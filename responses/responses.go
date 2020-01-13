@@ -82,3 +82,10 @@ func SendInternalServerError(w http.ResponseWriter, err string) {
 	w.WriteHeader(http.StatusInternalServerError)
 	SendResponse(w, BuildResponse(err))
 }
+
+// SendUnauthorized returns error response for unauthorized access
+func SendUnauthorized(w http.ResponseWriter, data map[string]interface{}) {
+	w.Header().Set(contentType, appJSON)
+	w.WriteHeader(http.StatusUnauthorized)
+	SendResponse(w, data)
+}
