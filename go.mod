@@ -1,4 +1,4 @@
-module insights-operator-utils
+module github.com/RedHatInsights/insights-operator-utils
 
 go 1.13
 
