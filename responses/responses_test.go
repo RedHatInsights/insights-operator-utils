@@ -19,21 +19,84 @@ package responses_test
 import (
 	"encoding/json"
 	"github.com/RedHatInsights/insights-operator-utils/responses"
-	//"io/ioutil"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 )
 
+type functionWithData func(http.ResponseWriter, map[string]interface{})
+
+type functionWithoutData func(http.ResponseWriter, string)
+
+const (
+	expectedBody = `{"color_s":"blue","extra_data_m":{"param1":1,"param2":false}}`
+	contentType  = "Content-Type"
+	appJSON      = "application/json; charset=utf-8"
+)
+
 var mock_payload = map[string]interface{}{
-	"numbers_l": []int{1, 2, 3, 5, 8},
-	"color_s":   "blue",
+	"color_s": "blue",
 	"extra_data_m": map[string]interface{}{
 		"param1": 1,
 		"param2": false,
-		"param3": 0.75,
 	},
+}
+
+var headerTestsWithData = []struct {
+	testName       string
+	fName          functionWithData
+	expectedHeader int
+}{
+	{"responses.SendResponse", responses.SendResponse, http.StatusOK},
+	{"responses.SendCreated", responses.SendCreated, http.StatusCreated},
+	{"responses.SendAccepted", responses.SendAccepted, http.StatusAccepted},
+	{"responses.SendUnauthorized", responses.SendUnauthorized, http.StatusUnauthorized},
+}
+
+var headerTestsWithoutData = []struct {
+	testName       string
+	fName          functionWithoutData
+	expectedHeader int
+}{
+	{"responses.SendError", responses.SendError, http.StatusBadRequest},
+	{"responses.SendForbidden", responses.SendForbidden, http.StatusForbidden},
+	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},
+}
+
+func checkResponse(url string, expectedStatusCode int, headerOnly bool, t *testing.T) {
+	res, err := http.Get(url)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != expectedStatusCode {
+		t.Errorf("Expected status code %v, got %v", expectedStatusCode, res.Status)
+	}
+
+	if !headerOnly {
+
+		body, err := ioutil.ReadAll(res.Body)
+		defer res.Body.Close()
+
+		var expected map[string]interface{}
+		err = json.NewDecoder(strings.NewReader(expectedBody)).Decode(&expected)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var response map[string]interface{}
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if equal := reflect.DeepEqual(response, expected); !equal {
+			t.Errorf("Expected response %v.", expectedBody)
+		}
+	}
 }
 
 // Test BuildResponse that returns simple map with key "status" and given value
@@ -71,35 +134,28 @@ func TestBuildOkResponseWithData(t *testing.T) {
 	}
 }
 
-func TestSendResponse(t *testing.T) {
-	test_server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := responses.BuildOkResponseWithData("data", mock_payload)
-		responses.SendResponse(w, response)
-	}))
-	defer test_server.Close()
-
-	res, err := http.Get(test_server.URL)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var response map[string]interface{}
-
-	json.NewDecoder(res.Body).Decode(&response)
-	expected_response := map[string]interface{}{
-		"data":   mock_payload,
-		"status": "ok",
-	}
-
-	t.Log(response)
-	t.Log(expected_response)
-	// why aren't they equal???
-	if equal := reflect.DeepEqual(expected_response, response); !equal {
-		t.Errorf("Expected response %v.", expected_response)
-	}
-}
-
 func TestSendCreated(t *testing.T) {
+	for _, tt := range headerTestsWithData {
+		t.Run(tt.testName, func(t *testing.T) {
+			test_server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				tt.fName(w, mock_payload) // call the function
+			}))
+			defer test_server.Close()
+
+			checkResponse(test_server.URL, tt.expectedHeader, false, t)
+		})
+	}
+
+	for _, tt := range headerTestsWithoutData {
+		t.Run(tt.testName, func(t *testing.T) {
+			test_server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				tt.fName(w, "Test Status") // call the function
+			}))
+			defer test_server.Close()
+
+			checkResponse(test_server.URL, tt.expectedHeader, true, t)
+		})
+	}
 
 }
 
