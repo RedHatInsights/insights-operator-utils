@@ -73,7 +73,7 @@ var headerTestsWithoutData = []struct {
 	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},
 }
 
-// Function to check status code against the expected one and check content-type + payload
+// checkResponse checks status code against the expected one and check content-type + payload
 func checkResponse(url string, expectedStatusCode int, checkPayload bool, t *testing.T) {
 	res, err := http.Get(url)
 	if err != nil {
@@ -111,7 +111,7 @@ func checkResponse(url string, expectedStatusCode int, checkPayload bool, t *tes
 	}
 }
 
-// Test BuildResponse that returns simple map with key "status" and given value
+// TestBuildResponse tests BuildResponse func that returns simple map with key "status" and given value
 func TestBuildResponse(t *testing.T) {
 	status_str := "I'm a teapot"
 	expected_response := map[string]interface{}{
@@ -123,7 +123,7 @@ func TestBuildResponse(t *testing.T) {
 	}
 }
 
-// Test BuildResponse that returns simple map with key "status" and value "ok"
+// TestBuildOkResponse tests BuildResponse that returns simple map with key "status" and value "ok"
 func TestBuildOkResponse(t *testing.T) {
 	expected_response := map[string]interface{}{
 		"status": "ok",
@@ -134,7 +134,7 @@ func TestBuildOkResponse(t *testing.T) {
 	}
 }
 
-// Test BuildResponse that returns simple map with key status: ok and given data
+// TestBuildOkResponseWithData tests that the func returns simple map with key status: ok and given data
 func TestBuildOkResponseWithData(t *testing.T) {
 	expected_response := map[string]interface{}{
 		"data":   mock_payload,
@@ -146,7 +146,7 @@ func TestBuildOkResponseWithData(t *testing.T) {
 	}
 }
 
-// Table tests to test StatusCodes and payloads.
+// TestHeaders run table tests to test StatusCodes and payloads.
 func TestHeaders(t *testing.T) {
 	for _, tt := range headerTestsWithData {
 		t.Run(tt.testName, func(t *testing.T) {
@@ -169,5 +169,4 @@ func TestHeaders(t *testing.T) {
 			checkResponse(test_server.URL, tt.expectedHeader, false, t)
 		})
 	}
-
 }

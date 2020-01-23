@@ -28,7 +28,7 @@ const (
 	appJSON     = "application/json; charset=utf-8"
 )
 
-// helper function to set the Content-Type header
+// setDefaultContentType is a helper function to set the Content-Type header
 func setDefaultContentType(w http.ResponseWriter) {
 	w.Header().Set(contentType, appJSON)
 }
