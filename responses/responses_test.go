@@ -27,6 +27,7 @@ import (
 	"testing"
 )
 
+// Define types used in table tests struct
 type functionWithData func(http.ResponseWriter, map[string]interface{})
 
 type functionWithoutData func(http.ResponseWriter, string)
@@ -66,17 +67,21 @@ var headerTestsWithoutData = []struct {
 	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},
 }
 
-func checkResponse(url string, expectedStatusCode int, headerOnly bool, t *testing.T) {
+func checkResponse(url string, expectedStatusCode int, checkPayload bool, t *testing.T) {
 	res, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if res.StatusCode != expectedStatusCode {
-		t.Errorf("Expected status code %v, got %v", expectedStatusCode, res.Status)
+		t.Errorf("Expected status code %v, got %v", expectedStatusCode, res.StatusCode)
 	}
 
-	if !headerOnly {
+	if checkPayload {
+		content_type := res.Header.Get(contentType)
+		if content_type != appJSON {
+			t.Errorf("Unexpected content type. Expected %v, got %v", appJSON, content_type)
+		}
 
 		body, err := ioutil.ReadAll(res.Body)
 		defer res.Body.Close()
@@ -94,7 +99,7 @@ func checkResponse(url string, expectedStatusCode int, headerOnly bool, t *testi
 		}
 
 		if equal := reflect.DeepEqual(response, expected); !equal {
-			t.Errorf("Expected response %v.", expectedBody)
+			t.Errorf("Expected response %v.", expected)
 		}
 	}
 }
@@ -142,7 +147,7 @@ func TestSendCreated(t *testing.T) {
 			}))
 			defer test_server.Close()
 
-			checkResponse(test_server.URL, tt.expectedHeader, false, t)
+			checkResponse(test_server.URL, tt.expectedHeader, true, t)
 		})
 	}
 
@@ -153,7 +158,7 @@ func TestSendCreated(t *testing.T) {
 			}))
 			defer test_server.Close()
 
-			checkResponse(test_server.URL, tt.expectedHeader, true, t)
+			checkResponse(test_server.URL, tt.expectedHeader, false, t)
 		})
 	}
 
