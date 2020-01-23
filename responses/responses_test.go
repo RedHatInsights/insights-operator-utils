@@ -38,6 +38,7 @@ const (
 	appJSON      = "application/json; charset=utf-8"
 )
 
+// Mock payload to be sent as data
 var mock_payload = map[string]interface{}{
 	"color_s": "blue",
 	"extra_data_m": map[string]interface{}{
@@ -46,6 +47,11 @@ var mock_payload = map[string]interface{}{
 	},
 }
 
+/*
+Table tests - two structs are used so that different type of function can be used
+It would be possible to only have one struct with both func types and a flag e.g. testPayload bool
+determining which one to call.
+*/
 var headerTestsWithData = []struct {
 	testName       string
 	fName          functionWithData
@@ -67,6 +73,7 @@ var headerTestsWithoutData = []struct {
 	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},
 }
 
+// Function to check status code against the expected one and check content-type + payload
 func checkResponse(url string, expectedStatusCode int, checkPayload bool, t *testing.T) {
 	res, err := http.Get(url)
 	if err != nil {
@@ -139,6 +146,7 @@ func TestBuildOkResponseWithData(t *testing.T) {
 	}
 }
 
+// Table tests to test StatusCodes and payloads.
 func TestSendCreated(t *testing.T) {
 	for _, tt := range headerTestsWithData {
 		t.Run(tt.testName, func(t *testing.T) {
@@ -163,30 +171,3 @@ func TestSendCreated(t *testing.T) {
 	}
 
 }
-
-func TestSendAccepted(t *testing.T) {
-
-}
-
-func TestSendError(t *testing.T) {
-
-}
-
-func TestSendForbidden(t *testing.T) {
-
-}
-
-func TestSendInternalServerError(t *testing.T) {
-
-}
-
-func TestSendUnauthorized(t *testing.T) {
-
-}
-
-/*
-   content_type := req.Header.Get("Content-type")
-   if content_type != "application/json" {
-       http.Error(w, fmt.Sprintf("Unexpected content %s", content_type), http.StatusBadRequest)
-   }
-*/
