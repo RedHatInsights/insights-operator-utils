@@ -147,7 +147,7 @@ func TestBuildOkResponseWithData(t *testing.T) {
 }
 
 // Table tests to test StatusCodes and payloads.
-func TestSendCreated(t *testing.T) {
+func TestHeaders(t *testing.T) {
 	for _, tt := range headerTestsWithData {
 		t.Run(tt.testName, func(t *testing.T) {
 			test_server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
