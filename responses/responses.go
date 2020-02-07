@@ -50,6 +50,20 @@ func BuildOkResponseWithData(dataName string, data interface{}) map[string]inter
 	return resp
 }
 
+// Send sends http response with a provided statusCode
+// data can be either string or map[string]interface{}
+// if data is string it will send reponse like this:
+// {"status": data} which is helpful for explaining error to the client
+func Send(statusCode int, w http.ResponseWriter, data interface{}) {
+	setDefaultContentType(w)
+	w.WriteHeader(statusCode)
+	if status, ok := data.(string); ok {
+		json.NewEncoder(w).Encode(BuildResponse(status))
+	} else {
+		json.NewEncoder(w).Encode(data)
+	}
+}
+
 // SendResponse returns JSON response
 func SendResponse(w http.ResponseWriter, data map[string]interface{}) {
 	setDefaultContentType(w) // doesn't work if WriteHeader has been called on w first

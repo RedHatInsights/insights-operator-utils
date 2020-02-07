@@ -33,13 +33,12 @@ type functionWithData func(http.ResponseWriter, map[string]interface{})
 type functionWithoutData func(http.ResponseWriter, string)
 
 const (
-	expectedBody = `{"color_s":"blue","extra_data_m":{"param1":1,"param2":false}}`
-	contentType  = "Content-Type"
-	appJSON      = "application/json; charset=utf-8"
+	contentType = "Content-Type"
+	appJSON     = "application/json; charset=utf-8"
 )
 
 // Mock payload to be sent as data
-var mock_payload = map[string]interface{}{
+var mockPayload = map[string]interface{}{
 	"color_s": "blue",
 	"extra_data_m": map[string]interface{}{
 		"param1": 1,
@@ -73,8 +72,44 @@ var headerTestsWithoutData = []struct {
 	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},
 }
 
+var sendTests = []struct {
+	testName       string
+	statusCode     int
+	expectedStatus int
+	data           interface{}
+	expectedData   string
+}{
+	{
+		"responses.Send(http.StatusInternalServerError, ...)",
+		http.StatusInternalServerError,
+		http.StatusInternalServerError,
+		"unable to connect to the database",
+		`{"status": "unable to connect to the database"}`,
+	},
+	{
+		"responses.Send(http.StatusInternalServerError, ...)",
+		http.StatusBadRequest,
+		http.StatusBadRequest,
+		"wrong ID format",
+		`{"status": "wrong ID format"}`,
+	},
+	{
+		"responses.Send(http.StatusInternalServerError, ...)",
+		http.StatusOK,
+		http.StatusOK,
+		map[string]interface{}{"list_of_something": []string{}},
+		`{"list_of_something": []}`,
+	},
+}
+
 // checkResponse checks status code against the expected one and check content-type + payload
-func checkResponse(url string, expectedStatusCode int, checkPayload bool, t *testing.T) {
+func checkResponse(
+	url string,
+	expectedStatusCode int,
+	checkPayload bool,
+	expectedBody string,
+	t *testing.T,
+) {
 	res, err := http.Get(url)
 	if err != nil {
 		t.Fatal(err)
@@ -85,9 +120,9 @@ func checkResponse(url string, expectedStatusCode int, checkPayload bool, t *tes
 	}
 
 	if checkPayload {
-		content_type := res.Header.Get(contentType)
-		if content_type != appJSON {
-			t.Errorf("Unexpected content type. Expected %v, got %v", appJSON, content_type)
+		contentType := res.Header.Get(contentType)
+		if contentType != appJSON {
+			t.Errorf("Unexpected content type. Expected %v, got %v", appJSON, contentType)
 		}
 
 		body, err := ioutil.ReadAll(res.Body)
@@ -106,43 +141,43 @@ func checkResponse(url string, expectedStatusCode int, checkPayload bool, t *tes
 		}
 
 		if equal := reflect.DeepEqual(response, expected); !equal {
-			t.Errorf("Expected response %v.", expected)
+			t.Errorf(`Expected response "%+v", got "%+v"`, expected, response)
 		}
 	}
 }
 
 // TestBuildResponse tests BuildResponse func that returns simple map with key "status" and given value
 func TestBuildResponse(t *testing.T) {
-	status_str := "I'm a teapot"
-	expected_response := map[string]interface{}{
-		"status": status_str,
+	statusStr := "I'm a teapot"
+	expectedResponse := map[string]interface{}{
+		"status": statusStr,
 	}
-	response := responses.BuildResponse(status_str)
-	if equal := reflect.DeepEqual(expected_response, response); !equal {
-		t.Errorf("Expected response %v", expected_response)
+	response := responses.BuildResponse(statusStr)
+	if equal := reflect.DeepEqual(expectedResponse, response); !equal {
+		t.Errorf("Expected response %v", expectedResponse)
 	}
 }
 
 // TestBuildOkResponse tests BuildResponse that returns simple map with key "status" and value "ok"
 func TestBuildOkResponse(t *testing.T) {
-	expected_response := map[string]interface{}{
+	expectedResponse := map[string]interface{}{
 		"status": "ok",
 	}
 	response := responses.BuildOkResponse()
-	if equal := reflect.DeepEqual(expected_response, response); !equal {
-		t.Errorf("Expected response %v", expected_response)
+	if equal := reflect.DeepEqual(expectedResponse, response); !equal {
+		t.Errorf("Expected response %v", expectedResponse)
 	}
 }
 
 // TestBuildOkResponseWithData tests that the func returns simple map with key status: ok and given data
 func TestBuildOkResponseWithData(t *testing.T) {
-	expected_response := map[string]interface{}{
-		"data":   mock_payload,
+	expectedResponse := map[string]interface{}{
+		"data":   mockPayload,
 		"status": "ok",
 	}
-	response := responses.BuildOkResponseWithData("data", mock_payload)
-	if equal := reflect.DeepEqual(expected_response, response); !equal {
-		t.Errorf("Expected response %v", expected_response)
+	response := responses.BuildOkResponseWithData("data", mockPayload)
+	if equal := reflect.DeepEqual(expectedResponse, response); !equal {
+		t.Errorf("Expected response %v", expectedResponse)
 	}
 }
 
@@ -150,23 +185,53 @@ func TestBuildOkResponseWithData(t *testing.T) {
 func TestHeaders(t *testing.T) {
 	for _, tt := range headerTestsWithData {
 		t.Run(tt.testName, func(t *testing.T) {
-			test_server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				tt.fName(w, mock_payload) // call the function
+			testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				tt.fName(w, mockPayload) // call the function
 			}))
-			defer test_server.Close()
+			defer testServer.Close()
 
-			checkResponse(test_server.URL, tt.expectedHeader, true, t)
+			const expectedBody = `{"color_s":"blue","extra_data_m":{"param1":1,"param2":false}}`
+			checkResponse(
+				testServer.URL,
+				tt.expectedHeader,
+				true,
+				expectedBody,
+				t,
+			)
 		})
 	}
 
 	for _, tt := range headerTestsWithoutData {
 		t.Run(tt.testName, func(t *testing.T) {
-			test_server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				tt.fName(w, "Test Status") // call the function
 			}))
-			defer test_server.Close()
+			defer testServer.Close()
 
-			checkResponse(test_server.URL, tt.expectedHeader, false, t)
+			checkResponse(
+				testServer.URL,
+				tt.expectedHeader,
+				false,
+				"",
+				t,
+			)
+		})
+	}
+
+	for _, test := range sendTests {
+		t.Run(test.testName, func(t *testing.T) {
+			testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				responses.Send(test.statusCode, w, test.data)
+			}))
+			defer testServer.Close()
+
+			checkResponse(
+				testServer.URL,
+				test.expectedStatus,
+				true,
+				test.expectedData,
+				t,
+			)
 		})
 	}
 }
