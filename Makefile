@@ -19,7 +19,7 @@ cyclo: ## Run gocyclo
 	./gocyclo.sh
 
 shellcheck: ## Run shellcheck
-	shellcheck **/*.sh
+	shellcheck *.sh
 
 style: fmt vet lint cyclo shellcheck ## Run all the formatting related commands (fmt, vet, lint, cyclo)
 
