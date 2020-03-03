@@ -50,7 +50,7 @@ func BuildOkResponseWithData(dataName string, data interface{}) map[string]inter
 	return resp
 }
 
-// Send sends http response with a provided statusCode
+// Send sends HTTP response with a provided statusCode
 // data can be either string or map[string]interface{}
 // if data is string it will send reponse like this:
 // {"status": data} which is helpful for explaining error to the client
