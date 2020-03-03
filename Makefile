@@ -18,7 +18,10 @@ cyclo: ## Run gocyclo
 	@echo "Running gocyclo"
 	./gocyclo.sh
 
-style: fmt vet lint cyclo ## Run all the formatting related commands (fmt, vet, lint, cyclo)
+shellcheck: ## Run shellcheck
+	shellcheck *.sh
+
+style: fmt vet lint cyclo shellcheck ## Run all the formatting related commands (fmt, vet, lint, cyclo)
 
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./... | grep -v tests)

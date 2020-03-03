@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-go test -race -covermode=atomic -coverprofile coverage.out $(go list ./... | grep -v tests) $@
+go test -race -covermode=atomic -coverprofile coverage.out "$(go list ./... | grep -v tests)" "$@"
 exit_code=$?
 
 echo "Test coverage:"
