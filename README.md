@@ -1,6 +1,10 @@
 # insights-operator Utils
 
+[![GoDoc](https://godoc.org/github.com/RedHatInsights/insights-operator-utils?status.svg)](https://godoc.org/github.com/RedHatInsights/insights-operator-utils)
 [![Go Report Card](https://goreportcard.com/badge/github.com/RedHatInsights/insights-operator-utils)](https://goreportcard.com/report/github.com/RedHatInsights/insights-operator-utils)
+[![Build Status](https://travis-ci.org/RedHatInsights/insights-operator-utils.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-operator-utils)
+[![codecov](https://codecov.io/gh/RedHatInsights/insights-operator-utils/branch/master/graph/badge.svg)](https://codecov.io/gh/RedHatInsights/insights-operator-utils)
+
 
 ## Description
 
