@@ -186,7 +186,10 @@ func TestHeaders(t *testing.T) {
 	for _, tt := range headerTestsWithData {
 		t.Run(tt.testName, func(t *testing.T) {
 			testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				tt.fName(w, mockPayload) // call the function
+				err := tt.fName(w, mockPayload) // call the function
+				if err != nil {
+					t.Fatal(err)
+				}
 			}))
 			defer testServer.Close()
 
@@ -204,7 +207,10 @@ func TestHeaders(t *testing.T) {
 	for _, tt := range headerTestsWithoutData {
 		t.Run(tt.testName, func(t *testing.T) {
 			testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				tt.fName(w, "Test Status") // call the function
+				err := tt.fName(w, "Test Status") // call the function
+				if err != nil {
+					t.Fatal(err)
+				}
 			}))
 			defer testServer.Close()
 
