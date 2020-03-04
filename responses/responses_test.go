@@ -28,9 +28,9 @@ import (
 )
 
 // Define types used in table tests struct
-type functionWithData func(http.ResponseWriter, map[string]interface{})
+type functionWithData func(http.ResponseWriter, map[string]interface{}) error
 
-type functionWithoutData func(http.ResponseWriter, string)
+type functionWithoutData func(http.ResponseWriter, string) error
 
 const (
 	contentType = "Content-Type"

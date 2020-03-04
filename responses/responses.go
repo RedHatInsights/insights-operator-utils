@@ -54,6 +54,8 @@ func BuildOkResponseWithData(dataName string, data interface{}) map[string]inter
 // data can be either string or map[string]interface{}
 // if data is string it will send reponse like this:
 // {"status": data} which is helpful for explaining error to the client
+//
+// Returned error value is based on error returned from json.Encoder
 func Send(statusCode int, w http.ResponseWriter, data interface{}) error {
 	setDefaultContentType(w)
 	w.WriteHeader(statusCode)
