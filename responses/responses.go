@@ -54,47 +54,48 @@ func BuildOkResponseWithData(dataName string, data interface{}) map[string]inter
 // data can be either string or map[string]interface{}
 // if data is string it will send reponse like this:
 // {"status": data} which is helpful for explaining error to the client
-func Send(statusCode int, w http.ResponseWriter, data interface{}) {
+//
+// Returned error value is based on error returned from json.Encoder
+func Send(statusCode int, w http.ResponseWriter, data interface{}) error {
 	setDefaultContentType(w)
 	w.WriteHeader(statusCode)
 	if status, ok := data.(string); ok {
-		json.NewEncoder(w).Encode(BuildResponse(status))
-	} else {
-		json.NewEncoder(w).Encode(data)
+		return json.NewEncoder(w).Encode(BuildResponse(status))
 	}
+	return json.NewEncoder(w).Encode(data)
 }
 
 // SendResponse returns JSON response
-func SendResponse(w http.ResponseWriter, data map[string]interface{}) {
-	Send(http.StatusOK, w, data)
+func SendResponse(w http.ResponseWriter, data map[string]interface{}) error {
+	return Send(http.StatusOK, w, data)
 }
 
 // SendCreated returns response with status Created
-func SendCreated(w http.ResponseWriter, data map[string]interface{}) {
-	Send(http.StatusCreated, w, data)
+func SendCreated(w http.ResponseWriter, data map[string]interface{}) error {
+	return Send(http.StatusCreated, w, data)
 }
 
 // SendAccepted returns response with status Accepted
-func SendAccepted(w http.ResponseWriter, data map[string]interface{}) {
-	Send(http.StatusAccepted, w, data)
+func SendAccepted(w http.ResponseWriter, data map[string]interface{}) error {
+	return Send(http.StatusAccepted, w, data)
 }
 
 // SendError returns error response
-func SendError(w http.ResponseWriter, err string) {
-	Send(http.StatusBadRequest, w, err)
+func SendError(w http.ResponseWriter, err string) error {
+	return Send(http.StatusBadRequest, w, err)
 }
 
 // SendForbidden returns response with status Forbidden
-func SendForbidden(w http.ResponseWriter, err string) {
-	Send(http.StatusForbidden, w, err)
+func SendForbidden(w http.ResponseWriter, err string) error {
+	return Send(http.StatusForbidden, w, err)
 }
 
 // SendInternalServerError returns response with status Internal Server Error
-func SendInternalServerError(w http.ResponseWriter, err string) {
-	Send(http.StatusInternalServerError, w, err)
+func SendInternalServerError(w http.ResponseWriter, err string) error {
+	return Send(http.StatusInternalServerError, w, err)
 }
 
 // SendUnauthorized returns error response for unauthorized access
-func SendUnauthorized(w http.ResponseWriter, data map[string]interface{}) {
-	Send(http.StatusUnauthorized, w, data)
+func SendUnauthorized(w http.ResponseWriter, data map[string]interface{}) error {
+	return Send(http.StatusUnauthorized, w, data)
 }
