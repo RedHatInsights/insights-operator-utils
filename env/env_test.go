@@ -26,15 +26,19 @@ import (
 const envVariableName = "MY_ENV_VARIABLE"
 const envVariableDefaultValue = "fallback"
 
-// TestGetEnvExistingVariable check whether the reading from existing environment variable is correct.
-func TestGetEnvExistingVariable(t *testing.T) {
-	const envVariableValue = "foobar"
-
-	// set the environment variable
+// setEnvVariable sets the environment variable with check whether the set was correct or not
+func setEnvVariable(t *testing.T, envVariableName string, envVariableValue string) {
 	err := os.Setenv(envVariableName, envVariableValue)
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+// TestGetEnvExistingVariable check whether the reading from existing environment variable is correct.
+func TestGetEnvExistingVariable(t *testing.T) {
+	const envVariableValue = "foobar"
+
+	setEnvVariable(t, envVariableName, envVariableValue)
 
 	// check the environment variable value
 	value := env.GetEnv(envVariableName, envVariableDefaultValue)
@@ -59,11 +63,7 @@ func TestGetEnvNoVariable(t *testing.T) {
 func TestGetEnvEmptyVariable(t *testing.T) {
 	const envVariableValue = ""
 
-	// set the environment variable
-	err := os.Setenv(envVariableName, envVariableValue)
-	if err != nil {
-		t.Fatal(err)
-	}
+	setEnvVariable(t, envVariableName, envVariableValue)
 
 	// check the environment variable value
 	value := env.GetEnv(envVariableName, envVariableDefaultValue)
