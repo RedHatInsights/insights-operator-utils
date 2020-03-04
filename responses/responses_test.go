@@ -126,6 +126,9 @@ func checkResponse(
 		}
 
 		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			t.Fatal(err)
+		}
 		defer res.Body.Close()
 
 		var expected map[string]interface{}
