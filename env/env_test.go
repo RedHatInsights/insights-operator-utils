@@ -15,3 +15,53 @@ limitations under the License.
 */
 
 package env_test
+
+import (
+	"os"
+	"testing"
+
+	"github.com/RedHatInsights/insights-operator-utils/env"
+)
+
+const envVariableName = "MY_ENV_VARIABLE"
+const envVariableDefaultValue = "fallback"
+
+// TestGetEnvExistingVariable check whether the reading from existing environment variable is correct.
+func TestGetEnvExistingVariable(t *testing.T) {
+	const envVariableValue = "foobar"
+
+	// set the environment variable
+	os.Setenv(envVariableName, envVariableValue)
+
+	// check the environment variable value
+	value := env.GetEnv(envVariableName, envVariableDefaultValue)
+	if value != envVariableValue {
+		t.Fatal("Environment variable has no proper value:", value)
+	}
+}
+
+// TestGetEnvNoVariable check how the non-existent environment variable is handled.
+func TestGetEnvNoVariable(t *testing.T) {
+	// make sure no environment variables are set up
+	os.Clearenv()
+
+	// check the environment variable value
+	value := env.GetEnv(envVariableName, envVariableDefaultValue)
+	if value != envVariableDefaultValue {
+		t.Fatal("Environment variable has no proper value:", value)
+	}
+}
+
+// TestGetEnvEmptyVariable check how the existing but empty environment variable is handled.
+func TestGetEnvEmptyVariable(t *testing.T) {
+	const envVariableValue = ""
+
+	// set the environment variable
+	os.Setenv(envVariableName, envVariableValue)
+
+	// check the environment variable value
+	value := env.GetEnv(envVariableName, envVariableDefaultValue)
+	if value != envVariableValue {
+		t.Fatal("Environment variable has no proper value:", value)
+	}
+}
