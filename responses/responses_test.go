@@ -102,6 +102,13 @@ var sendTests = []struct {
 	},
 }
 
+func closeResponseBody(t *testing.T, response *http.Response) {
+	err := response.Body.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 // checkResponse checks status code against the expected one and check content-type + payload
 func checkResponse(
 	url string,
@@ -129,7 +136,7 @@ func checkResponse(
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer res.Body.Close()
+		defer closeResponseBody(t, res)
 
 		var expected map[string]interface{}
 		err = json.NewDecoder(strings.NewReader(expectedBody)).Decode(&expected)
@@ -230,7 +237,10 @@ func TestHeaders(t *testing.T) {
 	for _, test := range sendTests {
 		t.Run(test.testName, func(t *testing.T) {
 			testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				responses.Send(test.statusCode, w, test.data)
+				err := responses.Send(test.statusCode, w, test.data)
+				if err != nil {
+					t.Fatal(err)
+				}
 			}))
 			defer testServer.Close()
 
