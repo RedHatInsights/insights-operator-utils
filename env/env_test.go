@@ -31,7 +31,10 @@ func TestGetEnvExistingVariable(t *testing.T) {
 	const envVariableValue = "foobar"
 
 	// set the environment variable
-	os.Setenv(envVariableName, envVariableValue)
+	err := os.Setenv(envVariableName, envVariableValue)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// check the environment variable value
 	value := env.GetEnv(envVariableName, envVariableDefaultValue)
@@ -57,7 +60,10 @@ func TestGetEnvEmptyVariable(t *testing.T) {
 	const envVariableValue = ""
 
 	// set the environment variable
-	os.Setenv(envVariableName, envVariableValue)
+	err := os.Setenv(envVariableName, envVariableValue)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// check the environment variable value
 	value := env.GetEnv(envVariableName, envVariableDefaultValue)
