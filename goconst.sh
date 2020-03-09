@@ -14,5 +14,5 @@
 # limitations under the License.
 
 
-go get github.com/fzipp/gocyclo
-gocyclo -over 9 -avg .
+go get github.com/jgautheron/goconst/cmd/goconst
+goconst ./...

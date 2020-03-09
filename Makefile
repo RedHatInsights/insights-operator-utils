@@ -26,10 +26,14 @@ goerrcheck: ## Run error checks linter
 	@echo "Running error checks linter"
 	./goerrcheck.sh
 
+goconst: ## Run goconst checker
+	@echo "Running goconst checker"
+	./goconst.sh
+
 shellcheck: ## Run shellcheck
 	shellcheck *.sh
 
-style: fmt vet lint cyclo ineffassign goerrcheck shellcheck ## Run all the formatting related commands (fmt, vet, lint, cyclo)
+style: fmt vet lint cyclo ineffassign goerrcheck goconst shellcheck ## Run all the formatting related commands (fmt, vet, lint, cyclo)
 
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./... | grep -v tests)
