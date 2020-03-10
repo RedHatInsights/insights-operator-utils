@@ -20,6 +20,9 @@ No further configuration is needed at this moment.
 
 Please look into document [CONTRIBUTING.md](CONTRIBUTING.md) that contains all information about how to contribute to this project.
 
+Please look also at [Definitiot of Done](DoD.md) document with further informations.
+
+
 ## Testing
 
 Unit tests can be started by the following command:
