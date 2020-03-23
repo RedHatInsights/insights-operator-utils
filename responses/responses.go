@@ -65,37 +65,42 @@ func Send(statusCode int, w http.ResponseWriter, data interface{}) error {
 	return json.NewEncoder(w).Encode(data)
 }
 
-// SendResponse returns JSON response
+// SendResponse returns JSON response with status OK 200
 func SendResponse(w http.ResponseWriter, data map[string]interface{}) error {
 	return Send(http.StatusOK, w, data)
 }
 
-// SendCreated returns response with status Created
+// SendCreated returns response with status Created 201
 func SendCreated(w http.ResponseWriter, data map[string]interface{}) error {
 	return Send(http.StatusCreated, w, data)
 }
 
-// SendAccepted returns response with status Accepted
+// SendAccepted returns response with status Accepted 202
 func SendAccepted(w http.ResponseWriter, data map[string]interface{}) error {
 	return Send(http.StatusAccepted, w, data)
 }
 
-// SendError returns error response
+// SendError returns error response with status Bad Request 400
 func SendError(w http.ResponseWriter, err string) error {
 	return Send(http.StatusBadRequest, w, err)
 }
 
-// SendForbidden returns response with status Forbidden
+// SendUnauthorized returns error response for unauthorized access with status Unauthorized 401
+func SendUnauthorized(w http.ResponseWriter, data map[string]interface{}) error {
+	return Send(http.StatusUnauthorized, w, data)
+}
+
+// SendForbidden returns response with status Forbidden 403
 func SendForbidden(w http.ResponseWriter, err string) error {
 	return Send(http.StatusForbidden, w, err)
 }
 
-// SendInternalServerError returns response with status Internal Server Error
-func SendInternalServerError(w http.ResponseWriter, err string) error {
-	return Send(http.StatusInternalServerError, w, err)
+// SendNotFound returns response with status Not Found 404
+func SendNotFound(w http.ResponseWriter, err string) error {
+	return Send(http.StatusNotFound, w, err)
 }
 
-// SendUnauthorized returns error response for unauthorized access
-func SendUnauthorized(w http.ResponseWriter, data map[string]interface{}) error {
-	return Send(http.StatusUnauthorized, w, data)
+// SendInternalServerError returns response with status Internal Server Error 500
+func SendInternalServerError(w http.ResponseWriter, err string) error {
+	return Send(http.StatusInternalServerError, w, err)
 }
