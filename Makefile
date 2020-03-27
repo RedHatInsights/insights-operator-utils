@@ -33,7 +33,11 @@ goconst: ## Run goconst checker
 shellcheck: ## Run shellcheck
 	shellcheck *.sh
 
-style: fmt vet lint cyclo ineffassign goerrcheck goconst shellcheck ## Run all the formatting related commands (fmt, vet, lint, cyclo)
+abcgo: ## Run ABC metrics checker
+	@echo "Run ABC metrics checker"
+	./abcgo.sh
+
+style: fmt vet lint cyclo ineffassign goerrcheck goconst shellcheck abcgo ## Run all the formatting related commands (fmt, vet, lint, cyclo)
 
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./... | grep -v tests)
