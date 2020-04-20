@@ -14,5 +14,13 @@
 # limitations under the License.
 
 
-go get github.com/jgautheron/goconst/cmd/goconst
-goconst ./...
+GO111MODULE=off go get github.com/jgautheron/goconst/cmd/goconst
+
+if [[ $(goconst -min-occurrences=2 ./... | tee /dev/tty | wc -l) -ne 0 ]]
+then
+    echo "Duplicated string(s) found"
+    exit 1
+else
+    echo "No duplicated strings found"
+    exit 0
+fi
