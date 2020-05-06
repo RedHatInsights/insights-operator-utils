@@ -65,8 +65,8 @@ func Send(statusCode int, w http.ResponseWriter, data interface{}) error {
 	return json.NewEncoder(w).Encode(data)
 }
 
-// SendResponse returns JSON response with status OK 200
-func SendResponse(w http.ResponseWriter, data map[string]interface{}) error {
+// SendOK returns JSON response with status OK 200
+func SendOK(w http.ResponseWriter, data map[string]interface{}) error {
 	return Send(http.StatusOK, w, data)
 }
 
@@ -80,8 +80,8 @@ func SendAccepted(w http.ResponseWriter, data map[string]interface{}) error {
 	return Send(http.StatusAccepted, w, data)
 }
 
-// SendError returns error response with status Bad Request 400
-func SendError(w http.ResponseWriter, err string) error {
+// SendBadRequest returns error response with status Bad Request 400
+func SendBadRequest(w http.ResponseWriter, err string) error {
 	return Send(http.StatusBadRequest, w, err)
 }
 

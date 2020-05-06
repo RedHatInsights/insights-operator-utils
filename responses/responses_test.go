@@ -56,7 +56,7 @@ var headerTestsWithData = []struct {
 	fName          functionWithData
 	expectedHeader int
 }{
-	{"responses.SendResponse", responses.SendResponse, http.StatusOK},
+	{"responses.SendOK", responses.SendOK, http.StatusOK},
 	{"responses.SendCreated", responses.SendCreated, http.StatusCreated},
 	{"responses.SendAccepted", responses.SendAccepted, http.StatusAccepted},
 	{"responses.SendUnauthorized", responses.SendUnauthorized, http.StatusUnauthorized},
@@ -67,7 +67,7 @@ var headerTestsWithoutData = []struct {
 	fName          functionWithoutData
 	expectedHeader int
 }{
-	{"responses.SendError", responses.SendError, http.StatusBadRequest},
+	{"responses.SendBadRequest", responses.SendBadRequest, http.StatusBadRequest},
 	{"responses.SendForbidden", responses.SendForbidden, http.StatusForbidden},
 	{"responses.SendNotFound", responses.SendNotFound, http.StatusNotFound},
 	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},
