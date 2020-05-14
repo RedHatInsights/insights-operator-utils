@@ -104,3 +104,8 @@ func SendNotFound(w http.ResponseWriter, err string) error {
 func SendInternalServerError(w http.ResponseWriter, err string) error {
 	return Send(http.StatusInternalServerError, w, err)
 }
+
+// SendServiceUnavailable returns response with status Service Unavailable 503
+func SendServiceUnavailable(w http.ResponseWriter, err string) error {
+	return Send(http.StatusServiceUnavailable, w, err)
+}
