@@ -71,6 +71,7 @@ var headerTestsWithoutData = []struct {
 	{"responses.SendForbidden", responses.SendForbidden, http.StatusForbidden},
 	{"responses.SendNotFound", responses.SendNotFound, http.StatusNotFound},
 	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},
+	{"responses.SendServiceUnavailable", responses.SendServiceUnavailable, http.StatusServiceUnavailable},
 }
 
 var sendTests = []struct {
