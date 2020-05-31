@@ -18,6 +18,7 @@ package responses_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/RedHatInsights/insights-operator-utils/responses"
 	"io/ioutil"
 	"net/http"
@@ -96,11 +97,18 @@ var sendTests = []struct {
 		`{"status": "wrong ID format"}`,
 	},
 	{
-		"responses.Send(http.StatusInternalServerError, ...)",
+		"responses.Send(http.StatusOK, ...)",
 		http.StatusOK,
 		http.StatusOK,
 		map[string]interface{}{"list_of_something": []string{}},
 		`{"list_of_something": []}`,
+	},
+	{
+		"responses.Send(http.StatusOK, ...)",
+		http.StatusOK,
+		http.StatusOK,
+		[]byte{123, 34, 107, 101, 121, 49, 34, 58, 32, 34, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 34, 125},
+		`{"key1": "hello world"}`,
 	},
 }
 
@@ -140,10 +148,12 @@ func checkResponse(
 		}
 		defer closeResponseBody(t, res)
 
+		fmt.Println(body)
+
 		var expected map[string]interface{}
 		err = json.NewDecoder(strings.NewReader(expectedBody)).Decode(&expected)
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("Response body is not JSON")
 		}
 
 		var response map[string]interface{}

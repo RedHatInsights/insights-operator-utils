@@ -61,7 +61,11 @@ func Send(statusCode int, w http.ResponseWriter, data interface{}) error {
 	w.WriteHeader(statusCode)
 	if status, ok := data.(string); ok {
 		return json.NewEncoder(w).Encode(BuildResponse(status))
+	} else if rawData, ok := data.([]byte); ok {
+		_, err := w.Write(rawData)
+		return err
 	}
+
 	return json.NewEncoder(w).Encode(data)
 }
 
