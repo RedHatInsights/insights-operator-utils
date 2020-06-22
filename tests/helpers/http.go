@@ -56,6 +56,8 @@ type APIResponse struct {
 	Headers     map[string]string
 }
 
+// AssertAPIRequest sends sends api request and checks api response (see docs for APIRequest and APIResponse)
+// to the provided testServer using the provided APIPrefix
 func AssertAPIRequest(
 	t testing.TB,
 	testServer ServerInitializer,
