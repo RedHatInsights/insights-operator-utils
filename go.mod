@@ -5,7 +5,6 @@ go 1.13
 require (
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
-	github.com/dhconnelly/docgo v0.0.0-20150110143410-5e9cb528655b // indirect
 	github.com/dhconnelly/litebrite v0.0.0-20121210220017-74b227723203 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4

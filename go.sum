@@ -7,8 +7,6 @@ github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dR
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/dhconnelly/docgo v0.0.0-20150110143410-5e9cb528655b h1:dw5wlQvAtqEZrGdp8IGM3rbxcKrqO15Ddui3/IhSspw=
-github.com/dhconnelly/docgo v0.0.0-20150110143410-5e9cb528655b/go.mod h1:MArnPVS0CZ2pB+jP7bSNyYlyzAUnnduuA0MVdKJ5bJI=
 github.com/dhconnelly/litebrite v0.0.0-20121210220017-74b227723203 h1:Ugw0c29AxSoXwVxqsHuReuerFXgwWivsyy1w4oFUB5s=
 github.com/dhconnelly/litebrite v0.0.0-20121210220017-74b227723203/go.mod h1:sOAhcfs5ejQ6CPfVyarDyvznx1sM0bLndPKfsu21+NU=
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
