@@ -16,7 +16,7 @@
 
 cd "$(dirname "$0")" || exit
 
-go get golang.org/x/lint/golint
+GO111MODULE=off go get golang.org/x/lint/golint
 
 # shellcheck disable=SC2046
 if golint $(go list ./...) |

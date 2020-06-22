@@ -18,7 +18,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-go get -u github.com/droptheplot/abcgo
+GO111MODULE=off go get -u github.com/droptheplot/abcgo
 
 echo -e "${BLUE}ABC metric${NC}"
 abcgo -path .
