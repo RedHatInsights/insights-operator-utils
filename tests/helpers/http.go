@@ -122,8 +122,10 @@ func makeRequest(t testing.TB, request *APIRequest, url string) *http.Request {
 		req.Header.Set("Authorization", request.AuthorizationToken)
 	}
 
-	for headerKey, headerValue := range request.ExtraHeaders {
-		req.Header.Add(headerKey, headerValue)
+	for headerKey, headerValues := range request.ExtraHeaders {
+		for _, headerValue := range headerValues {
+			req.Header.Add(headerKey, headerValue)
+		}
 	}
 
 	return req
