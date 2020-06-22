@@ -42,6 +42,7 @@ type APIRequest struct {
 	OrgID              types.OrgID
 	XRHIdentity        string
 	AuthorizationToken string
+	ExtraHeaders       http.Header
 }
 
 // APIResponse is an expected api response to use in AssertAPIRequest
@@ -119,6 +120,10 @@ func makeRequest(t testing.TB, request *APIRequest, url string) *http.Request {
 
 	if len(request.AuthorizationToken) != 0 {
 		req.Header.Set("Authorization", request.AuthorizationToken)
+	}
+
+	for headerKey, headerValue := range request.ExtraHeaders {
+		req.Header.Add(headerKey, headerValue)
 	}
 
 	return req
