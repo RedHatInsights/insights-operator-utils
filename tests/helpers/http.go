@@ -188,3 +188,36 @@ func NewGockAPIEndpointMatcher(endpoint string) func(req *http.Request, _ *gock.
 		return re.MatchString(uri), nil
 	}
 }
+
+// NewGockRequestMatcher returns a new matcher for github.com/h2non/gock to match requests
+// with provided method, url and jsonBody
+func NewGockRequestMatcher(
+	t *testing.T, method string, url string, jsonBody string,
+) func(*http.Request, *gock.Request) (bool, error) {
+	return func(httpReq *http.Request, gockReq *gock.Request) (bool, error) {
+		body, err := ioutil.ReadAll(httpReq.Body)
+		if err != nil {
+			return false, err
+		}
+
+		assert.Equal(t, method, httpReq.Method)
+		assert.Equal(t, url, httpReq.URL.String())
+		AssertStringsAreEqualJSON(t, jsonBody, string(body))
+
+		return true, nil
+	}
+}
+
+// GockExpectAPIRequest makes gock expect the request with the baseURL and sends back the response
+func GockExpectAPIRequest(t *testing.T, baseURL string, request *APIRequest, response *APIResponse) {
+	gock.New(baseURL).
+		AddMatcher(NewGockRequestMatcher(
+			t,
+			request.Method,
+			httputils.MakeURLToEndpoint(baseURL, request.Endpoint, request.EndpointArgs),
+			request.Body,
+		)).
+		Reply(response.StatusCode).
+		SetHeaders(response.Headers).
+		Body(strings.NewReader(response.Body))
+}
