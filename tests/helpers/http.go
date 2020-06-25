@@ -1,7 +1,10 @@
 package helpers
 
 import (
+	"bytes"
 	"context"
+	"encoding/gob"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -23,12 +26,15 @@ type ServerInitializer interface {
 	Initialize() http.Handler
 }
 
+// BodyChecker represents body checker type for api response
+type BodyChecker func(t testing.TB, expected, got []byte)
+
 // APIRequest is a request to api to use in AssertAPIRequest
 //
 // (required) Method is an http method
 // (required) Endpoint is an endpoint without api prefix
 // EndpointArgs are the arguments to pass to endpoint template (leave empty if endpoint is not a template)
-// Body is a string body (leave empty to not send)
+// Body is a request body which can be a string or []byte (leave empty to not send)
 // UserID is a user id for methods requiring user id (leave empty to not use it)
 // OrgID is an org id for methods requiring it to be in token (leave empty to not use it)
 // XRHIdentity is an authentication token (leave empty to not use it)
@@ -37,7 +43,7 @@ type APIRequest struct {
 	Method             string
 	Endpoint           string
 	EndpointArgs       []interface{}
-	Body               string
+	Body               interface{}
 	UserID             types.UserID
 	OrgID              types.OrgID
 	XRHIdentity        string
@@ -48,12 +54,12 @@ type APIRequest struct {
 // APIResponse is an expected api response to use in AssertAPIRequest
 //
 // StatusCode is an expected http status code (leave empty to not check for status code)
-// Body is an expected body string (leave empty to not check for body)
+// Body is an expected body which can be a string or []byte(leave empty to not check for body)
 // BodyChecker is a custom body checker function (leave empty to use default one - CheckResponseBodyJSON)
 type APIResponse struct {
 	StatusCode  int
-	Body        string
-	BodyChecker func(t testing.TB, expected, got string)
+	Body        interface{}
+	BodyChecker BodyChecker
 	Headers     map[string]string
 }
 
@@ -79,13 +85,42 @@ func AssertAPIRequest(
 	if expectedResponse.StatusCode != 0 {
 		assert.Equal(t, expectedResponse.StatusCode, response.StatusCode, "Expected different status code")
 	}
-	if expectedResponse.BodyChecker != nil {
-		bodyBytes, err := ioutil.ReadAll(response.Body)
-		FailOnError(t, err)
 
-		expectedResponse.BodyChecker(t, expectedResponse.Body, string(bodyBytes))
-	} else if len(expectedResponse.Body) != 0 {
-		CheckResponseBodyJSON(t, expectedResponse.Body, response.Body)
+	assertBody(t, expectedResponse.Body, response.Body, expectedResponse.BodyChecker)
+}
+
+func toBytes(t testing.TB, obj interface{}) []byte {
+	if obj == nil {
+		return nil
+	}
+
+	switch v := obj.(type) {
+	case []byte:
+		return v
+	case string:
+		return []byte(v)
+	case io.Reader:
+		res, err := ioutil.ReadAll(v)
+		FailOnError(t, err)
+		return res
+	default:
+		t.Fatalf(
+			`type "%T" of API(Request|Response).Body is not supported, please see the documentation. Value is "%+v"`,
+			obj, obj,
+		)
+	}
+
+	return nil
+}
+
+func assertBody(t testing.TB, expectedBody interface{}, body interface{}, bodyChecker BodyChecker) {
+	expectedBodyBytes := toBytes(t, expectedBody)
+	bodyBytes := toBytes(t, body)
+
+	if bodyChecker != nil {
+		bodyChecker(t, expectedBodyBytes, bodyBytes)
+	} else {
+		AssertStringsAreEqualJSON(t, string(expectedBodyBytes), string(bodyBytes))
 	}
 }
 
@@ -100,7 +135,9 @@ func ExecuteRequest(testServer ServerInitializer, req *http.Request) *httptest.R
 }
 
 func makeRequest(t testing.TB, request *APIRequest, url string) *http.Request {
-	req, err := http.NewRequest(request.Method, url, strings.NewReader(request.Body))
+	bodyBytes := toBytes(t, request.Body)
+
+	req, err := http.NewRequest(request.Method, url, bytes.NewReader(bodyBytes))
 	FailOnError(t, err)
 
 	// authorize user
@@ -194,4 +231,84 @@ func NewGockAPIEndpointMatcher(endpoint string) func(req *http.Request, _ *gock.
 		uri = strings.TrimLeft(uri, "/")
 		return re.MatchString(uri), nil
 	}
+}
+
+// NewGockRequestMatcher returns a new matcher for github.com/h2non/gock to match requests
+// with provided method, url and body(the same types as body in APIRequest(see the docs))
+func NewGockRequestMatcher(
+	t *testing.T, method string, url string, body interface{},
+) func(*http.Request, *gock.Request) (bool, error) {
+	return func(httpReq *http.Request, gockReq *gock.Request) (bool, error) {
+		assert.Equal(t, method, httpReq.Method)
+		assert.Equal(t, url, httpReq.URL.String())
+		if body != nil {
+			assertBody(t, body, httpReq.Body, nil)
+		}
+
+		return true, nil
+	}
+}
+
+// GockExpectAPIRequest makes gock expect the request with the baseURL and sends back the response
+func GockExpectAPIRequest(t *testing.T, baseURL string, request *APIRequest, response *APIResponse) {
+	bodyBytes := toBytes(t, response.Body)
+
+	headers := map[string]string{}
+
+	for key, values := range request.ExtraHeaders {
+		for _, value := range values {
+			headers[key] = value
+		}
+	}
+	gock.New(baseURL).
+		AddMatcher(NewGockRequestMatcher(
+			t,
+			request.Method,
+			httputils.MakeURLToEndpoint(baseURL, request.Endpoint, request.EndpointArgs...),
+			request.Body,
+		)).
+		MatchHeaders(headers).
+		Reply(response.StatusCode).
+		SetHeaders(response.Headers).
+		Body(bytes.NewBuffer(bodyBytes))
+}
+
+// CleanAfterGock cleans after gock library and prints all unmatched requests
+func CleanAfterGock(t testing.TB) {
+	defer gock.Off()
+	defer func() {
+		hasUnmatchedRequest := false
+
+		for _, request := range gock.GetUnmatchedRequests() {
+			hasUnmatchedRequest = false
+			fmt.Println("Not expected request: ")
+
+			fmt.Printf("\tURL: `%+v`\n", request.URL)
+			fmt.Printf("\tHeader: `%+v`\n", ToJSONString(request.Header))
+
+			if request.Body != nil {
+				bodyBytes, err := ioutil.ReadAll(request.Body)
+				FailOnError(t, err)
+
+				fmt.Printf("\tBody: `%+v`\n", string(bodyBytes))
+			}
+		}
+
+		if hasUnmatchedRequest {
+			t.Fatalf("there were some unexpected requests")
+		}
+	}()
+}
+
+// MustGobSerialize serializes an object using gob or panics
+func MustGobSerialize(t testing.TB, obj interface{}) []byte {
+	buf := new(bytes.Buffer)
+
+	err := gob.NewEncoder(buf).Encode(obj)
+	FailOnError(t, err)
+
+	res, err := ioutil.ReadAll(buf)
+	FailOnError(t, err)
+
+	return res
 }
