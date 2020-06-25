@@ -188,19 +188,19 @@ func checkResponseHeaders(t testing.TB, expectedHeaders map[string]string, actua
 }
 
 // AssertReportResponsesEqual checks if reports in answer are the same
-func AssertReportResponsesEqual(t testing.TB, expected, got string) {
+func AssertReportResponsesEqual(t testing.TB, expected, got []byte) {
 	var expectedResponse, gotResponse struct {
 		Status string               `json:"status"`
 		Report types.ReportResponse `json:"report"`
 	}
 
-	err := JSONUnmarshalStrict([]byte(expected), &expectedResponse)
+	err := JSONUnmarshalStrict(expected, &expectedResponse)
 	if err != nil {
 		log.Error().Msg("Error unmarshalling expected value")
 	}
 
 	FailOnError(t, err)
-	err = JSONUnmarshalStrict([]byte(got), &gotResponse)
+	err = JSONUnmarshalStrict(got, &gotResponse)
 	if err != nil {
 		log.Error().Msg("Error unmarshalling got value")
 	}
@@ -285,6 +285,7 @@ func CleanAfterGock(t testing.TB) {
 			hasUnmatchedRequest = false
 			fmt.Println("Not expected request: ")
 
+			fmt.Printf("\tMethod: `%+v`\n", request.Method)
 			fmt.Printf("\tURL: `%+v`\n", request.URL)
 			fmt.Printf("\tHeader: `%+v`\n", ToJSONString(request.Header))
 
