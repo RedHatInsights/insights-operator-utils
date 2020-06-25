@@ -86,7 +86,9 @@ func AssertAPIRequest(
 		assert.Equal(t, expectedResponse.StatusCode, response.StatusCode, "Expected different status code")
 	}
 
-	assertBody(t, expectedResponse.Body, response.Body, expectedResponse.BodyChecker)
+	if expectedResponse.Body != nil {
+		assertBody(t, expectedResponse.Body, response.Body, expectedResponse.BodyChecker)
+	}
 }
 
 func toBytes(t testing.TB, obj interface{}) []byte {
