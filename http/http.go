@@ -24,3 +24,26 @@ func ReplaceParamsInEndpointAndTrimLeftSlash(endpoint, replacer string) string {
 
 	return endpoint
 }
+
+// MakeURLToEndpointMapString creates URL to endpoint using arguments in map in string format, use constants from file endpoints.go
+func MakeURLToEndpointMapString(apiPrefix, endpoint string, args map[string]string) string {
+	newArgs := make(map[string]interface{})
+
+	for key, val := range args {
+		newArgs[key] = val
+	}
+
+	return MakeURLToEndpointMap(apiPrefix, endpoint, newArgs)
+}
+
+// MakeURLToEndpointMap creates URL to endpoint using arguments in map, use constants from file endpoints.go
+func MakeURLToEndpointMap(apiPrefix, endpoint string, args map[string]interface{}) string {
+	endpoint = strings.TrimLeft(endpoint, "/")
+	for key, val := range args {
+		endpoint = strings.ReplaceAll(endpoint, fmt.Sprintf("{%v}", key), fmt.Sprint(val))
+	}
+
+	apiPrefix = strings.TrimRight(apiPrefix, "/")
+
+	return apiPrefix + "/" + endpoint
+}
