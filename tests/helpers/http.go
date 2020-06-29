@@ -3,7 +3,6 @@ package helpers
 import (
 	"bytes"
 	"context"
-	"encoding/gob"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -139,8 +138,7 @@ func ExecuteRequest(testServer ServerInitializer, req *http.Request) *httptest.R
 func makeRequest(t testing.TB, request *APIRequest, url string) *http.Request {
 	bodyBytes := toBytes(t, request.Body)
 
-	req, err := http.NewRequest(request.Method, url, bytes.NewReader(bodyBytes))
-	FailOnError(t, err)
+	req := httptest.NewRequest(request.Method, url, bytes.NewReader(bodyBytes))
 
 	// authorize user
 	if request.UserID != types.UserID("") || request.OrgID != types.OrgID(0) {
@@ -301,17 +299,4 @@ func CleanAfterGock(t testing.TB) {
 			t.Fatalf("there were some unexpected requests")
 		}
 	}()
-}
-
-// MustGobSerialize serializes an object using gob or panics
-func MustGobSerialize(t testing.TB, obj interface{}) []byte {
-	buf := new(bytes.Buffer)
-
-	err := gob.NewEncoder(buf).Encode(obj)
-	FailOnError(t, err)
-
-	res, err := ioutil.ReadAll(buf)
-	FailOnError(t, err)
-
-	return res
 }
