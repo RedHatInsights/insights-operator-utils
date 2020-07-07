@@ -15,6 +15,7 @@ type MicroHTTPServer struct {
 	APIPrefix string
 }
 
+// NewMicroHTTPServer creates a MicroHTTPServer for the given address and prefix
 func NewMicroHTTPServer(address string, apiPrefix string) *MicroHTTPServer {
 	router := mux.NewRouter().StrictSlash(true)
 	server := &http.Server{Addr: address, Handler: router}
@@ -25,10 +26,12 @@ func NewMicroHTTPServer(address string, apiPrefix string) *MicroHTTPServer {
 	}
 }
 
+// Initialize returns the Handler instance in order to be modified
 func (server *MicroHTTPServer) Initialize() http.Handler {
 	return server.Router
 }
 
+// AddEndpoint adds a handler function to the router in order to response to the given endpoint
 func (server *MicroHTTPServer) AddEndpoint(endpoint string, f func(http.ResponseWriter, *http.Request)) {
 	realEndpoint := server.APIPrefix + endpoint
 	server.Router.HandleFunc(realEndpoint, f).Methods(http.MethodGet)

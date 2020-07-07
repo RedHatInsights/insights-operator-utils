@@ -23,7 +23,6 @@ limitations under the License.
 //
 // api_endpoints_status_codes - number of responses for each status code
 //
-
 package metrics
 
 import (
