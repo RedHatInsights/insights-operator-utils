@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package metrics
+package httputils
 
 import (
 	"fmt"
@@ -22,6 +22,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog/log"
+
+	"github.com/RedHatInsights/insights-operator-utils/metrics"
 )
 
 type loggingResponseWriter struct {
@@ -30,7 +32,7 @@ type loggingResponseWriter struct {
 
 func (writer loggingResponseWriter) WriteHeader(statusCode int) {
 	writer.ResponseWriter.WriteHeader(statusCode)
-	APIResponseStatusCodes.With(
+	metrics.APIResponseStatusCodes.With(
 		prometheus.Labels{"status_code": fmt.Sprint(statusCode)},
 	).Inc()
 }
@@ -45,13 +47,13 @@ func logRequestHandler(writer http.ResponseWriter, request *http.Request, nextHa
 		endpoint = ""
 	}
 
-	APIRequests.With(prometheus.Labels{"endpoint": endpoint}).Inc()
+	metrics.APIRequests.With(prometheus.Labels{"endpoint": endpoint}).Inc()
 
 	startTime := time.Now()
 	nextHandler.ServeHTTP(&loggingResponseWriter{ResponseWriter: writer}, request)
 	duration := time.Since(startTime)
 
-	APIResponsesTime.With(
+	metrics.APIResponsesTime.With(
 		prometheus.Labels{"endpoint": endpoint},
 	).Observe(duration.Seconds())
 }

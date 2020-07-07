@@ -28,6 +28,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 
+	httputils "github.com/RedHatInsights/insights-operator-utils/http"
 	"github.com/RedHatInsights/insights-operator-utils/metrics"
 )
 
@@ -63,7 +64,7 @@ func getCounterVecValue(counterVec *prometheus.CounterVec, labels map[string]str
 
 func prepareServer(status int) *helpers.MicroHTTPServer {
 	server := helpers.NewMicroHTTPServer(microAddress, apiPrefix)
-	server.Router.Use(metrics.LogRequest)
+	server.Router.Use(httputils.LogRequest)
 	server.AddEndpoint(testEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(status)
 	})
