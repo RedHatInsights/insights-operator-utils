@@ -76,6 +76,7 @@ type RuleContentResponse struct {
 	Tags         []string    `json:"tags"`
 	UserVote     UserVote    `json:"user_vote"`
 	Disabled     bool        `json:"disabled"`
+	Internal     bool        `json:"internal"`
 }
 
 // DisabledRuleResponse represents a single disabled rule displaying only identifying information
@@ -128,6 +129,7 @@ type RuleWithContent struct {
 	RiskOfChange int       `json:"risk_of_change"`
 	PublishDate  time.Time `json:"publish_date"`
 	Active       bool      `json:"active"`
+	Internal     bool      `json:"internal"`
 	Generic      string    `json:"generic"`
 	Tags         []string  `json:"tags"`
 }
