@@ -21,11 +21,9 @@ limitations under the License.
 //
 // api_endpoints_response_time - response times for all REST API endpoints
 //
-// consumed_messages - total number of messages consumed from selected broker
+// api_endpoints_status_codes - number of responses for each status code
 //
-// produced_messages - total number of produced messages
-//
-// written_reports - total number of reports written into the storage (cache)
+
 package metrics
 
 import (
