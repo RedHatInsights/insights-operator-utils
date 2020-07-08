@@ -121,13 +121,13 @@
 
 	<div class="ident">apiPrefix</div> <div class="operator">=</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">TrimRight</div><div class="operator">(</div><div class="ident">apiPrefix</div><div class="operator">,</div> <div class="literal">&#34;/&#34;</div><div class="operator">)</div><div class="operator"></div>
 	<div class="ident">nonParsedURL</div> <div class="operator">:=</div> <div class="ident">apiPrefix</div> <div class="operator">&#43;</div> <div class="literal">&#34;/&#34;</div> <div class="operator">&#43;</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprintf</div><div class="operator">(</div><div class="ident">endpoint</div><div class="operator">,</div> <div class="ident">args</div><div class="operator">...</div><div class="operator">)</div><div class="operator"></div>
-	<div class="ident">resultingUrl</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">url</div><div class="operator">.</div><div class="ident">Parse</div><div class="operator">(</div><div class="ident">nonParsedURL</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">resultingURL</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">url</div><div class="operator">.</div><div class="ident">Parse</div><div class="operator">(</div><div class="ident">nonParsedURL</div><div class="operator">)</div><div class="operator"></div>
 
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
 		<div class="keyword">return</div> <div class="ident">nonParsedURL</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
-	<div class="keyword">return</div> <div class="ident">resultingUrl</div><div class="operator">.</div><div class="ident">String</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">resultingURL</div><div class="operator">.</div><div class="ident">String</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>

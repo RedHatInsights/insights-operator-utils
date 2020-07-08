@@ -13,13 +13,13 @@ func MakeURLToEndpoint(apiPrefix, endpoint string, args ...interface{}) string {
 
 	apiPrefix = strings.TrimRight(apiPrefix, "/")
 	nonParsedURL := apiPrefix + "/" + fmt.Sprintf(endpoint, args...)
-	resultingUrl, err := url.Parse(nonParsedURL)
+	resultingURL, err := url.Parse(nonParsedURL)
 
 	if err != nil {
 		return nonParsedURL
 	}
 
-	return resultingUrl.String()
+	return resultingURL.String()
 }
 
 // ReplaceParamsInEndpointAndTrimLeftSlash replaces params in endpoint and trims left slash
