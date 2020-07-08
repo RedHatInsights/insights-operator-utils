@@ -104,7 +104,9 @@
 	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">helpers</div><div class="operator"></div>
 
 <div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;bytes&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;context&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;fmt&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io/ioutil&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;net/http&#34;</div><div class="operator"></div>
@@ -135,12 +137,20 @@
       </tr>
       
       <tr class="section">
+	<td class="doc"><p>BodyChecker represents body checker type for api response</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">BodyChecker</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
 	<td class="doc"><p>APIRequest is a request to api to use in AssertAPIRequest</p>
 
 <p>(required) Method is an http method
 (required) Endpoint is an endpoint without api prefix
 EndpointArgs are the arguments to pass to endpoint template (leave empty if endpoint is not a template)
-Body is a string body (leave empty to not send)
+Body is a request body which can be a string or []byte (leave empty to not send)
 UserID is a user id for methods requiring user id (leave empty to not use it)
 OrgID is an org id for methods requiring it to be in token (leave empty to not use it)
 XRHIdentity is an authentication token (leave empty to not use it)
@@ -150,7 +160,7 @@ AuthorizationToken is an authentication token (leave empty to not use it)</p>
 	<div class="ident">Method</div>             <div class="ident">string</div><div class="operator"></div>
 	<div class="ident">Endpoint</div>           <div class="ident">string</div><div class="operator"></div>
 	<div class="ident">EndpointArgs</div>       <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
-	<div class="ident">Body</div>               <div class="ident">string</div><div class="operator"></div>
+	<div class="ident">Body</div>               <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
 	<div class="ident">UserID</div>             <div class="ident">types</div><div class="operator">.</div><div class="ident">UserID</div><div class="operator"></div>
 	<div class="ident">OrgID</div>              <div class="ident">types</div><div class="operator">.</div><div class="ident">OrgID</div><div class="operator"></div>
 	<div class="ident">XRHIdentity</div>        <div class="ident">string</div><div class="operator"></div>
@@ -165,13 +175,13 @@ AuthorizationToken is an authentication token (leave empty to not use it)</p>
 	<td class="doc"><p>APIResponse is an expected api response to use in AssertAPIRequest</p>
 
 <p>StatusCode is an expected http status code (leave empty to not check for status code)
-Body is an expected body string (leave empty to not check for body)
+Body is an expected body which can be a string or []byte(leave empty to not check for body)
 BodyChecker is a custom body checker function (leave empty to use default one - CheckResponseBodyJSON)</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">APIResponse</div> <div class="keyword">struct</div> <div class="operator">{</div>
 	<div class="ident">StatusCode</div>  <div class="ident">int</div><div class="operator"></div>
-	<div class="ident">Body</div>        <div class="ident">string</div><div class="operator"></div>
-	<div class="ident">BodyChecker</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div> <div class="ident">string</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">Body</div>        <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+	<div class="ident">BodyChecker</div> <div class="ident">BodyChecker</div><div class="operator"></div>
 	<div class="ident">Headers</div>     <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
@@ -202,13 +212,44 @@ to the provided testServer using the provided APIPrefix</p>
 	<div class="keyword">if</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">StatusCode</div> <div class="operator">!=</div> <div class="literal">0</div> <div class="operator">{</div>
 		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">StatusCode</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">.</div><div class="ident">StatusCode</div><div class="operator">,</div> <div class="literal">&#34;Expected different status code&#34;</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
-	<div class="keyword">if</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">BodyChecker</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
-		<div class="ident">bodyBytes</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadAll</div><div class="operator">(</div><div class="ident">response</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
-		<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 
-		<div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">BodyChecker</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
-	<div class="operator">}</div> <div class="keyword">else</div> <div class="keyword">if</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div> <div class="operator">!=</div> <div class="literal">0</div> <div class="operator">{</div>
-		<div class="ident">CheckResponseBodyJSON</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Body</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">assertBody</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">BodyChecker</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">toBytes</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">obj</div> <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">)</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div> <div class="operator">{</div>
+	<div class="keyword">if</div> <div class="ident">obj</div> <div class="operator">==</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="keyword">return</div> <div class="ident">nil</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">switch</div> <div class="ident">v</div> <div class="operator">:=</div> <div class="ident">obj</div><div class="operator">.</div><div class="operator">(</div><div class="keyword">type</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">case</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">:</div>
+		<div class="keyword">return</div> <div class="ident">v</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="ident">string</div><div class="operator">:</div>
+		<div class="keyword">return</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">(</div><div class="ident">v</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="ident">io</div><div class="operator">.</div><div class="ident">Reader</div><div class="operator">:</div>
+		<div class="ident">res</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadAll</div><div class="operator">(</div><div class="ident">v</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">return</div> <div class="ident">res</div><div class="operator"></div>
+	<div class="keyword">default</div><div class="operator">:</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatalf</div><div class="operator">(</div>
+			<div class="literal">`type &#34;%T&#34; of API(Request|Response).Body is not supported, please see the documentation. Value is &#34;%&#43;v&#34;`</div><div class="operator">,</div>
+			<div class="ident">obj</div><div class="operator">,</div> <div class="ident">obj</div><div class="operator">,</div>
+		<div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">return</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">assertBody</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expectedBody</div> <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">body</div> <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">bodyChecker</div> <div class="ident">BodyChecker</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">expectedBodyBytes</div> <div class="operator">:=</div> <div class="ident">toBytes</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedBody</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">bodyBytes</div> <div class="operator">:=</div> <div class="ident">toBytes</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">body</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">if</div> <div class="ident">bodyChecker</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">bodyChecker</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedBodyBytes</div><div class="operator">,</div> <div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div> <div class="keyword">else</div> <div class="operator">{</div>
+		<div class="ident">AssertStringsAreEqualJSON</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">expectedBodyBytes</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
@@ -228,8 +269,9 @@ to the provided testServer using the provided APIPrefix</p>
 <div class="operator">}</div><div class="operator"></div>
 
 <div class="keyword">func</div> <div class="ident">makeRequest</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">*</div><div class="ident">APIRequest</div><div class="operator">,</div> <div class="ident">url</div> <div class="ident">string</div><div class="operator">)</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div> <div class="operator">{</div>
-	<div class="ident">req</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">NewRequest</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">,</div> <div class="ident">url</div><div class="operator">,</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">NewReader</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
-	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">bodyBytes</div> <div class="operator">:=</div> <div class="ident">toBytes</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">req</div> <div class="operator">:=</div> <div class="ident">httptest</div><div class="operator">.</div><div class="ident">NewRequest</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">,</div> <div class="ident">url</div><div class="operator">,</div> <div class="ident">bytes</div><div class="operator">.</div><div class="ident">NewReader</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
 
 </code></pre></td>
       </tr>
@@ -255,8 +297,10 @@ to the provided testServer using the provided APIPrefix</p>
 		<div class="ident">req</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">.</div><div class="ident">Set</div><div class="operator">(</div><div class="literal">&#34;Authorization&#34;</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">AuthorizationToken</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
-	<div class="keyword">for</div> <div class="ident">headerKey</div><div class="operator">,</div> <div class="ident">headerValue</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">ExtraHeaders</div> <div class="operator">{</div>
-		<div class="ident">req</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">.</div><div class="ident">Add</div><div class="operator">(</div><div class="ident">headerKey</div><div class="operator">,</div> <div class="ident">headerValue</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">for</div> <div class="ident">headerKey</div><div class="operator">,</div> <div class="ident">headerValues</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">ExtraHeaders</div> <div class="operator">{</div>
+		<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">headerValue</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">headerValues</div> <div class="operator">{</div>
+			<div class="ident">req</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">.</div><div class="ident">Add</div><div class="operator">(</div><div class="ident">headerKey</div><div class="operator">,</div> <div class="ident">headerValue</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
 	<div class="keyword">return</div> <div class="ident">req</div><div class="operator"></div>
@@ -295,19 +339,19 @@ also validates both expected and body to be a valid json</p>
       <tr class="section">
 	<td class="doc"><p>AssertReportResponsesEqual checks if reports in answer are the same</p>
 </td>
-	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">AssertReportResponsesEqual</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div> <div class="ident">string</div><div class="operator">)</div> <div class="operator">{</div>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">AssertReportResponsesEqual</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">)</div> <div class="operator">{</div>
 	<div class="keyword">var</div> <div class="ident">expectedResponse</div><div class="operator">,</div> <div class="ident">gotResponse</div> <div class="keyword">struct</div> <div class="operator">{</div>
 		<div class="ident">Status</div> <div class="ident">string</div>               <div class="literal">`json:&#34;status&#34;`</div><div class="operator"></div>
 		<div class="ident">Report</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">ReportResponse</div> <div class="literal">`json:&#34;report&#34;`</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
-	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">(</div><div class="ident">expected</div><div class="operator">)</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">expected</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
 		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Error unmarshalling expected value&#34;</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
 	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
-	<div class="ident">err</div> <div class="operator">=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">(</div><div class="ident">got</div><div class="operator">)</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">gotResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">err</div> <div class="operator">=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">got</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">gotResponse</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
 		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Error unmarshalling got value&#34;</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
@@ -350,6 +394,89 @@ also validates both expected and body to be a valid json</p>
 		<div class="ident">uri</div> <div class="operator">=</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">TrimLeft</div><div class="operator">(</div><div class="ident">uri</div><div class="operator">,</div> <div class="literal">&#34;/&#34;</div><div class="operator">)</div><div class="operator"></div>
 		<div class="keyword">return</div> <div class="ident">re</div><div class="operator">.</div><div class="ident">MatchString</div><div class="operator">(</div><div class="ident">uri</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>NewGockRequestMatcher returns a new matcher for github.com/h2non/gock to match requests
+with provided method, url and body(the same types as body in APIRequest(see the docs))</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">NewGockRequestMatcher</div><div class="operator">(</div>
+	<div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div> <div class="ident">method</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">url</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">body</div> <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
+<div class="operator">)</div> <div class="keyword">func</div><div class="operator">(</div><div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">,</div> <div class="operator">*</div><div class="ident">gock</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">bool</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">return</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">httpReq</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">,</div> <div class="ident">gockReq</div> <div class="operator">*</div><div class="ident">gock</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">bool</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">method</div><div class="operator">,</div> <div class="ident">httpReq</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">url</div><div class="operator">,</div> <div class="ident">httpReq</div><div class="operator">.</div><div class="ident">URL</div><div class="operator">.</div><div class="ident">String</div><div class="operator">(</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">body</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">assertBody</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">body</div><div class="operator">,</div> <div class="ident">httpReq</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="keyword">return</div> <div class="ident">true</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>GockExpectAPIRequest makes gock expect the request with the baseURL and sends back the response</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">GockExpectAPIRequest</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div> <div class="ident">baseURL</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">*</div><div class="ident">APIRequest</div><div class="operator">,</div> <div class="ident">response</div> <div class="operator">*</div><div class="ident">APIResponse</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">bodyBytes</div> <div class="operator">:=</div> <div class="ident">toBytes</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">headers</div> <div class="operator">:=</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">for</div> <div class="ident">key</div><div class="operator">,</div> <div class="ident">values</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">ExtraHeaders</div> <div class="operator">{</div>
+		<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">value</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">values</div> <div class="operator">{</div>
+			<div class="ident">headers</div><div class="operator">[</div><div class="ident">key</div><div class="operator">]</div> <div class="operator">=</div> <div class="ident">value</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">gock</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">baseURL</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">AddMatcher</div><div class="operator">(</div><div class="ident">NewGockRequestMatcher</div><div class="operator">(</div>
+			<div class="ident">t</div><div class="operator">,</div>
+			<div class="ident">request</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">,</div>
+			<div class="ident">httputils</div><div class="operator">.</div><div class="ident">MakeURLToEndpoint</div><div class="operator">(</div><div class="ident">baseURL</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Endpoint</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">EndpointArgs</div><div class="operator">...</div><div class="operator">)</div><div class="operator">,</div>
+			<div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">,</div>
+		<div class="operator">)</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">MatchHeaders</div><div class="operator">(</div><div class="ident">headers</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Reply</div><div class="operator">(</div><div class="ident">response</div><div class="operator">.</div><div class="ident">StatusCode</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">SetHeaders</div><div class="operator">(</div><div class="ident">response</div><div class="operator">.</div><div class="ident">Headers</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Body</div><div class="operator">(</div><div class="ident">bytes</div><div class="operator">.</div><div class="ident">NewBuffer</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>CleanAfterGock cleans after gock library and prints all unmatched requests</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">CleanAfterGock</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">defer</div> <div class="ident">gock</div><div class="operator">.</div><div class="ident">Off</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">defer</div> <div class="keyword">func</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">hasUnmatchedRequest</div> <div class="operator">:=</div> <div class="ident">false</div><div class="operator"></div>
+
+		<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">gock</div><div class="operator">.</div><div class="ident">GetUnmatchedRequests</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">hasUnmatchedRequest</div> <div class="operator">=</div> <div class="ident">false</div><div class="operator"></div>
+			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Println</div><div class="operator">(</div><div class="literal">&#34;Not expected request: &#34;</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tMethod: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tURL: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">URL</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tHeader: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">ToJSONString</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="keyword">if</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+				<div class="ident">bodyBytes</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadAll</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
+				<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+				<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tBody: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="keyword">if</div> <div class="ident">hasUnmatchedRequest</div> <div class="operator">{</div>
+			<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatalf</div><div class="operator">(</div><div class="literal">&#34;there were some unexpected requests&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>

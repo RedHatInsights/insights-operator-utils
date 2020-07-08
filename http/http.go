@@ -2,6 +2,7 @@ package httputils
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -11,8 +12,14 @@ func MakeURLToEndpoint(apiPrefix, endpoint string, args ...interface{}) string {
 	endpoint = ReplaceParamsInEndpointAndTrimLeftSlash(endpoint, "%v")
 
 	apiPrefix = strings.TrimRight(apiPrefix, "/")
+	nonParsedURL := apiPrefix + "/" + fmt.Sprintf(endpoint, args...)
+	resultingUrl, err := url.Parse(nonParsedURL)
 
-	return apiPrefix + "/" + fmt.Sprintf(endpoint, args...)
+	if err != nil {
+		return nonParsedURL
+	}
+
+	return resultingUrl.String()
 }
 
 // ReplaceParamsInEndpointAndTrimLeftSlash replaces params in endpoint and trims left slash
