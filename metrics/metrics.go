@@ -30,21 +30,49 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-// APIRequests is a counter vector for requests to endpoints
-var APIRequests = promauto.NewCounterVec(prometheus.CounterOpts{
-	Name: "api_endpoints_requests",
-	Help: "The total number of requests per endpoint",
-}, []string{"endpoint"})
+var (
+	// APIRequests is a counter vector for requests to endpoints
+	APIRequests *prometheus.CounterVec = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "api_endpoints_requests",
+		Help: "The total number of requests per endpoint",
+	}, []string{"endpoint"})
 
-// APIResponsesTime collects the information about api response time per endpoint
-var APIResponsesTime = promauto.NewHistogramVec(prometheus.HistogramOpts{
-	Name:    "api_endpoints_response_time",
-	Help:    "API endpoints response time",
-	Buckets: prometheus.LinearBuckets(0, 20, 20),
-}, []string{"endpoint"})
+	// APIResponsesTime collects the information about api response time per endpoint
+	APIResponsesTime *prometheus.HistogramVec = promauto.NewHistogramVec(prometheus.HistogramOpts{
+		Name:    "api_endpoints_response_time",
+		Help:    "API endpoints response time",
+		Buckets: prometheus.LinearBuckets(0, 20, 20),
+	}, []string{"endpoint"})
 
-// APIResponseStatusCodes collects the information about api response status codes
-var APIResponseStatusCodes = promauto.NewCounterVec(prometheus.CounterOpts{
-	Name: "api_endpoints_status_codes",
-	Help: "API endpoints status codes",
-}, []string{"status_code"})
+	// APIResponseStatusCodes collects the information about api response status codes
+	APIResponseStatusCodes *prometheus.CounterVec = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "api_endpoints_status_codes",
+		Help: "API endpoints status codes",
+	}, []string{"status_code"})
+)
+
+// AddAPIMetricsWithNamespace overwrite the defined metrics with namespaced version of them
+func AddAPIMetricsWithNamespace(namespace string) {
+	prometheus.Unregister(APIRequests)
+	prometheus.Unregister(APIResponsesTime)
+	prometheus.Unregister(APIResponseStatusCodes)
+
+	APIRequests = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: namespace,
+		Name:      "api_endpoints_requests",
+		Help:      "The total number of requests per endpoint",
+	}, []string{"endpoint"})
+
+	APIResponsesTime = promauto.NewHistogramVec(prometheus.HistogramOpts{
+		Namespace: namespace,
+		Name:      "api_endpoints_response_time",
+		Help:      "API endpoints response time",
+		Buckets:   prometheus.LinearBuckets(0, 20, 20),
+	}, []string{"endpoint"})
+
+	APIResponseStatusCodes = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: namespace,
+		Name:      "api_endpoints_status_codes",
+		Help:      "API endpoints status codes",
+	}, []string{"status_code"})
+}
