@@ -62,6 +62,12 @@ type APIResponse struct {
 	Headers     map[string]string
 }
 
+const (
+	errorUnmarshallingExpectedValue = "Error unmarshalling expected value"
+	errorUnmarshallingGotValue      = "Error unmarshalling got value"
+	errorStatusIsEmpty              = "status is empty (probably JSON is completely wrong and unmarshal didn't do anything useful)"
+)
+
 // AssertAPIRequest sends sends api request and checks api response (see docs for APIRequest and APIResponse)
 // to the provided testServer using the provided APIPrefix
 func AssertAPIRequest(
@@ -194,20 +200,20 @@ func AssertReportResponsesEqual(t testing.TB, expected, got []byte) {
 
 	err := JSONUnmarshalStrict(expected, &expectedResponse)
 	if err != nil {
-		log.Error().Msg("Error unmarshalling expected value")
+		log.Error().Msg(errorUnmarshallingExpectedValue)
 	}
 
 	FailOnError(t, err)
 	err = JSONUnmarshalStrict(got, &gotResponse)
 	if err != nil {
-		log.Error().Msg("Error unmarshalling got value")
+		log.Error().Msg(errorUnmarshallingGotValue)
 	}
 	FailOnError(t, err)
 
 	assert.NotEmpty(
 		t,
 		expectedResponse.Status,
-		"status is empty(probably json is completely wrong and unmarshal didn't do anything useful)",
+		errorStatusIsEmpty,
 	)
 	assert.Equal(t, expectedResponse.Status, gotResponse.Status)
 	assert.Equal(t, expectedResponse.Report.Meta, gotResponse.Report.Meta)
@@ -219,6 +225,35 @@ func AssertReportResponsesEqual(t testing.TB, expected, got []byte) {
 		"length of reports should be equal",
 	)
 	assert.ElementsMatch(t, expectedResponse.Report.Report, gotResponse.Report.Report)
+}
+
+// AssertRuleResponsesEqual checks if rules in answer are the same
+func AssertRuleResponsesEqual(t testing.TB, expected, got []byte) {
+	var expectedResponse, gotResponse struct {
+		Status string             `json:"status"`
+		Report types.RuleOnReport `json:"report"`
+	}
+
+	err := JSONUnmarshalStrict(expected, &expectedResponse)
+	if err != nil {
+		log.Error().Msg(errorUnmarshallingExpectedValue)
+	}
+
+	FailOnError(t, err)
+	err = JSONUnmarshalStrict(got, &gotResponse)
+	if err != nil {
+		log.Error().Msg(errorUnmarshallingGotValue)
+	}
+	FailOnError(t, err)
+
+	assert.NotEmpty(
+		t,
+		expectedResponse.Status,
+		errorStatusIsEmpty,
+	)
+	assert.Equal(t, expectedResponse.Status, gotResponse.Status)
+
+	assert.EqualValues(t, expectedResponse.Report, gotResponse.Report)
 }
 
 // NewGockAPIEndpointMatcher returns new matcher for github.com/h2non/gock to match endpoint with any args
