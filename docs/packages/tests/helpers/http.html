@@ -185,6 +185,12 @@ BodyChecker is a custom body checker function (leave empty to use default one - 
 	<div class="ident">Headers</div>     <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
+<div class="keyword">const</div> <div class="operator">(</div>
+	<div class="ident">errorUnmarshallingExpectedValue</div> <div class="operator">=</div> <div class="literal">&#34;Error unmarshalling expected value&#34;</div><div class="operator"></div>
+	<div class="ident">errorUnmarshallingGotValue</div>      <div class="operator">=</div> <div class="literal">&#34;Error unmarshalling got value&#34;</div><div class="operator"></div>
+	<div class="ident">errorStatusIsEmpty</div>              <div class="operator">=</div> <div class="literal">&#34;status is empty (probably JSON is completely wrong and unmarshal didn&#39;t do anything useful)&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
 </code></pre></td>
       </tr>
       
@@ -347,20 +353,20 @@ also validates both expected and body to be a valid json</p>
 
 	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">expected</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
-		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Error unmarshalling expected value&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="ident">errorUnmarshallingExpectedValue</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
 	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 	<div class="ident">err</div> <div class="operator">=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">got</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">gotResponse</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
-		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Error unmarshalling got value&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="ident">errorUnmarshallingGotValue</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 
 	<div class="ident">assert</div><div class="operator">.</div><div class="ident">NotEmpty</div><div class="operator">(</div>
 		<div class="ident">t</div><div class="operator">,</div>
 		<div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Status</div><div class="operator">,</div>
-		<div class="literal">&#34;status is empty(probably json is completely wrong and unmarshal didn&#39;t do anything useful)&#34;</div><div class="operator">,</div>
+		<div class="ident">errorStatusIsEmpty</div><div class="operator">,</div>
 	<div class="operator">)</div><div class="operator"></div>
 	<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Status</div><div class="operator">,</div> <div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Status</div><div class="operator">)</div><div class="operator"></div>
 	<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Meta</div><div class="operator">,</div> <div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Meta</div><div class="operator">)</div><div class="operator"></div>
@@ -377,6 +383,40 @@ also validates both expected and body to be a valid json</p>
 		<div class="literal">&#34;length of reports should be equal&#34;</div><div class="operator">,</div>
 	<div class="operator">)</div><div class="operator"></div>
 	<div class="ident">assert</div><div class="operator">.</div><div class="ident">ElementsMatch</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">,</div> <div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>AssertRuleResponsesEqual checks if rules in answer are the same</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">AssertRuleResponsesEqual</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">var</div> <div class="ident">expectedResponse</div><div class="operator">,</div> <div class="ident">gotResponse</div> <div class="keyword">struct</div> <div class="operator">{</div>
+		<div class="ident">Status</div> <div class="ident">string</div>             <div class="literal">`json:&#34;status&#34;`</div><div class="operator"></div>
+		<div class="ident">Report</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">RuleOnReport</div> <div class="literal">`json:&#34;report&#34;`</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">expected</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="ident">errorUnmarshallingExpectedValue</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">err</div> <div class="operator">=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">got</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">gotResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="ident">errorUnmarshallingGotValue</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">NotEmpty</div><div class="operator">(</div>
+		<div class="ident">t</div><div class="operator">,</div>
+		<div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Status</div><div class="operator">,</div>
+		<div class="ident">errorStatusIsEmpty</div><div class="operator">,</div>
+	<div class="operator">)</div><div class="operator"></div>
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Status</div><div class="operator">,</div> <div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Status</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">EqualValues</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">,</div> <div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
