@@ -3,6 +3,7 @@
 package types
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -132,6 +133,13 @@ type RuleWithContent struct {
 	Internal     bool      `json:"internal"`
 	Generic      string    `json:"generic"`
 	Tags         []string  `json:"tags"`
+}
+
+// ReportItem represents a single (hit) rule of the string encoded report
+type ReportItem struct {
+	Module       RuleID          `json:"component"`
+	ErrorKey     ErrorKey        `json:"key"`
+	TemplateData json.RawMessage `json:"details"`
 }
 
 // KafkaOffset type for kafka offset
