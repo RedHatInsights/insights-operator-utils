@@ -106,6 +106,7 @@ used elsewhere in the aggregator code.</p>
 	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">types</div><div class="operator"></div>
 
 <div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;encoding/json&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;time&#34;</div><div class="operator"></div>
 <div class="operator">)</div><div class="operator"></div>
 
@@ -325,6 +326,18 @@ a unique identifier of payloads. Empty string represents a missing request ID.</
 	<div class="ident">Internal</div>     <div class="ident">bool</div>      <div class="literal">`json:&#34;internal&#34;`</div><div class="operator"></div>
 	<div class="ident">Generic</div>      <div class="ident">string</div>    <div class="literal">`json:&#34;generic&#34;`</div><div class="operator"></div>
 	<div class="ident">Tags</div>         <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div>  <div class="literal">`json:&#34;tags&#34;`</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>ReportItem represents a single (hit) rule of the string encoded report</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">ReportItem</div> <div class="keyword">struct</div> <div class="operator">{</div>
+	<div class="ident">Module</div>       <div class="ident">RuleID</div>          <div class="literal">`json:&#34;component&#34;`</div><div class="operator"></div>
+	<div class="ident">ErrorKey</div>     <div class="ident">ErrorKey</div>        <div class="literal">`json:&#34;key&#34;`</div><div class="operator"></div>
+	<div class="ident">TemplateData</div> <div class="ident">json</div><div class="operator">.</div><div class="ident">RawMessage</div> <div class="literal">`json:&#34;details&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
