@@ -53,6 +53,6 @@ It is also possible to specify CLI options for Go test. For example, if you need
 * `shellcheck` to perform static analysis for all shell scripts used in this repository
 * `abcgo` to measure ABC metrics for Go source code and check if the metrics does not exceed specified threshold
 
-Please note that all checks mentioned above have to pass for the change to be merged into master branch.
+Please note that all checks mentioned above have to pass for the change to be merged into the main branch (look into Settings to check which branch has been set as main one).
 
 History of checks performed by CI is available at [RedHatInsights / insights-operator-utils](https://travis-ci.org/RedHatInsights/insights-operator-utils).
