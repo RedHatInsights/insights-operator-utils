@@ -1,4 +1,4 @@
-.PHONY: help clean build fmt lint vet run test style cyclo
+.PHONY: help clean build fmt lint vet run test style cyclo license godoc install_docgo install_addlicense
 
 SOURCES:=$(shell find . -name '*.go')
 DOCFILES:=$(addprefix docs/packages/, $(addsuffix .html, $(basename ${SOURCES})))
@@ -56,8 +56,21 @@ help: ## Show this help screen
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ''
 
+license: install_addlicense
+	addlicense -c "Red Hat, Inc" -l "apache" -v ./
+
 docs/packages/%.html: %.go
 	mkdir -p $(dir $@)
 	docgo -outdir $(dir $@) $^
+	addlicense -c "Red Hat, Inc" -l "apache" -v $@
 
-godoc: ${DOCFILES}
+godoc: export GO111MODULE=off
+godoc: install_docgo install_addlicense ${DOCFILES}
+
+install_docgo: export GO111MODULE=off
+install_docgo:
+	[[ `command -v docgo` ]] || GO111MODULE=off go get -u github.com/dhconnelly/docgo
+
+install_addlicense: export GO111MODULE=off
+install_addlicense:
+	[[ `command -v addlicense` ]] || GO111MODULE=off go get -u github.com/google/addlicense
