@@ -18,5 +18,5 @@ Please delete options that are not relevant.
 - Documentation update
 
 ## Testing steps
-Please describe how the change was tested locally. If, for some reason, the testing was not done or not done fully, please describe what are the testing steps.
 
+Please describe how the change was tested locally. If, for some reason, the testing was not done or not done fully, please describe what are the testing steps.
