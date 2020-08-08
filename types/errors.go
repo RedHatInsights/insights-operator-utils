@@ -52,11 +52,11 @@ func (e *RouterParsingError) Error() string {
 
 // AuthenticationError happens during auth problems, for example malformed token
 type AuthenticationError struct {
-	errString string
+	ErrString string
 }
 
 func (e *AuthenticationError) Error() string {
-	return e.errString
+	return e.ErrString
 }
 
 // NoBodyError error meaning that client didn't provide body when it's required
