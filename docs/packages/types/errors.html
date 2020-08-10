@@ -191,11 +191,11 @@ limitations under the License.</p>
 	<td class="doc"><p>AuthenticationError happens during auth problems, for example malformed token</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">AuthenticationError</div> <div class="keyword">struct</div> <div class="operator">{</div>
-	<div class="ident">errString</div> <div class="ident">string</div><div class="operator"></div>
+	<div class="ident">ErrString</div> <div class="ident">string</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 <div class="keyword">func</div> <div class="operator">(</div><div class="ident">e</div> <div class="operator">*</div><div class="ident">AuthenticationError</div><div class="operator">)</div> <div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div> <div class="ident">string</div> <div class="operator">{</div>
-	<div class="keyword">return</div> <div class="ident">e</div><div class="operator">.</div><div class="ident">errString</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">e</div><div class="operator">.</div><div class="ident">ErrString</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
