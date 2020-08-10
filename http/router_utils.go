@@ -80,7 +80,7 @@ func ReadClusterName(writer http.ResponseWriter, request *http.Request) (types.C
 	return validatedClusterName, true
 }
 
-// ReadErrorKey retrieves rule id from request's url or writes an error to writer.
+// ReadRuleID retrieves rule id from request's url or writes an error to writer.
 // The function returns a rule id and a bool indicating if it was successful.
 func ReadRuleID(writer http.ResponseWriter, request *http.Request) (types.RuleID, bool) {
 	ruleID, err := getRouterParam(request, "rule_id")
