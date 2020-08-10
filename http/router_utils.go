@@ -17,6 +17,7 @@ package httputils
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -77,4 +78,47 @@ func ReadClusterName(writer http.ResponseWriter, request *http.Request) (types.C
 	}
 
 	return validatedClusterName, true
+}
+
+// ReadRuleID retrieves rule id from request's url or writes an error to writer.
+// The function returns a rule id and a bool indicating if it was successful.
+func ReadRuleID(writer http.ResponseWriter, request *http.Request) (types.RuleID, bool) {
+	ruleID, err := getRouterParam(request, "rule_id")
+	if err != nil {
+		const message = "unable to get rule id"
+		log.Error().Err(err).Msg(message)
+		types.HandleServerError(writer, err)
+		return types.RuleID(0), false
+	}
+
+	ruleIDValidator := regexp.MustCompile(`^[a-zA-Z_0-9.]+$`)
+
+	isRuleIDValid := ruleIDValidator.Match([]byte(ruleID))
+
+	if !isRuleIDValid {
+		err = fmt.Errorf("invalid rule ID, it must contain only from latin characters, number, underscores or dots")
+		log.Error().Err(err)
+		types.HandleServerError(writer, &types.RouterParsingError{
+			ParamName:  "rule_id",
+			ParamValue: ruleID,
+			ErrString:  err.Error(),
+		})
+		return types.RuleID(0), false
+	}
+
+	return types.RuleID(ruleID), true
+}
+
+// ReadErrorKey retrieves error key from request's url or writes an error to writer.
+// The function returns an error key and a bool indicating if it was successful.
+func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (types.ErrorKey, bool) {
+	errorKey, err := getRouterParam(request, "error_key")
+	if err != nil {
+		const message = "unable to get error_key"
+		log.Error().Err(err).Msg(message)
+		types.HandleServerError(writer, err)
+		return types.ErrorKey(0), false
+	}
+
+	return types.ErrorKey(errorKey), true
 }
