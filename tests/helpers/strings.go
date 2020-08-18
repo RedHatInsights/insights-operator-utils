@@ -66,3 +66,10 @@ func JSONUnmarshalStrict(data []byte, outObj interface{}) error {
 
 	return d.Decode(outObj)
 }
+
+// IsStringJSON check if the string is a JSON
+func IsStringJSON(str string) bool {
+	var devNull interface{}
+	err := json.Unmarshal([]byte(str), &devNull)
+	return err == nil
+}
