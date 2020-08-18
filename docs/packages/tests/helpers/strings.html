@@ -199,6 +199,18 @@ but not in outObj</p>
 </code></pre></td>
       </tr>
       
+      <tr class="section">
+	<td class="doc"><p>IsStringJSON check if the string is a JSON</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">IsStringJSON</div><div class="operator">(</div><div class="ident">str</div> <div class="ident">string</div><div class="operator">)</div> <div class="ident">bool</div> <div class="operator">{</div>
+	<div class="keyword">var</div> <div class="ident">devNull</div> <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">json</div><div class="operator">.</div><div class="ident">Unmarshal</div><div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">(</div><div class="ident">str</div><div class="operator">)</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">devNull</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">err</div> <div class="operator">==</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
     </tbody>
   </table>
 </div>
