@@ -17,6 +17,8 @@
 THRESHOLD=85
 ERR_MESSAGE="Code coverage have to be at least $THRESHOLD%"
 
+make test
+
 go_tool_cover_output=$(go tool cover -func=coverage.out)
 
 echo "$go_tool_cover_output"
