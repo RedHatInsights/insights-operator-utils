@@ -73,7 +73,7 @@ func prepareServer(status int) *helpers.MicroHTTPServer {
 }
 
 func TestAPIRequestsMetric(t *testing.T) {
-	helpers.RunTestWithTimeout(t, func(t *testing.T) {
+	helpers.RunTestWithTimeout(t, func(t testing.TB) {
 		// resetting since go runs tests in 1 process
 		metrics.APIRequests.Reset()
 		finalEndpoint := apiPrefix + testEndpoint
@@ -137,7 +137,7 @@ func TestAPIResponsesTimeMetric(t *testing.T) {
 }
 
 func TestApiResponseStatusCodesMetric_StatusOK(t *testing.T) {
-	helpers.RunTestWithTimeout(t, func(t *testing.T) {
+	helpers.RunTestWithTimeout(t, func(t testing.TB) {
 		metrics.APIResponseStatusCodes.Reset()
 
 		assert.Equal(t, 0.0, getCounterVecValue(metrics.APIResponseStatusCodes, map[string]string{
@@ -162,7 +162,7 @@ func TestApiResponseStatusCodesMetric_StatusOK(t *testing.T) {
 }
 
 func TestApiResponseStatusCodesMetric_StatusBadRequest(t *testing.T) {
-	helpers.RunTestWithTimeout(t, func(t *testing.T) {
+	helpers.RunTestWithTimeout(t, func(t testing.TB) {
 		metrics.APIResponseStatusCodes.Reset()
 
 		assert.Equal(t, 0.0, getCounterVecValue(metrics.APIResponseStatusCodes, map[string]string{

@@ -22,10 +22,10 @@ import (
 )
 
 // TestFunctionPtr pointer to test function
-type TestFunctionPtr = func(*testing.T)
+type TestFunctionPtr = func(testing.TB)
 
 // RunTestWithTimeout runs test with timeToRun timeout and fails if it wasn't in time
-func RunTestWithTimeout(t *testing.T, test TestFunctionPtr, timeToRun time.Duration) {
+func RunTestWithTimeout(t testing.TB, test TestFunctionPtr, timeToRun time.Duration) {
 	timeout := time.After(timeToRun)
 	done := make(chan bool)
 
@@ -36,7 +36,7 @@ func RunTestWithTimeout(t *testing.T, test TestFunctionPtr, timeToRun time.Durat
 
 	select {
 	case <-timeout:
-		t.Fatal("Test ran out of time")
+		t.Fatal("test ran out of time")
 	case <-done:
 	}
 }
