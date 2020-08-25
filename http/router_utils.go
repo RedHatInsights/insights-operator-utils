@@ -167,7 +167,6 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]type
 	return clusterNamesConverted, true
 }
 
-
 // ReadOrganizations does the same as `readOrganizationID`, except for multiple organizations.
 func ReadOrganizations(writer http.ResponseWriter, request *http.Request) ([]types.OrgID, bool) {
 	organizationsParam, err := GetRouterParam(request, "organizations")

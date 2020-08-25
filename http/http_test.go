@@ -57,7 +57,7 @@ func TestMakeURLToEndpointMap(t *testing.T) {
 		t,
 		"api/prefix/organizations/2/clusters/cluster_id/users/1/report",
 		httputils.MakeURLToEndpointMap("api/prefix/", baseEndpoint, map[string]interface{}{
-			"org_id": 2,
+			"org_id":  2,
 			"cluster": "cluster_id",
 			"user_id": 1,
 		}),
@@ -69,7 +69,7 @@ func TestMakeURLToEndpointMapString(t *testing.T) {
 		t,
 		"api/prefix/organizations/2/clusters/cluster_id/users/1/report",
 		httputils.MakeURLToEndpointMapString("api/prefix/", baseEndpoint, map[string]string{
-			"org_id": "2",
+			"org_id":  "2",
 			"cluster": "cluster_id",
 			"user_id": "1",
 		}),

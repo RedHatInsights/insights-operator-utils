@@ -1,6 +1,6 @@
 package helpers
 
 var (
-	ToBytes = toBytes
+	ToBytes                     = toBytes
 	UnmarshalResponseBodyToJSON = unmarshalResponseBodyToJSON
 )
