@@ -17,6 +17,8 @@ package helpers
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -348,4 +350,12 @@ func CleanAfterGock(t testing.TB) {
 			t.Fatalf("there were some unexpected requests")
 		}
 	}()
+}
+
+// MakeXRHTokenString converts types.Token to a token string(base64 encoded)
+func MakeXRHTokenString(t testing.TB, token *types.Token) string {
+	tokenBytes, err := json.Marshal(token)
+	FailOnError(t, err)
+
+	return base64.StdEncoding.EncodeToString(tokenBytes)
 }
