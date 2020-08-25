@@ -20,4 +20,4 @@ then
     GO111MODULE=off go get github.com/fzipp/gocyclo
 fi
 
-gocyclo -over 9 -avg . | grep -v "TestMockT_WrappedMethods" && exit 1
+gocyclo -over 9 -avg .

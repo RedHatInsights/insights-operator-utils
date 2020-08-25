@@ -21,7 +21,7 @@ then
 fi
 
 
-if [[ $(goconst -min-occurrences=2 ./... | tee /dev/tty | wc -l) -ne 0 ]]
+if [[ $(goconst -min-occurrences=3 ./... | tee /dev/tty | wc -l) -ne 0 ]]
 then
     echo "Duplicated string(s) found"
     exit 1
