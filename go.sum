@@ -28,6 +28,8 @@ github.com/RedHatInsights/insights-operator-utils v1.4.1-0.20200729093922-bca685
 github.com/RedHatInsights/insights-results-aggregator v0.0.0-20200604090056-3534f6dd9c1c/go.mod h1:7Pc15NYXErx7BMJ4rF1Hacm+29G6atzjhwBpXNFMt+0=
 github.com/RedHatInsights/insights-results-aggregator-data v0.0.0-20200819071308-9c57dc08481b h1:2GwNZntisU99f4sQ3fZ9RNvTxrmpPxy46/zSD93X7ac=
 github.com/RedHatInsights/insights-results-aggregator-data v0.0.0-20200819071308-9c57dc08481b/go.mod h1:DcDgoCCmBuUSKQOGrTi0BfFLdSjAp/KxIwyqKUd46sM=
+github.com/RedHatInsights/insights-results-aggregator-data v0.0.0-20200825113234-e84e924194bc h1:YW3dZHVYKUEzADsBF+m3BdrGxGZM0Xb3UAByJIBT9Cw=
+github.com/RedHatInsights/insights-results-aggregator-data v0.0.0-20200825113234-e84e924194bc/go.mod h1:DcDgoCCmBuUSKQOGrTi0BfFLdSjAp/KxIwyqKUd46sM=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/sarama v1.26.0/go.mod h1:y/CFFTO9eaMTNriwu/Q+W4eioLqiDMGkA1W+gmdfj8w=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=

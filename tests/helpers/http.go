@@ -17,7 +17,8 @@ package helpers
 import (
 	"bytes"
 	"context"
-	"fmt"
+	"encoding/base64"
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -213,16 +214,16 @@ func AssertReportResponsesEqual(t testing.TB, expected, got []byte) {
 	}
 
 	err := JSONUnmarshalStrict(expected, &expectedResponse)
+	FailOnError(t, err)
 	if err != nil {
 		log.Error().Msg(errorUnmarshallingExpectedValue)
 	}
 
-	FailOnError(t, err)
 	err = JSONUnmarshalStrict(got, &gotResponse)
+	FailOnError(t, err)
 	if err != nil {
 		log.Error().Msg(errorUnmarshallingGotValue)
 	}
-	FailOnError(t, err)
 
 	assert.NotEmpty(
 		t,
@@ -325,27 +326,34 @@ func GockExpectAPIRequest(t *testing.T, baseURL string, request *APIRequest, res
 // CleanAfterGock cleans after gock library and prints all unmatched requests
 func CleanAfterGock(t testing.TB) {
 	defer gock.Off()
-	defer func() {
-		hasUnmatchedRequest := false
 
-		for _, request := range gock.GetUnmatchedRequests() {
-			hasUnmatchedRequest = false
-			fmt.Println("Not expected request: ")
+	hasUnmatchedRequest := false
 
-			fmt.Printf("\tMethod: `%+v`\n", request.Method)
-			fmt.Printf("\tURL: `%+v`\n", request.URL)
-			fmt.Printf("\tHeader: `%+v`\n", ToJSONString(request.Header))
+	for _, request := range gock.GetUnmatchedRequests() {
+		hasUnmatchedRequest = true
+		t.Error("Not expected request: ")
 
-			if request.Body != nil {
-				bodyBytes, err := ioutil.ReadAll(request.Body)
-				FailOnError(t, err)
+		t.Errorf("\tMethod: `%+v`\n", request.Method)
+		t.Errorf("\tURL: `%+v`\n", request.URL)
+		t.Errorf("\tHeader: `%+v`\n", ToJSONString(request.Header))
 
-				fmt.Printf("\tBody: `%+v`\n", string(bodyBytes))
-			}
+		if request.Body != nil {
+			bodyBytes, err := ioutil.ReadAll(request.Body)
+			FailOnError(t, err)
+
+			t.Errorf("\tBody: `%+v`\n", string(bodyBytes))
 		}
+	}
 
-		if hasUnmatchedRequest {
-			t.Fatalf("there were some unexpected requests")
-		}
-	}()
+	if hasUnmatchedRequest {
+		t.Fatalf("there were some unexpected requests")
+	}
+}
+
+// MakeXRHTokenString converts types.Token to a token string(base64 encoded)
+func MakeXRHTokenString(t testing.TB, token *types.Token) string {
+	tokenBytes, err := json.Marshal(token)
+	FailOnError(t, err)
+
+	return base64.StdEncoding.EncodeToString(tokenBytes)
 }
