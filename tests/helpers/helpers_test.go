@@ -331,7 +331,8 @@ func TestCleanAfterGockError(t *testing.T) {
 	defer helpers.CleanAfterGock(mockT)
 
 	_, err := http.Post(serverAddress, "application/json", strings.NewReader("{}"))
-	assert.EqualError(t, err, fmt.Sprintf(`Post "%v": gock: cannot match any request`, serverAddress))
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "gock: cannot match any request")
 
 	mockT.Expects.EXPECT().Error(gomock.Any())
 	for i := 0; i < 4; i++ {

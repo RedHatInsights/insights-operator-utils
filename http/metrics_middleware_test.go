@@ -18,8 +18,8 @@ import (
 )
 
 const (
-	localhostAddress = "http://localhost"
-	port             = 9999
+	localhostAddress = "localhost"
+	port             = 8080
 )
 
 func TestLogRequest(t *testing.T) {
@@ -37,7 +37,7 @@ func TestLogRequest(t *testing.T) {
 		},
 	})
 
-	resp, err := http.Get(localhostAddress + ":" + fmt.Sprint(port) + "/")
+	resp, err := http.Get(fmt.Sprintf("http://%v:%v/", localhostAddress, port))
 	helpers.FailOnError(t, err)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -62,7 +62,7 @@ func createTestServer(t testing.TB, endpoints []Endpoint) *http.Server {
 		router.HandleFunc(endpoint.Path, endpoint.Func).Methods(endpoint.Methods...)
 	}
 
-	server := &http.Server{Addr: ":" + fmt.Sprint(port), Handler: router}
+	server := &http.Server{Addr: fmt.Sprintf("%v:%v", localhostAddress, port), Handler: router}
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
