@@ -25,7 +25,9 @@ import (
 func MakeURLToEndpoint(apiPrefix, endpoint string, args ...interface{}) string {
 	endpoint = ReplaceParamsInEndpointAndTrimLeftSlash(endpoint, "%v")
 
-	apiPrefix = strings.TrimRight(apiPrefix, "/")
+	if apiPrefix != "/" && len(endpoint) > 0 {
+		apiPrefix = strings.TrimRight(apiPrefix, "/")
+	}
 
 	nonParsedURL := apiPrefix
 	endpointWithArgs := fmt.Sprintf(endpoint, args...)

@@ -286,7 +286,7 @@ func NewGockAPIEndpointMatcher(endpoint string) func(req *http.Request, _ *gock.
 // NewGockRequestMatcher returns a new matcher for github.com/h2non/gock to match requests
 // with provided method, url and body(the same types as body in APIRequest(see the docs))
 func NewGockRequestMatcher(
-	t *testing.T, method string, url string, body interface{},
+	t testing.TB, method string, url string, body interface{},
 ) func(*http.Request, *gock.Request) (bool, error) {
 	return func(httpReq *http.Request, gockReq *gock.Request) (bool, error) {
 		assert.Equal(t, method, httpReq.Method)
@@ -300,7 +300,7 @@ func NewGockRequestMatcher(
 }
 
 // GockExpectAPIRequest makes gock expect the request with the baseURL and sends back the response
-func GockExpectAPIRequest(t *testing.T, baseURL string, request *APIRequest, response *APIResponse) {
+func GockExpectAPIRequest(t testing.TB, baseURL string, request *APIRequest, response *APIResponse) {
 	bodyBytes := toBytes(t, response.Body)
 
 	headers := map[string]string{}
