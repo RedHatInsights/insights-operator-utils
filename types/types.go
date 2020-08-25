@@ -18,6 +18,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -179,3 +180,17 @@ const (
 	// UserVoteLike shows user's like
 	UserVoteLike UserVote = 1
 )
+
+// ValidationError validation error, for example when string is longer then expected
+type ValidationError struct {
+	ParamName  string
+	ParamValue interface{}
+	ErrString  string
+}
+
+func (e *ValidationError) Error() string {
+	return fmt.Sprintf(
+		"Error during validating param '%v' with value '%v'. Error: '%v'",
+		e.ParamName, e.ParamValue, e.ErrString,
+	)
+}
