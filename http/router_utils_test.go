@@ -14,4 +14,340 @@
 
 package httputils_test
 
-// TODO: write tests for router_utils
+import (
+	"context"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"reflect"
+	"strings"
+	"testing"
+
+	"github.com/RedHatInsights/insights-results-aggregator-data/testdata"
+	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/assert"
+
+	httputils "github.com/RedHatInsights/insights-operator-utils/http"
+	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
+	"github.com/RedHatInsights/insights-operator-utils/types"
+)
+
+func TestGetRouterPositiveIntParam_NonIntError(t *testing.T) {
+	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+		"id": "non int",
+	})
+
+	_, err := httputils.GetRouterPositiveIntParam(request, "id")
+	assert.EqualError(
+		t,
+		err,
+		"Error during parsing param 'id' with value 'non int'. Error: 'unsigned integer expected'",
+	)
+}
+
+func TestGetRouterPositiveIntParam(t *testing.T) {
+	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+		"id": "99",
+	})
+
+	id, err := httputils.GetRouterPositiveIntParam(request, "id")
+	helpers.FailOnError(t, err)
+
+	assert.Equal(t, uint64(99), id)
+}
+
+func TestGetRouterPositiveIntParam_ZeroError(t *testing.T) {
+	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+		"id": "0",
+	})
+
+	_, err := httputils.GetRouterPositiveIntParam(request, "id")
+	assert.EqualError(t, err, "Error during parsing param 'id' with value '0'. Error: 'positive value expected'")
+}
+
+func TestGetRouterPositiveIntParam_Missing(t *testing.T) {
+	request, err := http.NewRequest(http.MethodGet, "organizations//clusters", nil)
+	helpers.FailOnError(t, err)
+
+	_, err = httputils.GetRouterPositiveIntParam(request, "test")
+	assert.EqualError(t, err, "Missing required param from request: test")
+}
+
+func TestReadParam(t *testing.T) {
+	for _, testCase := range []struct {
+		TestName   string
+		ParamName  string
+		ParamValue []interface{}
+	}{
+		{TestName: "cluster", ParamName: "cluster", ParamValue: []interface{}{testdata.ClusterName}},
+		{TestName: "rule_id", ParamName: "rule_id", ParamValue: []interface{}{testdata.Rule1ID}},
+		{TestName: "error_key", ParamName: "error_key", ParamValue: []interface{}{testdata.ErrorKey1}},
+		{TestName: "organization", ParamName: "organization", ParamValue: []interface{}{testdata.OrgID}},
+		{
+			TestName:   "organization/with_auth",
+			ParamName:  "organization",
+			ParamValue: []interface{}{testdata.OrgID},
+		},
+		{
+			TestName:   "clusters",
+			ParamName:  "clusters",
+			ParamValue: []interface{}{testdata.ClusterName, testdata.ClusterName, testdata.ClusterName},
+		},
+		{
+			TestName:   "organizations",
+			ParamName:  "organizations",
+			ParamValue: []interface{}{testdata.OrgID, testdata.OrgID},
+		},
+	} {
+		expectedParamValue := paramsToString(",", testCase.ParamValue...)
+
+		t.Run(testCase.TestName, func(t *testing.T) {
+			request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+				testCase.ParamName: expectedParamValue,
+			})
+			recorder := httptest.NewRecorder()
+
+			var (
+				value      string
+				successful bool
+				result     interface{}
+			)
+
+			switch testCase.TestName {
+			case "cluster":
+				result, successful = httputils.ReadClusterName(recorder, request)
+			case "rule_id":
+				result, successful = httputils.ReadRuleID(recorder, request)
+			case "error_key":
+				result, successful = httputils.ReadErrorKey(recorder, request)
+			case "organization":
+				result, successful = httputils.ReadOrganization(recorder, request, false)
+			case "organization/with_auth":
+				result, successful = httputils.ReadOrganization(recorder, request, true)
+			case "clusters":
+				var results []types.ClusterName
+				results, successful = httputils.ReadClusterNames(recorder, request)
+				result = paramsToString(",", results)
+			case "organizations":
+				var results []types.OrgID
+				results, successful = httputils.ReadOrganizations(recorder, request)
+				result = paramsToString(",", results)
+			}
+
+			assert.True(t, successful)
+
+			value = fmt.Sprint(result)
+			assert.Equal(t, expectedParamValue, value)
+		})
+	}
+}
+
+func TestReadClusterName_Error(t *testing.T) {
+	for _, testCase := range []struct {
+		TestCaseName  string
+		Args          map[string]string
+		ExpectedError string
+	}{
+		{TestCaseName: "Missing", Args: nil, ExpectedError: `{"status":"Missing required param from request: cluster"}`},
+		{
+			TestCaseName: "BadClusterName",
+			Args: map[string]string{
+				"cluster": string(testdata.BadClusterName),
+			},
+			ExpectedError: `{"status":"Error during parsing param 'cluster' with value '` +
+				string(testdata.BadClusterName) + `'. Error: 'invalid UUID length: 4'"}`,
+		},
+	} {
+		t.Run(testCase.TestCaseName, func(t *testing.T) {
+			testReadParamError(t, "cluster", testCase.Args, testCase.ExpectedError)
+		})
+	}
+}
+
+func TestReadRuleID_Error(t *testing.T) {
+	for _, testCase := range []struct {
+		TestCaseName  string
+		Args          map[string]string
+		ExpectedError string
+	}{
+		{TestCaseName: "Missing", Args: nil, ExpectedError: `{"status":"Missing required param from request: rule_id"}`},
+		{
+			TestCaseName: "BadRuleID",
+			Args: map[string]string{
+				"rule_id": string(testdata.BadRuleID),
+			},
+			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
+				string(testdata.BadRuleID) +
+				`'. Error: 'invalid rule ID, it must contain only from latin characters, number, underscores or dots'"}`,
+		},
+	} {
+		t.Run(testCase.TestCaseName, func(t *testing.T) {
+			testReadParamError(t, "rule_id", testCase.Args, testCase.ExpectedError)
+		})
+	}
+}
+
+func TestReadErrorKey_Error(t *testing.T) {
+	testReadParamError(
+		t,
+		"error_key",
+		nil,
+		`{"status":"Missing required param from request: error_key"}`,
+	)
+}
+
+func TestReadOrganization_Error(t *testing.T) {
+	testReadParamError(
+		t,
+		"organization",
+		nil,
+		`{"status":"Missing required param from request: organization"}`,
+	)
+	testReadParamError(
+		t,
+		"organization/with_auth",
+		map[string]string{
+			"organization": fmt.Sprint(testdata.OrgID),
+		},
+		`{"status":"you have no permissions to get or change info about this organization"}`,
+	)
+}
+
+func TestReadClusters_Error(t *testing.T) {
+	for _, testCase := range []struct {
+		TestCaseName  string
+		Args          map[string]string
+		ExpectedError string
+	}{
+		{TestCaseName: "Missing", Args: nil, ExpectedError: `{"status":"Missing required param from request: clusters"}`},
+		{
+			TestCaseName: "BadClusters",
+			Args: map[string]string{
+				"clusters": string(testdata.BadClusterName),
+			},
+			ExpectedError: `{"status":"Error during parsing param 'cluster' with value '` +
+				string(testdata.BadClusterName) +
+				`'. Error: 'invalid UUID length: 4'"}`,
+		},
+	} {
+		t.Run(testCase.TestCaseName, func(t *testing.T) {
+			testReadParamError(t, "clusters", testCase.Args, testCase.ExpectedError)
+		})
+	}
+}
+
+func TestReadOrganizations_Error(t *testing.T) {
+	const badOrgID = "non-int"
+
+	for _, testCase := range []struct {
+		TestCaseName  string
+		Args          map[string]string
+		ExpectedError string
+	}{
+		{
+			TestCaseName:  "Missing",
+			Args:          nil,
+			ExpectedError: `{"status":"Missing required param from request: organizations"}`,
+		},
+		{
+			TestCaseName: "BadOrganizations",
+			Args: map[string]string{
+				"organizations": badOrgID,
+			},
+			ExpectedError: `{"status":"Error during parsing param 'organizations' with value '` + badOrgID +
+				`'. Error: 'integer array expected'"}`,
+		},
+	} {
+		t.Run(testCase.TestCaseName, func(t *testing.T) {
+			testReadParamError(t, "organizations", testCase.Args, testCase.ExpectedError)
+		})
+	}
+}
+
+func mustGetRequestWithMuxVars(
+	t *testing.T,
+	method string,
+	url string,
+	body io.Reader,
+	vars map[string]string,
+) *http.Request {
+	request, err := http.NewRequest(method, url, body)
+	helpers.FailOnError(t, err)
+
+	request = mux.SetURLVars(request, vars)
+
+	return request
+}
+
+func testReadParamError(t *testing.T, paramName string, args map[string]string, expectedError string) {
+	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, args)
+
+	recorder := httptest.NewRecorder()
+
+	var successful bool
+
+	switch paramName {
+	case "cluster":
+		_, successful = httputils.ReadClusterName(recorder, request)
+	case "rule_id":
+		_, successful = httputils.ReadRuleID(recorder, request)
+	case "error_key":
+		_, successful = httputils.ReadErrorKey(recorder, request)
+	case "organization":
+		_, successful = httputils.ReadOrganization(recorder, request, false)
+	case "organization/with_auth":
+		ctx := context.WithValue(request.Context(), types.ContextKeyUser, types.Identity{
+			AccountNumber: testdata.UserID,
+			Internal: types.Internal{
+				OrgID: testdata.Org2ID,
+			},
+		})
+		request = request.WithContext(ctx)
+		_, successful = httputils.ReadOrganization(recorder, request, true)
+	case "organizations":
+		_, successful = httputils.ReadOrganizations(recorder, request)
+	case "clusters":
+		_, successful = httputils.ReadClusterNames(recorder, request)
+	default:
+		panic("testReadParamError is not implemented for param '" + paramName + "'")
+	}
+
+	assert.False(t, successful)
+
+	resp := recorder.Result()
+	assert.NotNil(t, resp)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	helpers.FailOnError(t, err)
+
+	assert.Equal(t, expectedError, strings.TrimSpace(string(body)))
+}
+
+func paramsToString(separator string, params ...interface{}) string {
+	var unpackedParams []interface{}
+
+	for _, param := range params {
+		switch reflect.TypeOf(param).Kind() {
+		case reflect.Array, reflect.Slice:
+			s := reflect.ValueOf(param)
+
+			for i := 0; i < s.Len(); i++ {
+				unpackedParams = append(unpackedParams, s.Index(i).Interface())
+			}
+		default:
+			unpackedParams = append(unpackedParams, param)
+		}
+	}
+
+	params = unpackedParams
+
+	var stringParams []string
+	for _, param := range params {
+		stringParams = append(stringParams, fmt.Sprint(param))
+	}
+
+	res := strings.Join(stringParams, separator)
+	return res
+}

@@ -40,10 +40,14 @@ func NewMicroHTTPServer(address string, apiPrefix string) *MicroHTTPServer {
 	}
 }
 
+// TODO: consider renaming to something more obvious, it does not initialize anything
+
 // Initialize returns the Handler instance in order to be modified
 func (server *MicroHTTPServer) Initialize() http.Handler {
 	return server.Router
 }
+
+// TODO: make it more flexible, at least an array of methods should be passed through arguments
 
 // AddEndpoint adds a handler function to the router in order to response to the given endpoint
 func (server *MicroHTTPServer) AddEndpoint(endpoint string, f func(http.ResponseWriter, *http.Request)) {

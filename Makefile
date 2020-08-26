@@ -45,7 +45,7 @@ abcgo: ## Run ABC metrics checker
 style: fmt vet lint cyclo shellcheck errcheck goconst gosec ineffassign abcgo ## Run all the formatting related commands (fmt, vet, lint, cyclo) + check shell scripts
 
 test: clean build ## Run the unit tests
-	@go test -coverprofile coverage.out $(shell go list ./... | grep -v tests)
+	@go test -coverprofile coverage.out $(shell go list ./...)
 
 help: ## Show this help screen
 	@echo 'Usage: make <OPTIONS> ... <TARGETS>'

@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"reflect"
 
 	"github.com/verdverm/frisby"
@@ -47,24 +46,21 @@ func FrisbyExpectItemInArray(fieldName string, expectedItem interface{}) frisby.
 			return false, err.Error()
 		}
 
+		jsonResp := ToJSONString(resp)
+
 		if _, exist := resp[fieldName]; !exist {
-			return false, fmt.Sprintf("field %v does not exist in response %v", fieldName, resp)
+			return false, fmt.Sprintf("field %v does not exist in response %v", fieldName, jsonResp)
 		}
 
 		array, ok := resp[fieldName].([]interface{})
 		if !ok {
-			return false, fmt.Sprintf("field %v is not an array in response %v", fieldName, resp)
+			return false, fmt.Sprintf("field %v is not an array in response %v", fieldName, jsonResp)
 		}
 
 		for _, actualItem := range array {
 			if reflect.DeepEqual(fmt.Sprint(expectedItem), fmt.Sprint(actualItem)) {
 				return true, ""
 			}
-		}
-
-		jsonResp, err := json.Marshal(resp)
-		if err != nil {
-			return false, err.Error()
 		}
 
 		return false, fmt.Sprintf(
@@ -79,13 +75,12 @@ func unmarshalResponseBodyToJSON(respBody io.ReadCloser, obj interface{}) error 
 	if err != nil {
 		return err
 	}
-	defer func() {
-		// error should not happen there, but we need to make errcheck tool happy
-		err := respBody.Close()
-		if err != nil {
-			log.Fatal("respBody.Close() fails - that is not expected")
-		}
-	}()
+
+	// error should not happen there, but we need to make errcheck tool happy
+	err = respBody.Close()
+	if err != nil {
+		return err
+	}
 
 	err = json.Unmarshal(bodyBytes, obj)
 	if err != nil {

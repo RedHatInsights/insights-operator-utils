@@ -19,7 +19,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -215,16 +214,16 @@ func AssertReportResponsesEqual(t testing.TB, expected, got []byte) {
 	}
 
 	err := JSONUnmarshalStrict(expected, &expectedResponse)
+	FailOnError(t, err)
 	if err != nil {
 		log.Error().Msg(errorUnmarshallingExpectedValue)
 	}
 
-	FailOnError(t, err)
 	err = JSONUnmarshalStrict(got, &gotResponse)
+	FailOnError(t, err)
 	if err != nil {
 		log.Error().Msg(errorUnmarshallingGotValue)
 	}
-	FailOnError(t, err)
 
 	assert.NotEmpty(
 		t,
@@ -287,7 +286,7 @@ func NewGockAPIEndpointMatcher(endpoint string) func(req *http.Request, _ *gock.
 // NewGockRequestMatcher returns a new matcher for github.com/h2non/gock to match requests
 // with provided method, url and body(the same types as body in APIRequest(see the docs))
 func NewGockRequestMatcher(
-	t *testing.T, method string, url string, body interface{},
+	t testing.TB, method string, url string, body interface{},
 ) func(*http.Request, *gock.Request) (bool, error) {
 	return func(httpReq *http.Request, gockReq *gock.Request) (bool, error) {
 		assert.Equal(t, method, httpReq.Method)
@@ -301,7 +300,7 @@ func NewGockRequestMatcher(
 }
 
 // GockExpectAPIRequest makes gock expect the request with the baseURL and sends back the response
-func GockExpectAPIRequest(t *testing.T, baseURL string, request *APIRequest, response *APIResponse) {
+func GockExpectAPIRequest(t testing.TB, baseURL string, request *APIRequest, response *APIResponse) {
 	bodyBytes := toBytes(t, response.Body)
 
 	headers := map[string]string{}
@@ -327,29 +326,28 @@ func GockExpectAPIRequest(t *testing.T, baseURL string, request *APIRequest, res
 // CleanAfterGock cleans after gock library and prints all unmatched requests
 func CleanAfterGock(t testing.TB) {
 	defer gock.Off()
-	defer func() {
-		hasUnmatchedRequest := false
 
-		for _, request := range gock.GetUnmatchedRequests() {
-			hasUnmatchedRequest = false
-			fmt.Println("Not expected request: ")
+	hasUnmatchedRequest := false
 
-			fmt.Printf("\tMethod: `%+v`\n", request.Method)
-			fmt.Printf("\tURL: `%+v`\n", request.URL)
-			fmt.Printf("\tHeader: `%+v`\n", ToJSONString(request.Header))
+	for _, request := range gock.GetUnmatchedRequests() {
+		hasUnmatchedRequest = true
+		t.Error("Not expected request: ")
 
-			if request.Body != nil {
-				bodyBytes, err := ioutil.ReadAll(request.Body)
-				FailOnError(t, err)
+		t.Errorf("\tMethod: `%+v`\n", request.Method)
+		t.Errorf("\tURL: `%+v`\n", request.URL)
+		t.Errorf("\tHeader: `%+v`\n", ToJSONString(request.Header))
 
-				fmt.Printf("\tBody: `%+v`\n", string(bodyBytes))
-			}
+		if request.Body != nil {
+			bodyBytes, err := ioutil.ReadAll(request.Body)
+			FailOnError(t, err)
+
+			t.Errorf("\tBody: `%+v`\n", string(bodyBytes))
 		}
+	}
 
-		if hasUnmatchedRequest {
-			t.Fatalf("there were some unexpected requests")
-		}
-	}()
+	if hasUnmatchedRequest {
+		t.Fatalf("there were some unexpected requests")
+	}
 }
 
 // MakeXRHTokenString converts types.Token to a token string(base64 encoded)
