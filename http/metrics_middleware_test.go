@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"testing"
 
@@ -64,8 +65,11 @@ func createTestServer(t testing.TB, endpoints []Endpoint) *http.Server {
 
 	server := &http.Server{Addr: fmt.Sprintf("%v:%v", localhostAddress, port), Handler: router}
 
+	listener, err := net.Listen("tcp", server.Addr)
+	helpers.FailOnError(t, err)
+
 	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := server.Serve(listener); err != nil && err != http.ErrServerClosed {
 			helpers.FailOnError(t, err)
 		}
 	}()
