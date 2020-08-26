@@ -57,7 +57,7 @@ namespace httputils {
 
 namespace types {
     class AuthenticationError << (S,Aquamarine) >> {
-        - errString string
+        + ErrString string
 
         + Error() string
 
@@ -91,6 +91,12 @@ namespace types {
     }
     class NoBodyError << (S,Aquamarine) >> {
         + Error() string
+
+    }
+    class ReportItem << (S,Aquamarine) >> {
+        + Module RuleID
+        + ErrorKey ErrorKey
+        + TemplateData json.RawMessage
 
     }
     class ReportResponse << (S,Aquamarine) >> {
@@ -192,6 +198,14 @@ namespace types {
     }
     class Token << (S,Aquamarine) >> {
         + Identity Identity
+
+    }
+    class ValidationError << (S,Aquamarine) >> {
+        + ParamName string
+        + ParamValue <font color=blue>interface</font>{}
+        + ErrString string
+
+        + Error() string
 
     }
     class types.ClusterName << (T, #FF7700) >>  {

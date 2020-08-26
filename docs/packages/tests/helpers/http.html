@@ -136,6 +136,8 @@ limitations under the License.</p>
 <div class="keyword">import</div> <div class="operator">(</div>
 	<div class="literal">&#34;bytes&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;context&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;encoding/base64&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;encoding/json&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;fmt&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io/ioutil&#34;</div><div class="operator"></div>
@@ -547,6 +549,19 @@ with provided method, url and body(the same types as body in APIRequest(see the 
 			<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatalf</div><div class="operator">(</div><div class="literal">&#34;there were some unexpected requests&#34;</div><div class="operator">)</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>MakeXRHTokenString converts types.Token to a token string(base64 encoded)</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">MakeXRHTokenString</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">token</div> <div class="operator">*</div><div class="ident">types</div><div class="operator">.</div><div class="ident">Token</div><div class="operator">)</div> <div class="ident">string</div> <div class="operator">{</div>
+	<div class="ident">tokenBytes</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">json</div><div class="operator">.</div><div class="ident">Marshal</div><div class="operator">(</div><div class="ident">token</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">return</div> <div class="ident">base64</div><div class="operator">.</div><div class="ident">StdEncoding</div><div class="operator">.</div><div class="ident">EncodeToString</div><div class="operator">(</div><div class="ident">tokenBytes</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
