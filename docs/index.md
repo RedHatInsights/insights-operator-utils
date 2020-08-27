@@ -14,6 +14,7 @@ insights-operator and insights-aggregator repositories.
 * [http/metrics_middleware.go](packages/http/metrics_middleware.html)
 * [http/http.go](packages/http/http.html)
 * [http/router_utils.go](packages/http/router_utils.html)
+* [http/metrics_middleware_test.go](packages/http/metrics_middleware_test.html)
 * [types/types.go](packages/types/types.html)
 * [types/pg_consts.go](packages/types/pg_consts.html)
 * [types/auth.go](packages/types/auth.html)
@@ -32,3 +33,8 @@ insights-operator and insights-aggregator repositories.
 * [tests/helpers/json.go](packages/tests/helpers/json.html)
 * [tests/helpers/errors.go](packages/tests/helpers/errors.html)
 * [tests/helpers/micro_server.go](packages/tests/helpers/micro_server.html)
+* [tests/helpers/export_test.go](packages/tests/helpers/export_test.html)
+* [tests/helpers/helpers_test.go](packages/tests/helpers/helpers_test.html)
+* [tests/helpers/mock_t.go](packages/tests/helpers/mock_t.html)
+* [tests/helpers/mock_t_test.go](packages/tests/helpers/mock_t_test.html)
+

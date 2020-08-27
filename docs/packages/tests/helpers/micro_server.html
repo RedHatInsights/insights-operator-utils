@@ -173,12 +173,26 @@ a real HTTP server implementation</p>
       </tr>
       
       <tr class="section">
+	<td class="doc"><p>TODO: consider renaming to something more obvious, it does not initialize anything</p>
+</td>
+	<td class="code"><pre><code>
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
 	<td class="doc"><p>Initialize returns the Handler instance in order to be modified</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">func</div> <div class="operator">(</div><div class="ident">server</div> <div class="operator">*</div><div class="ident">MicroHTTPServer</div><div class="operator">)</div> <div class="ident">Initialize</div><div class="operator">(</div><div class="operator">)</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">Handler</div> <div class="operator">{</div>
 	<div class="keyword">return</div> <div class="ident">server</div><div class="operator">.</div><div class="ident">Router</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TODO: make it more flexible, at least an array of methods should be passed through arguments</p>
+</td>
+	<td class="code"><pre><code>
 </code></pre></td>
       </tr>
       
