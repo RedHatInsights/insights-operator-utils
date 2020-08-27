@@ -140,7 +140,6 @@ limitations under the License.
 	<div class="literal">&#34;fmt&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io/ioutil&#34;</div><div class="operator"></div>
-	<div class="literal">&#34;log&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;reflect&#34;</div><div class="operator"></div>
 
 	<div class="literal">&#34;github.com/verdverm/frisby&#34;</div><div class="operator"></div>
@@ -171,24 +170,21 @@ Expect(helpers.FrisbyExpectItemInArray(&quot;organizations&quot;, 55))</p>
 			<div class="keyword">return</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
 
+		<div class="ident">jsonResp</div> <div class="operator">:=</div> <div class="ident">ToJSONString</div><div class="operator">(</div><div class="ident">resp</div><div class="operator">)</div><div class="operator"></div>
+
 		<div class="keyword">if</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">exist</div> <div class="operator">:=</div> <div class="ident">resp</div><div class="operator">[</div><div class="ident">fieldName</div><div class="operator">]</div><div class="operator">;</div> <div class="operator">!</div><div class="ident">exist</div> <div class="operator">{</div>
-			<div class="keyword">return</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprintf</div><div class="operator">(</div><div class="literal">&#34;field %v does not exist in response %v&#34;</div><div class="operator">,</div> <div class="ident">fieldName</div><div class="operator">,</div> <div class="ident">resp</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">return</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprintf</div><div class="operator">(</div><div class="literal">&#34;field %v does not exist in response %v&#34;</div><div class="operator">,</div> <div class="ident">fieldName</div><div class="operator">,</div> <div class="ident">jsonResp</div><div class="operator">)</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
 
 		<div class="ident">array</div><div class="operator">,</div> <div class="ident">ok</div> <div class="operator">:=</div> <div class="ident">resp</div><div class="operator">[</div><div class="ident">fieldName</div><div class="operator">]</div><div class="operator">.</div><div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
 		<div class="keyword">if</div> <div class="operator">!</div><div class="ident">ok</div> <div class="operator">{</div>
-			<div class="keyword">return</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprintf</div><div class="operator">(</div><div class="literal">&#34;field %v is not an array in response %v&#34;</div><div class="operator">,</div> <div class="ident">fieldName</div><div class="operator">,</div> <div class="ident">resp</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">return</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprintf</div><div class="operator">(</div><div class="literal">&#34;field %v is not an array in response %v&#34;</div><div class="operator">,</div> <div class="ident">fieldName</div><div class="operator">,</div> <div class="ident">jsonResp</div><div class="operator">)</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
 
 		<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">actualItem</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">array</div> <div class="operator">{</div>
 			<div class="keyword">if</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">DeepEqual</div><div class="operator">(</div><div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprint</div><div class="operator">(</div><div class="ident">expectedItem</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprint</div><div class="operator">(</div><div class="ident">actualItem</div><div class="operator">)</div><div class="operator">)</div> <div class="operator">{</div>
 				<div class="keyword">return</div> <div class="ident">true</div><div class="operator">,</div> <div class="literal">&#34;&#34;</div><div class="operator"></div>
 			<div class="operator">}</div><div class="operator"></div>
-		<div class="operator">}</div><div class="operator"></div>
-
-		<div class="ident">jsonResp</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">json</div><div class="operator">.</div><div class="ident">Marshal</div><div class="operator">(</div><div class="ident">resp</div><div class="operator">)</div><div class="operator"></div>
-		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
-			<div class="keyword">return</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
 
 		<div class="keyword">return</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprintf</div><div class="operator">(</div>
@@ -203,18 +199,17 @@ Expect(helpers.FrisbyExpectItemInArray(&quot;organizations&quot;, 55))</p>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
 		<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
-	<div class="keyword">defer</div> <div class="keyword">func</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+
 </code></pre></td>
       </tr>
       
       <tr class="section">
 	<td class="doc"><p>error should not happen there, but we need to make errcheck tool happy</p>
 </td>
-	<td class="code"><pre><code>		<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">respBody</div><div class="operator">.</div><div class="ident">Close</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
-		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
-			<div class="ident">log</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="literal">&#34;respBody.Close() fails - that is not expected&#34;</div><div class="operator">)</div><div class="operator"></div>
-		<div class="operator">}</div><div class="operator"></div>
-	<div class="operator">}</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<td class="code"><pre><code>	<div class="ident">err</div> <div class="operator">=</div> <div class="ident">respBody</div><div class="operator">.</div><div class="ident">Close</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
 
 	<div class="ident">err</div> <div class="operator">=</div> <div class="ident">json</div><div class="operator">.</div><div class="ident">Unmarshal</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">,</div> <div class="ident">obj</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>

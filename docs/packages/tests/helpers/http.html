@@ -138,7 +138,6 @@ limitations under the License.</p>
 	<div class="literal">&#34;context&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;encoding/base64&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;encoding/json&#34;</div><div class="operator"></div>
-	<div class="literal">&#34;fmt&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;io/ioutil&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;net/http&#34;</div><div class="operator"></div>
@@ -384,16 +383,16 @@ also validates both expected and body to be a valid json</p>
 	<div class="operator">}</div><div class="operator"></div>
 
 	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">expected</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
 		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="ident">errorUnmarshallingExpectedValue</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
-	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 	<div class="ident">err</div> <div class="operator">=</div> <div class="ident">JSONUnmarshalStrict</div><div class="operator">(</div><div class="ident">got</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">gotResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
 		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="ident">errorUnmarshallingGotValue</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
-	<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 
 	<div class="ident">assert</div><div class="operator">.</div><div class="ident">NotEmpty</div><div class="operator">(</div>
 		<div class="ident">t</div><div class="operator">,</div>
@@ -476,7 +475,7 @@ also validates both expected and body to be a valid json</p>
 with provided method, url and body(the same types as body in APIRequest(see the docs))</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">NewGockRequestMatcher</div><div class="operator">(</div>
-	<div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div> <div class="ident">method</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">url</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">body</div> <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">method</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">url</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">body</div> <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
 <div class="operator">)</div> <div class="keyword">func</div><div class="operator">(</div><div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">,</div> <div class="operator">*</div><div class="ident">gock</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">bool</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
 	<div class="keyword">return</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">httpReq</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">,</div> <div class="ident">gockReq</div> <div class="operator">*</div><div class="ident">gock</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">bool</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
 		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">method</div><div class="operator">,</div> <div class="ident">httpReq</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">)</div><div class="operator"></div>
@@ -495,7 +494,7 @@ with provided method, url and body(the same types as body in APIRequest(see the 
       <tr class="section">
 	<td class="doc"><p>GockExpectAPIRequest makes gock expect the request with the baseURL and sends back the response</p>
 </td>
-	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">GockExpectAPIRequest</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div> <div class="ident">baseURL</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">*</div><div class="ident">APIRequest</div><div class="operator">,</div> <div class="ident">response</div> <div class="operator">*</div><div class="ident">APIResponse</div><div class="operator">)</div> <div class="operator">{</div>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">GockExpectAPIRequest</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">baseURL</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">*</div><div class="ident">APIRequest</div><div class="operator">,</div> <div class="ident">response</div> <div class="operator">*</div><div class="ident">APIResponse</div><div class="operator">)</div> <div class="operator">{</div>
 	<div class="ident">bodyBytes</div> <div class="operator">:=</div> <div class="ident">toBytes</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
 
 	<div class="ident">headers</div> <div class="operator">:=</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
@@ -526,29 +525,28 @@ with provided method, url and body(the same types as body in APIRequest(see the 
 </td>
 	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">CleanAfterGock</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">)</div> <div class="operator">{</div>
 	<div class="keyword">defer</div> <div class="ident">gock</div><div class="operator">.</div><div class="ident">Off</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
-	<div class="keyword">defer</div> <div class="keyword">func</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
-		<div class="ident">hasUnmatchedRequest</div> <div class="operator">:=</div> <div class="ident">false</div><div class="operator"></div>
 
-		<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">gock</div><div class="operator">.</div><div class="ident">GetUnmatchedRequests</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
-			<div class="ident">hasUnmatchedRequest</div> <div class="operator">=</div> <div class="ident">false</div><div class="operator"></div>
-			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Println</div><div class="operator">(</div><div class="literal">&#34;Not expected request: &#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">hasUnmatchedRequest</div> <div class="operator">:=</div> <div class="ident">false</div><div class="operator"></div>
 
-			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tMethod: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">)</div><div class="operator"></div>
-			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tURL: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">URL</div><div class="operator">)</div><div class="operator"></div>
-			<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tHeader: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">ToJSONString</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">gock</div><div class="operator">.</div><div class="ident">GetUnmatchedRequests</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">hasUnmatchedRequest</div> <div class="operator">=</div> <div class="ident">true</div><div class="operator"></div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="literal">&#34;Not expected request: &#34;</div><div class="operator">)</div><div class="operator"></div>
 
-			<div class="keyword">if</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
-				<div class="ident">bodyBytes</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadAll</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
-				<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;\tMethod: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Method</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;\tURL: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">URL</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;\tHeader: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">ToJSONString</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
 
-				<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Printf</div><div class="operator">(</div><div class="literal">&#34;\tBody: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
-			<div class="operator">}</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">bodyBytes</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadAll</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;\tBody: `%&#43;v`\n&#34;</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">bodyBytes</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
 
-		<div class="keyword">if</div> <div class="ident">hasUnmatchedRequest</div> <div class="operator">{</div>
-			<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatalf</div><div class="operator">(</div><div class="literal">&#34;there were some unexpected requests&#34;</div><div class="operator">)</div><div class="operator"></div>
-		<div class="operator">}</div><div class="operator"></div>
-	<div class="operator">}</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">hasUnmatchedRequest</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatalf</div><div class="operator">(</div><div class="literal">&#34;there were some unexpected requests&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>

@@ -133,13 +133,344 @@ limitations under the License.</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">httputils_test</div><div class="operator"></div>
 
-</code></pre></td>
-      </tr>
-      
-      <tr class="section">
-	<td class="doc"><p>TODO: write tests for router_utils</p>
-</td>
-	<td class="code"><pre><code>
+<div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;context&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;fmt&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;io&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;io/ioutil&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;net/http&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;net/http/httptest&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;reflect&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;strings&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;testing&#34;</div><div class="operator"></div>
+
+	<div class="literal">&#34;github.com/RedHatInsights/insights-results-aggregator-data/testdata&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/gorilla/mux&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/stretchr/testify/assert&#34;</div><div class="operator"></div>
+
+	<div class="ident">httputils</div> <div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/http&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/tests/helpers&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/types&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestGetRouterPositiveIntParam_NonIntError</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">request</div> <div class="operator">:=</div> <div class="ident">mustGetRequestWithMuxVars</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">MethodGet</div><div class="operator">,</div> <div class="literal">&#34;&#34;</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">,</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+		<div class="literal">&#34;id&#34;</div><div class="operator">:</div> <div class="literal">&#34;non int&#34;</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">GetRouterPositiveIntParam</div><div class="operator">(</div><div class="ident">request</div><div class="operator">,</div> <div class="literal">&#34;id&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">EqualError</div><div class="operator">(</div>
+		<div class="ident">t</div><div class="operator">,</div>
+		<div class="ident">err</div><div class="operator">,</div>
+		<div class="literal">&#34;Error during parsing param &#39;id&#39; with value &#39;non int&#39;. Error: &#39;unsigned integer expected&#39;&#34;</div><div class="operator">,</div>
+	<div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestGetRouterPositiveIntParam</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">request</div> <div class="operator">:=</div> <div class="ident">mustGetRequestWithMuxVars</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">MethodGet</div><div class="operator">,</div> <div class="literal">&#34;&#34;</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">,</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+		<div class="literal">&#34;id&#34;</div><div class="operator">:</div> <div class="literal">&#34;99&#34;</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">id</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">GetRouterPositiveIntParam</div><div class="operator">(</div><div class="ident">request</div><div class="operator">,</div> <div class="literal">&#34;id&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">uint64</div><div class="operator">(</div><div class="literal">99</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">id</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestGetRouterPositiveIntParam_ZeroError</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">request</div> <div class="operator">:=</div> <div class="ident">mustGetRequestWithMuxVars</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">MethodGet</div><div class="operator">,</div> <div class="literal">&#34;&#34;</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">,</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+		<div class="literal">&#34;id&#34;</div><div class="operator">:</div> <div class="literal">&#34;0&#34;</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">GetRouterPositiveIntParam</div><div class="operator">(</div><div class="ident">request</div><div class="operator">,</div> <div class="literal">&#34;id&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">EqualError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">,</div> <div class="literal">&#34;Error during parsing param &#39;id&#39; with value &#39;0&#39;. Error: &#39;positive value expected&#39;&#34;</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestGetRouterPositiveIntParam_Missing</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">request</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">NewRequest</div><div class="operator">(</div><div class="ident">http</div><div class="operator">.</div><div class="ident">MethodGet</div><div class="operator">,</div> <div class="literal">&#34;organizations//clusters&#34;</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">GetRouterPositiveIntParam</div><div class="operator">(</div><div class="ident">request</div><div class="operator">,</div> <div class="literal">&#34;test&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">EqualError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">,</div> <div class="literal">&#34;Missing required param from request: test&#34;</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestReadParam</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">testCase</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+		<div class="ident">TestName</div>   <div class="ident">string</div><div class="operator"></div>
+		<div class="ident">ParamName</div>  <div class="ident">string</div><div class="operator"></div>
+		<div class="ident">ParamValue</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">{</div>
+		<div class="operator">{</div><div class="ident">TestName</div><div class="operator">:</div> <div class="literal">&#34;cluster&#34;</div><div class="operator">,</div> <div class="ident">ParamName</div><div class="operator">:</div> <div class="literal">&#34;cluster&#34;</div><div class="operator">,</div> <div class="ident">ParamValue</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">ClusterName</div><div class="operator">}</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div><div class="ident">TestName</div><div class="operator">:</div> <div class="literal">&#34;rule_id&#34;</div><div class="operator">,</div> <div class="ident">ParamName</div><div class="operator">:</div> <div class="literal">&#34;rule_id&#34;</div><div class="operator">,</div> <div class="ident">ParamValue</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">Rule1ID</div><div class="operator">}</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div><div class="ident">TestName</div><div class="operator">:</div> <div class="literal">&#34;error_key&#34;</div><div class="operator">,</div> <div class="ident">ParamName</div><div class="operator">:</div> <div class="literal">&#34;error_key&#34;</div><div class="operator">,</div> <div class="ident">ParamValue</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">ErrorKey1</div><div class="operator">}</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div><div class="ident">TestName</div><div class="operator">:</div> <div class="literal">&#34;organization&#34;</div><div class="operator">,</div> <div class="ident">ParamName</div><div class="operator">:</div> <div class="literal">&#34;organization&#34;</div><div class="operator">,</div> <div class="ident">ParamValue</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">OrgID</div><div class="operator">}</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div>
+			<div class="ident">TestName</div><div class="operator">:</div>   <div class="literal">&#34;organization/with_auth&#34;</div><div class="operator">,</div>
+			<div class="ident">ParamName</div><div class="operator">:</div>  <div class="literal">&#34;organization&#34;</div><div class="operator">,</div>
+			<div class="ident">ParamValue</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">OrgID</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div>
+			<div class="ident">TestName</div><div class="operator">:</div>   <div class="literal">&#34;clusters&#34;</div><div class="operator">,</div>
+			<div class="ident">ParamName</div><div class="operator">:</div>  <div class="literal">&#34;clusters&#34;</div><div class="operator">,</div>
+			<div class="ident">ParamValue</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">ClusterName</div><div class="operator">,</div> <div class="ident">testdata</div><div class="operator">.</div><div class="ident">ClusterName</div><div class="operator">,</div> <div class="ident">testdata</div><div class="operator">.</div><div class="ident">ClusterName</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div>
+			<div class="ident">TestName</div><div class="operator">:</div>   <div class="literal">&#34;organizations&#34;</div><div class="operator">,</div>
+			<div class="ident">ParamName</div><div class="operator">:</div>  <div class="literal">&#34;organizations&#34;</div><div class="operator">,</div>
+			<div class="ident">ParamValue</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">OrgID</div><div class="operator">,</div> <div class="ident">testdata</div><div class="operator">.</div><div class="ident">OrgID</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">}</div> <div class="operator">{</div>
+		<div class="ident">expectedParamValue</div> <div class="operator">:=</div> <div class="ident">paramsToString</div><div class="operator">(</div><div class="literal">&#34;,&#34;</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">ParamValue</div><div class="operator">...</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">testCase</div><div class="operator">.</div><div class="ident">TestName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">request</div> <div class="operator">:=</div> <div class="ident">mustGetRequestWithMuxVars</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">MethodGet</div><div class="operator">,</div> <div class="literal">&#34;&#34;</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">,</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+				<div class="ident">testCase</div><div class="operator">.</div><div class="ident">ParamName</div><div class="operator">:</div> <div class="ident">expectedParamValue</div><div class="operator">,</div>
+			<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">recorder</div> <div class="operator">:=</div> <div class="ident">httptest</div><div class="operator">.</div><div class="ident">NewRecorder</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="keyword">var</div> <div class="operator">(</div>
+				<div class="ident">value</div>      <div class="ident">string</div><div class="operator"></div>
+				<div class="ident">successful</div> <div class="ident">bool</div><div class="operator"></div>
+				<div class="ident">result</div>     <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+			<div class="operator">)</div><div class="operator"></div>
+
+			<div class="keyword">switch</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">TestName</div> <div class="operator">{</div>
+			<div class="keyword">case</div> <div class="literal">&#34;cluster&#34;</div><div class="operator">:</div>
+				<div class="ident">result</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadClusterName</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">case</div> <div class="literal">&#34;rule_id&#34;</div><div class="operator">:</div>
+				<div class="ident">result</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadRuleID</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">case</div> <div class="literal">&#34;error_key&#34;</div><div class="operator">:</div>
+				<div class="ident">result</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadErrorKey</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">case</div> <div class="literal">&#34;organization&#34;</div><div class="operator">:</div>
+				<div class="ident">result</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadOrganization</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">,</div> <div class="ident">false</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">case</div> <div class="literal">&#34;organization/with_auth&#34;</div><div class="operator">:</div>
+				<div class="ident">result</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadOrganization</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">,</div> <div class="ident">true</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">case</div> <div class="literal">&#34;clusters&#34;</div><div class="operator">:</div>
+				<div class="keyword">var</div> <div class="ident">results</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">types</div><div class="operator">.</div><div class="ident">ClusterName</div><div class="operator"></div>
+				<div class="ident">results</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadClusterNames</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+				<div class="ident">result</div> <div class="operator">=</div> <div class="ident">paramsToString</div><div class="operator">(</div><div class="literal">&#34;,&#34;</div><div class="operator">,</div> <div class="ident">results</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">case</div> <div class="literal">&#34;organizations&#34;</div><div class="operator">:</div>
+				<div class="keyword">var</div> <div class="ident">results</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">types</div><div class="operator">.</div><div class="ident">OrgID</div><div class="operator"></div>
+				<div class="ident">results</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadOrganizations</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+				<div class="ident">result</div> <div class="operator">=</div> <div class="ident">paramsToString</div><div class="operator">(</div><div class="literal">&#34;,&#34;</div><div class="operator">,</div> <div class="ident">results</div><div class="operator">)</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator"></div>
+
+			<div class="ident">assert</div><div class="operator">.</div><div class="ident">True</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">successful</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="ident">value</div> <div class="operator">=</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprint</div><div class="operator">(</div><div class="ident">result</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedParamValue</div><div class="operator">,</div> <div class="ident">value</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestReadClusterName_Error</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">testCase</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+		<div class="ident">TestCaseName</div>  <div class="ident">string</div><div class="operator"></div>
+		<div class="ident">Args</div>          <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator"></div>
+		<div class="ident">ExpectedError</div> <div class="ident">string</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">{</div>
+		<div class="operator">{</div><div class="ident">TestCaseName</div><div class="operator">:</div> <div class="literal">&#34;Missing&#34;</div><div class="operator">,</div> <div class="ident">Args</div><div class="operator">:</div> <div class="ident">nil</div><div class="operator">,</div> <div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Missing required param from request: cluster&#34;}`</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div>
+			<div class="ident">TestCaseName</div><div class="operator">:</div> <div class="literal">&#34;BadClusterName&#34;</div><div class="operator">,</div>
+			<div class="ident">Args</div><div class="operator">:</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+				<div class="literal">&#34;cluster&#34;</div><div class="operator">:</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">BadClusterName</div><div class="operator">)</div><div class="operator">,</div>
+			<div class="operator">}</div><div class="operator">,</div>
+			<div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Error during parsing param &#39;cluster&#39; with value &#39;`</div> <div class="operator">&#43;</div>
+				<div class="ident">string</div><div class="operator">(</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">BadClusterName</div><div class="operator">)</div> <div class="operator">&#43;</div> <div class="literal">`&#39;. Error: &#39;invalid UUID length: 4&#39;&#34;}`</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">}</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">testCase</div><div class="operator">.</div><div class="ident">TestCaseName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">testReadParamError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="literal">&#34;cluster&#34;</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">Args</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">ExpectedError</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestReadRuleID_Error</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">testCase</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+		<div class="ident">TestCaseName</div>  <div class="ident">string</div><div class="operator"></div>
+		<div class="ident">Args</div>          <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator"></div>
+		<div class="ident">ExpectedError</div> <div class="ident">string</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">{</div>
+		<div class="operator">{</div><div class="ident">TestCaseName</div><div class="operator">:</div> <div class="literal">&#34;Missing&#34;</div><div class="operator">,</div> <div class="ident">Args</div><div class="operator">:</div> <div class="ident">nil</div><div class="operator">,</div> <div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Missing required param from request: rule_id&#34;}`</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div>
+			<div class="ident">TestCaseName</div><div class="operator">:</div> <div class="literal">&#34;BadRuleID&#34;</div><div class="operator">,</div>
+			<div class="ident">Args</div><div class="operator">:</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+				<div class="literal">&#34;rule_id&#34;</div><div class="operator">:</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">BadRuleID</div><div class="operator">)</div><div class="operator">,</div>
+			<div class="operator">}</div><div class="operator">,</div>
+			<div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Error during parsing param &#39;rule_id&#39; with value &#39;`</div> <div class="operator">&#43;</div>
+				<div class="ident">string</div><div class="operator">(</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">BadRuleID</div><div class="operator">)</div> <div class="operator">&#43;</div>
+				<div class="literal">`&#39;. Error: &#39;invalid rule ID, it must contain only from latin characters, number, underscores or dots&#39;&#34;}`</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">}</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">testCase</div><div class="operator">.</div><div class="ident">TestCaseName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">testReadParamError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="literal">&#34;rule_id&#34;</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">Args</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">ExpectedError</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestReadErrorKey_Error</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">testReadParamError</div><div class="operator">(</div>
+		<div class="ident">t</div><div class="operator">,</div>
+		<div class="literal">&#34;error_key&#34;</div><div class="operator">,</div>
+		<div class="ident">nil</div><div class="operator">,</div>
+		<div class="literal">`{&#34;status&#34;:&#34;Missing required param from request: error_key&#34;}`</div><div class="operator">,</div>
+	<div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestReadOrganization_Error</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">testReadParamError</div><div class="operator">(</div>
+		<div class="ident">t</div><div class="operator">,</div>
+		<div class="literal">&#34;organization&#34;</div><div class="operator">,</div>
+		<div class="ident">nil</div><div class="operator">,</div>
+		<div class="literal">`{&#34;status&#34;:&#34;Missing required param from request: organization&#34;}`</div><div class="operator">,</div>
+	<div class="operator">)</div><div class="operator"></div>
+	<div class="ident">testReadParamError</div><div class="operator">(</div>
+		<div class="ident">t</div><div class="operator">,</div>
+		<div class="literal">&#34;organization/with_auth&#34;</div><div class="operator">,</div>
+		<div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+			<div class="literal">&#34;organization&#34;</div><div class="operator">:</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprint</div><div class="operator">(</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">OrgID</div><div class="operator">)</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+		<div class="literal">`{&#34;status&#34;:&#34;you have no permissions to get or change info about this organization&#34;}`</div><div class="operator">,</div>
+	<div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestReadClusters_Error</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">testCase</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+		<div class="ident">TestCaseName</div>  <div class="ident">string</div><div class="operator"></div>
+		<div class="ident">Args</div>          <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator"></div>
+		<div class="ident">ExpectedError</div> <div class="ident">string</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">{</div>
+		<div class="operator">{</div><div class="ident">TestCaseName</div><div class="operator">:</div> <div class="literal">&#34;Missing&#34;</div><div class="operator">,</div> <div class="ident">Args</div><div class="operator">:</div> <div class="ident">nil</div><div class="operator">,</div> <div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Missing required param from request: clusters&#34;}`</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div>
+			<div class="ident">TestCaseName</div><div class="operator">:</div> <div class="literal">&#34;BadClusters&#34;</div><div class="operator">,</div>
+			<div class="ident">Args</div><div class="operator">:</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+				<div class="literal">&#34;clusters&#34;</div><div class="operator">:</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">BadClusterName</div><div class="operator">)</div><div class="operator">,</div>
+			<div class="operator">}</div><div class="operator">,</div>
+			<div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Error during parsing param &#39;cluster&#39; with value &#39;`</div> <div class="operator">&#43;</div>
+				<div class="ident">string</div><div class="operator">(</div><div class="ident">testdata</div><div class="operator">.</div><div class="ident">BadClusterName</div><div class="operator">)</div> <div class="operator">&#43;</div>
+				<div class="literal">`&#39;. Error: &#39;invalid UUID length: 4&#39;&#34;}`</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">}</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">testCase</div><div class="operator">.</div><div class="ident">TestCaseName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">testReadParamError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="literal">&#34;clusters&#34;</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">Args</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">ExpectedError</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestReadOrganizations_Error</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">const</div> <div class="ident">badOrgID</div> <div class="operator">=</div> <div class="literal">&#34;non-int&#34;</div><div class="operator"></div>
+
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">testCase</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+		<div class="ident">TestCaseName</div>  <div class="ident">string</div><div class="operator"></div>
+		<div class="ident">Args</div>          <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator"></div>
+		<div class="ident">ExpectedError</div> <div class="ident">string</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">{</div>
+		<div class="operator">{</div>
+			<div class="ident">TestCaseName</div><div class="operator">:</div>  <div class="literal">&#34;Missing&#34;</div><div class="operator">,</div>
+			<div class="ident">Args</div><div class="operator">:</div>          <div class="ident">nil</div><div class="operator">,</div>
+			<div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Missing required param from request: organizations&#34;}`</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">{</div>
+			<div class="ident">TestCaseName</div><div class="operator">:</div> <div class="literal">&#34;BadOrganizations&#34;</div><div class="operator">,</div>
+			<div class="ident">Args</div><div class="operator">:</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+				<div class="literal">&#34;organizations&#34;</div><div class="operator">:</div> <div class="ident">badOrgID</div><div class="operator">,</div>
+			<div class="operator">}</div><div class="operator">,</div>
+			<div class="ident">ExpectedError</div><div class="operator">:</div> <div class="literal">`{&#34;status&#34;:&#34;Error during parsing param &#39;organizations&#39; with value &#39;`</div> <div class="operator">&#43;</div> <div class="ident">badOrgID</div> <div class="operator">&#43;</div>
+				<div class="literal">`&#39;. Error: &#39;integer array expected&#39;&#34;}`</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">}</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">testCase</div><div class="operator">.</div><div class="ident">TestCaseName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">testReadParamError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="literal">&#34;organizations&#34;</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">Args</div><div class="operator">,</div> <div class="ident">testCase</div><div class="operator">.</div><div class="ident">ExpectedError</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">mustGetRequestWithMuxVars</div><div class="operator">(</div>
+	<div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div>
+	<div class="ident">method</div> <div class="ident">string</div><div class="operator">,</div>
+	<div class="ident">url</div> <div class="ident">string</div><div class="operator">,</div>
+	<div class="ident">body</div> <div class="ident">io</div><div class="operator">.</div><div class="ident">Reader</div><div class="operator">,</div>
+	<div class="ident">vars</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">,</div>
+<div class="operator">)</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div> <div class="operator">{</div>
+	<div class="ident">request</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">NewRequest</div><div class="operator">(</div><div class="ident">method</div><div class="operator">,</div> <div class="ident">url</div><div class="operator">,</div> <div class="ident">body</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">request</div> <div class="operator">=</div> <div class="ident">mux</div><div class="operator">.</div><div class="ident">SetURLVars</div><div class="operator">(</div><div class="ident">request</div><div class="operator">,</div> <div class="ident">vars</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">return</div> <div class="ident">request</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">testReadParamError</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div> <div class="ident">paramName</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">args</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">,</div> <div class="ident">expectedError</div> <div class="ident">string</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">request</div> <div class="operator">:=</div> <div class="ident">mustGetRequestWithMuxVars</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">MethodGet</div><div class="operator">,</div> <div class="literal">&#34;&#34;</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">,</div> <div class="ident">args</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">recorder</div> <div class="operator">:=</div> <div class="ident">httptest</div><div class="operator">.</div><div class="ident">NewRecorder</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">var</div> <div class="ident">successful</div> <div class="ident">bool</div><div class="operator"></div>
+
+	<div class="keyword">switch</div> <div class="ident">paramName</div> <div class="operator">{</div>
+	<div class="keyword">case</div> <div class="literal">&#34;cluster&#34;</div><div class="operator">:</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadClusterName</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="literal">&#34;rule_id&#34;</div><div class="operator">:</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadRuleID</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="literal">&#34;error_key&#34;</div><div class="operator">:</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadErrorKey</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="literal">&#34;organization&#34;</div><div class="operator">:</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadOrganization</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">,</div> <div class="ident">false</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="literal">&#34;organization/with_auth&#34;</div><div class="operator">:</div>
+		<div class="ident">ctx</div> <div class="operator">:=</div> <div class="ident">context</div><div class="operator">.</div><div class="ident">WithValue</div><div class="operator">(</div><div class="ident">request</div><div class="operator">.</div><div class="ident">Context</div><div class="operator">(</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">ContextKeyUser</div><div class="operator">,</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">Identity</div><div class="operator">{</div>
+			<div class="ident">AccountNumber</div><div class="operator">:</div> <div class="ident">testdata</div><div class="operator">.</div><div class="ident">UserID</div><div class="operator">,</div>
+			<div class="ident">Internal</div><div class="operator">:</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">Internal</div><div class="operator">{</div>
+				<div class="ident">OrgID</div><div class="operator">:</div> <div class="ident">testdata</div><div class="operator">.</div><div class="ident">Org2ID</div><div class="operator">,</div>
+			<div class="operator">}</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">request</div> <div class="operator">=</div> <div class="ident">request</div><div class="operator">.</div><div class="ident">WithContext</div><div class="operator">(</div><div class="ident">ctx</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadOrganization</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">,</div> <div class="ident">true</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="literal">&#34;organizations&#34;</div><div class="operator">:</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadOrganizations</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="literal">&#34;clusters&#34;</div><div class="operator">:</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">successful</div> <div class="operator">=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">ReadClusterNames</div><div class="operator">(</div><div class="ident">recorder</div><div class="operator">,</div> <div class="ident">request</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">default</div><div class="operator">:</div>
+		<div class="ident">panic</div><div class="operator">(</div><div class="literal">&#34;testReadParamError is not implemented for param &#39;&#34;</div> <div class="operator">&#43;</div> <div class="ident">paramName</div> <div class="operator">&#43;</div> <div class="literal">&#34;&#39;&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">False</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">successful</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">resp</div> <div class="operator">:=</div> <div class="ident">recorder</div><div class="operator">.</div><div class="ident">Result</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">NotNil</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">resp</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">body</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadAll</div><div class="operator">(</div><div class="ident">resp</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedError</div><div class="operator">,</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">TrimSpace</div><div class="operator">(</div><div class="ident">string</div><div class="operator">(</div><div class="ident">body</div><div class="operator">)</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">paramsToString</div><div class="operator">(</div><div class="ident">separator</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">params</div> <div class="operator">...</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">)</div> <div class="ident">string</div> <div class="operator">{</div>
+	<div class="keyword">var</div> <div class="ident">unpackedParams</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">param</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">params</div> <div class="operator">{</div>
+		<div class="keyword">switch</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">TypeOf</div><div class="operator">(</div><div class="ident">param</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Kind</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="keyword">case</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">Array</div><div class="operator">,</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">Slice</div><div class="operator">:</div>
+			<div class="ident">s</div> <div class="operator">:=</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">ValueOf</div><div class="operator">(</div><div class="ident">param</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="keyword">for</div> <div class="ident">i</div> <div class="operator">:=</div> <div class="literal">0</div><div class="operator">;</div> <div class="ident">i</div> <div class="operator">&lt;</div> <div class="ident">s</div><div class="operator">.</div><div class="ident">Len</div><div class="operator">(</div><div class="operator">)</div><div class="operator">;</div> <div class="ident">i</div><div class="operator">&#43;&#43;</div> <div class="operator">{</div>
+				<div class="ident">unpackedParams</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">unpackedParams</div><div class="operator">,</div> <div class="ident">s</div><div class="operator">.</div><div class="ident">Index</div><div class="operator">(</div><div class="ident">i</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Interface</div><div class="operator">(</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator"></div>
+		<div class="keyword">default</div><div class="operator">:</div>
+			<div class="ident">unpackedParams</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">unpackedParams</div><div class="operator">,</div> <div class="ident">param</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">params</div> <div class="operator">=</div> <div class="ident">unpackedParams</div><div class="operator"></div>
+
+	<div class="keyword">var</div> <div class="ident">stringParams</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator"></div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">param</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">params</div> <div class="operator">{</div>
+		<div class="ident">stringParams</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">stringParams</div><div class="operator">,</div> <div class="ident">fmt</div><div class="operator">.</div><div class="ident">Sprint</div><div class="operator">(</div><div class="ident">param</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">res</div> <div class="operator">:=</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">Join</div><div class="operator">(</div><div class="ident">stringParams</div><div class="operator">,</div> <div class="ident">separator</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">res</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
 </code></pre></td>
       </tr>
       
