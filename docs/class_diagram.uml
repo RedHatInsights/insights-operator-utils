@@ -28,6 +28,30 @@ namespace helpers {
         + AddEndpoint(endpoint string, f <font color=blue>func</font>(http.ResponseWriter, *http.Request) ) 
 
     }
+    class MockT << (S,Aquamarine) >> {
+        - mockController *gomock.Controller
+
+        + Expects *mock_testing.MockTB
+
+        + Finish() 
+        + ExpectFailOnError(err error) 
+        + ExpectFailOnErrorAnyArgument() 
+        + Cleanup(f <font color=blue>func</font>() ) 
+        + Error(args ...<font color=blue>interface</font>{}) 
+        + Errorf(format string, args ...<font color=blue>interface</font>{}) 
+        + Fail() 
+        + FailNow() 
+        + Failed() bool
+        + Fatal(args ...<font color=blue>interface</font>{}) 
+        + Fatalf(format string, args ...<font color=blue>interface</font>{}) 
+        + Log(args ...<font color=blue>interface</font>{}) 
+        + Logf(format string, args ...<font color=blue>interface</font>{}) 
+        + Skip(args ...<font color=blue>interface</font>{}) 
+        + SkipNow() 
+        + Skipf(format string, args ...<font color=blue>interface</font>{}) 
+        + Skipped() bool
+
+    }
     interface ServerInitializer  {
         + Initialize() http.Handler
 
@@ -36,13 +60,14 @@ namespace helpers {
     }
     class helpers.TestFunctionPtr << (T, #FF7700) >>  {
     }
-    class "<font color=blue>func</font>(*testing.T) " as fontcolorbluefuncfonttestingT {
+    class "<font color=blue>func</font>(testing.TB) " as fontcolorbluefuncfonttestingTB {
         'This class was created so that we can correctly have an alias pointing to this name. Since it contains dots that can break namespaces
     }
     class "<font color=blue>func</font>(testing.TB, []byte, []byte) " as fontcolorbluefuncfonttestingTBbytebyte {
         'This class was created so that we can correctly have an alias pointing to this name. Since it contains dots that can break namespaces
     }
 }
+"testing.T" *-- "helpers.MockT"
 
 "helpers.ServerInitializer" <|-- "helpers.MicroHTTPServer"
 
@@ -53,6 +78,78 @@ namespace httputils {
     }
 }
 "http.ResponseWriter" *-- "httputils.loggingResponseWriter"
+
+
+namespace mock_io {
+    class MockReadCloser << (S,Aquamarine) >> {
+        - ctrl *gomock.Controller
+        - recorder *MockReadCloserMockRecorder
+
+        + EXPECT() *MockReadCloserMockRecorder
+        + Close() error
+        + Read(arg0 []byte) (int, error)
+
+    }
+    class MockReadCloserMockRecorder << (S,Aquamarine) >> {
+        - mock *MockReadCloser
+
+        + Close() *gomock.Call
+        + Read(arg0 <font color=blue>interface</font>{}) *gomock.Call
+
+    }
+}
+
+
+namespace mock_testing {
+    class MockTB << (S,Aquamarine) >> {
+        - ctrl *gomock.Controller
+        - recorder *MockTBMockRecorder
+
+        - private() 
+
+        + EXPECT() *MockTBMockRecorder
+        + Cleanup(arg0 <font color=blue>func</font>() ) 
+        + Error(arg0 ...<font color=blue>interface</font>{}) 
+        + Errorf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Fail() 
+        + FailNow() 
+        + Failed() bool
+        + Fatal(arg0 ...<font color=blue>interface</font>{}) 
+        + Fatalf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Helper() 
+        + Log(arg0 ...<font color=blue>interface</font>{}) 
+        + Logf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Name() string
+        + Skip(arg0 ...<font color=blue>interface</font>{}) 
+        + SkipNow() 
+        + Skipf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Skipped() bool
+
+    }
+    class MockTBMockRecorder << (S,Aquamarine) >> {
+        - mock *MockTB
+
+        - private() *gomock.Call
+
+        + Cleanup(arg0 <font color=blue>interface</font>{}) *gomock.Call
+        + Error(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Errorf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Fail() *gomock.Call
+        + FailNow() *gomock.Call
+        + Failed() *gomock.Call
+        + Fatal(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Fatalf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Helper() *gomock.Call
+        + Log(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Logf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Name() *gomock.Call
+        + Skip(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + SkipNow() *gomock.Call
+        + Skipf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Skipped() *gomock.Call
+
+    }
+}
 
 
 namespace types {
@@ -247,6 +344,6 @@ namespace types {
 "__builtin__.string" #.. "types.Timestamp"
 "__builtin__.string" #.. "types.UserID"
 "__builtin__.uint32" #.. "types.OrgID"
-"helpers.fontcolorbluefuncfonttestingT" #.. "helpers.TestFunctionPtr"
+"helpers.fontcolorbluefuncfonttestingTB" #.. "helpers.TestFunctionPtr"
 "helpers.fontcolorbluefuncfonttestingTBbytebyte" #.. "helpers.BodyChecker"
 @enduml
