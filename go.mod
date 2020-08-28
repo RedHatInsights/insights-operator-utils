@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/RedHatInsights/insights-results-aggregator-data v0.0.0-20200825113234-e84e924194bc
-	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
+	github.com/getkin/kin-openapi v0.20.0
 	github.com/golang/mock v1.4.3
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4
