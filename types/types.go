@@ -50,11 +50,13 @@ type RuleID string
 
 // RuleOnReport represents a single (hit) rule of the string encoded report
 type RuleOnReport struct {
-	Module       RuleID      `json:"component"`
-	ErrorKey     ErrorKey    `json:"key"`
-	UserVote     UserVote    `json:"user_vote"`
-	Disabled     bool        `json:"disabled"`
-	TemplateData interface{} `json:"details"`
+	Module          RuleID      `json:"component"`
+	ErrorKey        ErrorKey    `json:"key"`
+	UserVote        UserVote    `json:"user_vote"`
+	Disabled        bool        `json:"disabled"`
+	DisableFeedback string      `json:"disable_feedback"`
+	DisabledAt      Timestamp   `json:"disabled_at"`
+	TemplateData    interface{} `json:"details"`
 }
 
 // ReportRules is a helper struct for easy JSON unmarshalling of string encoded report
