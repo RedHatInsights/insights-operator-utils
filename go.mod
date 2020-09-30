@@ -3,7 +3,10 @@ module github.com/RedHatInsights/insights-operator-utils
 go 1.13
 
 require (
+	github.com/RedHatInsights/cloudwatch v0.0.0-20200512151223-b0b55757a24b
 	github.com/RedHatInsights/insights-results-aggregator-data v0.0.0-20200825113234-e84e924194bc
+	github.com/Shopify/sarama v1.26.0
+	github.com/aws/aws-sdk-go v1.30.25
 	github.com/getkin/kin-openapi v0.20.0
 	github.com/golang/mock v1.4.3
 	github.com/google/uuid v1.1.1
