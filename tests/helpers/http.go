@@ -208,6 +208,16 @@ func checkResponseHeaders(t testing.TB, expectedHeaders map[string]string, actua
 
 // AssertReportResponsesEqual checks if reports in answer are the same
 func AssertReportResponsesEqual(t testing.TB, expected, got []byte) {
+	AssertReportResponsesEqualCustomElementsChecker(t, expected, got, func(t testing.TB, expected []types.RuleOnReport, got []types.RuleOnReport) {
+		assert.ElementsMatch(t, expected, got)
+	})
+}
+
+// AssertReportResponsesEqualCustomElementsChecker checks if reports in answer are the same using custom checker
+// for elements
+func AssertReportResponsesEqualCustomElementsChecker(
+	t testing.TB, expected, got []byte, elementsChecker func(testing.TB, []types.RuleOnReport, []types.RuleOnReport),
+) {
 	var expectedResponse, gotResponse struct {
 		Status string               `json:"status"`
 		Report types.ReportResponse `json:"report"`
@@ -239,7 +249,9 @@ func AssertReportResponsesEqual(t testing.TB, expected, got []byte) {
 		len(gotResponse.Report.Report),
 		"length of reports should be equal",
 	)
-	assert.ElementsMatch(t, expectedResponse.Report.Report, gotResponse.Report.Report)
+	if elementsChecker != nil {
+		elementsChecker(t, expectedResponse.Report.Report, gotResponse.Report.Report)
+	}
 }
 
 // AssertRuleResponsesEqual checks if rules in answer are the same
