@@ -12,6 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# In order to generate class diagram, `plantuml.jar` needs to be installed
+# and added into `CLASSPATH`. The Java archive file `plantuml.jar` is available
+# at https://plantuml.com/download. It is possible just to download the Java
+# archive into this directory and not to update `CLASSPATH` environment
+# variable.
+#
+# More info about `CLASSPATH` is available at
+# https://docs.oracle.com/javase/tutorial/essential/environment/paths.html
+
 pushd ..
 goplantuml -recursive . > class_diagram.uml
 java -jar ~/tools/plantuml.jar class_diagram.uml
