@@ -377,6 +377,21 @@ also validates both expected and body to be a valid json</p>
 	<td class="doc"><p>AssertReportResponsesEqual checks if reports in answer are the same</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">AssertReportResponsesEqual</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">AssertReportResponsesEqualCustomElementsChecker</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">types</div><div class="operator">.</div><div class="ident">RuleOnReport</div><div class="operator">,</div> <div class="ident">got</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">types</div><div class="operator">.</div><div class="ident">RuleOnReport</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">ElementsMatch</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>AssertReportResponsesEqualCustomElementsChecker checks if reports in answer are the same using custom checker
+for elements</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">AssertReportResponsesEqualCustomElementsChecker</div><div class="operator">(</div>
+	<div class="ident">t</div> <div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">got</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">,</div> <div class="ident">elementsChecker</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">TB</div><div class="operator">,</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">types</div><div class="operator">.</div><div class="ident">RuleOnReport</div><div class="operator">,</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">types</div><div class="operator">.</div><div class="ident">RuleOnReport</div><div class="operator">)</div><div class="operator">,</div>
+<div class="operator">)</div> <div class="operator">{</div>
 	<div class="keyword">var</div> <div class="ident">expectedResponse</div><div class="operator">,</div> <div class="ident">gotResponse</div> <div class="keyword">struct</div> <div class="operator">{</div>
 		<div class="ident">Status</div> <div class="ident">string</div>               <div class="literal">`json:&#34;status&#34;`</div><div class="operator"></div>
 		<div class="ident">Report</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">ReportResponse</div> <div class="literal">`json:&#34;report&#34;`</div><div class="operator"></div>
@@ -413,7 +428,9 @@ also validates both expected and body to be a valid json</p>
 		<div class="ident">len</div><div class="operator">(</div><div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">)</div><div class="operator">,</div>
 		<div class="literal">&#34;length of reports should be equal&#34;</div><div class="operator">,</div>
 	<div class="operator">)</div><div class="operator"></div>
-	<div class="ident">assert</div><div class="operator">.</div><div class="ident">ElementsMatch</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">,</div> <div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">elementsChecker</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">elementsChecker</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">,</div> <div class="ident">gotResponse</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">.</div><div class="ident">Report</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
