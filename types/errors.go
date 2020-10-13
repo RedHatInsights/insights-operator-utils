@@ -80,7 +80,7 @@ func HandleServerError(writer http.ResponseWriter, err error) {
 	case *ItemNotFoundError:
 		respErr = responses.SendNotFound(writer, err.Error())
 	case *AuthenticationError:
-		respErr = responses.SendForbidden(writer, err.Error())
+		respErr = responses.SendUnauthorized(writer, err.Error())
 	default:
 		respErr = responses.SendInternalServerError(writer, "Internal Server Error")
 	}

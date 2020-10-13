@@ -85,31 +85,31 @@ func SendAccepted(w http.ResponseWriter, data map[string]interface{}) error {
 }
 
 // SendBadRequest returns error response with status Bad Request 400
-func SendBadRequest(w http.ResponseWriter, err string) error {
-	return Send(http.StatusBadRequest, w, err)
+func SendBadRequest(w http.ResponseWriter, errorMessage string) error {
+	return Send(http.StatusBadRequest, w, errorMessage)
 }
 
 // SendUnauthorized returns error response for unauthorized access with status Unauthorized 401
-func SendUnauthorized(w http.ResponseWriter, data map[string]interface{}) error {
-	return Send(http.StatusUnauthorized, w, data)
+func SendUnauthorized(w http.ResponseWriter, errorMessage string) error {
+	return Send(http.StatusUnauthorized, w, errorMessage)
 }
 
 // SendForbidden returns response with status Forbidden 403
-func SendForbidden(w http.ResponseWriter, err string) error {
-	return Send(http.StatusForbidden, w, err)
+func SendForbidden(w http.ResponseWriter, errorMessage string) error {
+	return Send(http.StatusForbidden, w, errorMessage)
 }
 
 // SendNotFound returns response with status Not Found 404
-func SendNotFound(w http.ResponseWriter, err string) error {
-	return Send(http.StatusNotFound, w, err)
+func SendNotFound(w http.ResponseWriter, errorMessage string) error {
+	return Send(http.StatusNotFound, w, errorMessage)
 }
 
 // SendInternalServerError returns response with status Internal Server Error 500
-func SendInternalServerError(w http.ResponseWriter, err string) error {
-	return Send(http.StatusInternalServerError, w, err)
+func SendInternalServerError(w http.ResponseWriter, errorMessage string) error {
+	return Send(http.StatusInternalServerError, w, errorMessage)
 }
 
 // SendServiceUnavailable returns response with status Service Unavailable 503
-func SendServiceUnavailable(w http.ResponseWriter, err string) error {
-	return Send(http.StatusServiceUnavailable, w, err)
+func SendServiceUnavailable(w http.ResponseWriter, errorMessage string) error {
+	return Send(http.StatusServiceUnavailable, w, errorMessage)
 }
