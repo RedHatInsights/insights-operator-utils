@@ -123,16 +123,16 @@ func TestReadParam(t *testing.T) {
 			case "error_key":
 				result, successful = httputils.ReadErrorKey(recorder, request)
 			case "organization":
-				result, successful = httputils.ReadOrganization(recorder, request, false)
+				result, successful = httputils.ReadOrganizationID(recorder, request, false)
 			case "organization/with_auth":
-				result, successful = httputils.ReadOrganization(recorder, request, true)
+				result, successful = httputils.ReadOrganizationID(recorder, request, true)
 			case "clusters":
 				var results []types.ClusterName
 				results, successful = httputils.ReadClusterNames(recorder, request)
 				result = paramsToString(",", results)
 			case "organizations":
 				var results []types.OrgID
-				results, successful = httputils.ReadOrganizations(recorder, request)
+				results, successful = httputils.ReadOrganizationIDs(recorder, request)
 				result = paramsToString(",", results)
 			}
 
@@ -296,7 +296,7 @@ func testReadParamError(t *testing.T, paramName string, args map[string]string, 
 	case "error_key":
 		_, successful = httputils.ReadErrorKey(recorder, request)
 	case "organization":
-		_, successful = httputils.ReadOrganization(recorder, request, false)
+		_, successful = httputils.ReadOrganizationID(recorder, request, false)
 	case "organization/with_auth":
 		ctx := context.WithValue(request.Context(), types.ContextKeyUser, types.Identity{
 			AccountNumber: testdata.UserID,
@@ -305,9 +305,9 @@ func testReadParamError(t *testing.T, paramName string, args map[string]string, 
 			},
 		})
 		request = request.WithContext(ctx)
-		_, successful = httputils.ReadOrganization(recorder, request, true)
+		_, successful = httputils.ReadOrganizationID(recorder, request, true)
 	case "organizations":
-		_, successful = httputils.ReadOrganizations(recorder, request)
+		_, successful = httputils.ReadOrganizationIDs(recorder, request)
 	case "clusters":
 		_, successful = httputils.ReadClusterNames(recorder, request)
 	default:
