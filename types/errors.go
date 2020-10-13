@@ -50,12 +50,22 @@ func (e *RouterParsingError) Error() string {
 	)
 }
 
-// AuthenticationError happens during auth problems, for example malformed token
-type AuthenticationError struct {
+// UnauthorizedError means server can't authorize you, for example the token is missing or malformed
+type UnauthorizedError struct {
 	ErrString string
 }
 
-func (e *AuthenticationError) Error() string {
+func (e *UnauthorizedError) Error() string {
+	return e.ErrString
+}
+
+// ForbiddenError means you don't have permission to do a particular action,
+// for example your account belongs to a different organization
+type ForbiddenError struct {
+	ErrString string
+}
+
+func (e *ForbiddenError) Error() string {
 	return e.ErrString
 }
 
@@ -79,8 +89,10 @@ func HandleServerError(writer http.ResponseWriter, err error) {
 		respErr = responses.SendBadRequest(writer, "bad type in json data")
 	case *ItemNotFoundError:
 		respErr = responses.SendNotFound(writer, err.Error())
-	case *AuthenticationError:
+	case *UnauthorizedError:
 		respErr = responses.SendUnauthorized(writer, err.Error())
+	case *ForbiddenError:
+		respErr = responses.SendForbidden(writer, err.Error())
 	default:
 		respErr = responses.SendInternalServerError(writer, "Internal Server Error")
 	}

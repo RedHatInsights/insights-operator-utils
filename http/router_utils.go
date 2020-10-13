@@ -205,7 +205,7 @@ func checkPermissions(writer http.ResponseWriter, request *http.Request, orgID t
 		if identity.Internal.OrgID != orgID {
 			const message = "you have no permissions to get or change info about this organization"
 			log.Error().Msg(message)
-			types.HandleServerError(writer, &types.AuthenticationError{ErrString: message})
+			types.HandleServerError(writer, &types.ForbiddenError{ErrString: message})
 
 			return false
 		}
