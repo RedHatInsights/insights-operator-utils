@@ -188,13 +188,28 @@ limitations under the License.</p>
       </tr>
       
       <tr class="section">
-	<td class="doc"><p>AuthenticationError happens during auth problems, for example malformed token</p>
+	<td class="doc"><p>UnauthorizedError means server can't authorize you, for example the token is missing or malformed</p>
 </td>
-	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">AuthenticationError</div> <div class="keyword">struct</div> <div class="operator">{</div>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">UnauthorizedError</div> <div class="keyword">struct</div> <div class="operator">{</div>
 	<div class="ident">ErrString</div> <div class="ident">string</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
-<div class="keyword">func</div> <div class="operator">(</div><div class="ident">e</div> <div class="operator">*</div><div class="ident">AuthenticationError</div><div class="operator">)</div> <div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div> <div class="ident">string</div> <div class="operator">{</div>
+<div class="keyword">func</div> <div class="operator">(</div><div class="ident">e</div> <div class="operator">*</div><div class="ident">UnauthorizedError</div><div class="operator">)</div> <div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div> <div class="ident">string</div> <div class="operator">{</div>
+	<div class="keyword">return</div> <div class="ident">e</div><div class="operator">.</div><div class="ident">ErrString</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>ForbiddenError means you don't have permission to do a particular action,
+for example your account belongs to a different organization</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">ForbiddenError</div> <div class="keyword">struct</div> <div class="operator">{</div>
+	<div class="ident">ErrString</div> <div class="ident">string</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="operator">(</div><div class="ident">e</div> <div class="operator">*</div><div class="ident">ForbiddenError</div><div class="operator">)</div> <div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div> <div class="ident">string</div> <div class="operator">{</div>
 	<div class="keyword">return</div> <div class="ident">e</div><div class="operator">.</div><div class="ident">ErrString</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
@@ -228,7 +243,9 @@ limitations under the License.</p>
 		<div class="ident">respErr</div> <div class="operator">=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendBadRequest</div><div class="operator">(</div><div class="ident">writer</div><div class="operator">,</div> <div class="literal">&#34;bad type in json data&#34;</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">case</div> <div class="operator">*</div><div class="ident">ItemNotFoundError</div><div class="operator">:</div>
 		<div class="ident">respErr</div> <div class="operator">=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendNotFound</div><div class="operator">(</div><div class="ident">writer</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
-	<div class="keyword">case</div> <div class="operator">*</div><div class="ident">AuthenticationError</div><div class="operator">:</div>
+	<div class="keyword">case</div> <div class="operator">*</div><div class="ident">UnauthorizedError</div><div class="operator">:</div>
+		<div class="ident">respErr</div> <div class="operator">=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendUnauthorized</div><div class="operator">(</div><div class="ident">writer</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">case</div> <div class="operator">*</div><div class="ident">ForbiddenError</div><div class="operator">:</div>
 		<div class="ident">respErr</div> <div class="operator">=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendForbidden</div><div class="operator">(</div><div class="ident">writer</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
 	<div class="keyword">default</div><div class="operator">:</div>
 		<div class="ident">respErr</div> <div class="operator">=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendInternalServerError</div><div class="operator">(</div><div class="ident">writer</div><div class="operator">,</div> <div class="literal">&#34;Internal Server Error&#34;</div><div class="operator">)</div><div class="operator"></div>
