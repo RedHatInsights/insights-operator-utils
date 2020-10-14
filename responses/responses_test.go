@@ -60,7 +60,6 @@ var headerTestsWithData = []struct {
 	{"responses.SendOK", responses.SendOK, http.StatusOK},
 	{"responses.SendCreated", responses.SendCreated, http.StatusCreated},
 	{"responses.SendAccepted", responses.SendAccepted, http.StatusAccepted},
-	{"responses.SendUnauthorized", responses.SendUnauthorized, http.StatusUnauthorized},
 }
 
 var headerTestsWithoutData = []struct {
@@ -69,6 +68,8 @@ var headerTestsWithoutData = []struct {
 	expectedHeader int
 }{
 	{"responses.SendBadRequest", responses.SendBadRequest, http.StatusBadRequest},
+	{"responses.SendUnauthorized", responses.SendUnauthorized, http.StatusUnauthorized},
+	{"responses.SendForbidden", responses.SendForbidden, http.StatusForbidden},
 	{"responses.SendForbidden", responses.SendForbidden, http.StatusForbidden},
 	{"responses.SendNotFound", responses.SendNotFound, http.StatusNotFound},
 	{"responses.SendInternalServerError", responses.SendInternalServerError, http.StatusInternalServerError},

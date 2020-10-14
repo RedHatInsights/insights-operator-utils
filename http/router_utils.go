@@ -75,7 +75,7 @@ func ReadClusterName(writer http.ResponseWriter, request *http.Request) (types.C
 		return "", false
 	}
 
-	validatedClusterName, err := validateClusterName(clusterName)
+	validatedClusterName, err := ValidateClusterName(clusterName)
 	if err != nil {
 		handleClusterNameError(writer, err)
 		return "", false
@@ -127,16 +127,16 @@ func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (types.Erro
 	return types.ErrorKey(errorKey), true
 }
 
-// ReadOrganization retrieves organization id from request
+// ReadOrganizationID retrieves organization id from request
 // if it's not possible, it writes http error to the writer and returns false
-func ReadOrganization(writer http.ResponseWriter, request *http.Request, auth bool) (types.OrgID, bool) {
+func ReadOrganizationID(writer http.ResponseWriter, request *http.Request, auth bool) (types.OrgID, bool) {
 	organizationID, err := GetRouterPositiveIntParam(request, "organization")
 	if err != nil {
-		handleOrgIDError(writer, err)
+		HandleOrgIDError(writer, err)
 		return 0, false
 	}
 
-	successful := checkPermissions(writer, request, types.OrgID(organizationID), auth)
+	successful := CheckPermissions(writer, request, types.OrgID(organizationID), auth)
 
 	return types.OrgID(organizationID), successful
 }
@@ -154,8 +154,8 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]type
 	}
 
 	clusterNamesConverted := make([]types.ClusterName, 0)
-	for _, clusterName := range splitRequestParamArray(clusterNamesParam) {
-		convertedName, err := validateClusterName(clusterName)
+	for _, clusterName := range SplitRequestParamArray(clusterNamesParam) {
+		convertedName, err := ValidateClusterName(clusterName)
 		if err != nil {
 			types.HandleServerError(writer, err)
 			return []types.ClusterName{}, false
@@ -167,16 +167,16 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]type
 	return clusterNamesConverted, true
 }
 
-// ReadOrganizations does the same as `readOrganizationID`, except for multiple organizations.
-func ReadOrganizations(writer http.ResponseWriter, request *http.Request) ([]types.OrgID, bool) {
+// ReadOrganizationIDs does the same as `readOrganizationID`, except for multiple organizations.
+func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]types.OrgID, bool) {
 	organizationsParam, err := GetRouterParam(request, "organizations")
 	if err != nil {
-		handleOrgIDError(writer, err)
+		HandleOrgIDError(writer, err)
 		return []types.OrgID{}, false
 	}
 
 	organizationsConverted := make([]types.OrgID, 0)
-	for _, orgStr := range splitRequestParamArray(organizationsParam) {
+	for _, orgStr := range SplitRequestParamArray(organizationsParam) {
 		orgInt, err := strconv.ParseUint(orgStr, 10, 64)
 		if err != nil {
 			types.HandleServerError(writer, &types.RouterParsingError{
@@ -192,12 +192,15 @@ func ReadOrganizations(writer http.ResponseWriter, request *http.Request) ([]typ
 	return organizationsConverted, true
 }
 
-func handleOrgIDError(writer http.ResponseWriter, err error) {
+// HandleOrgIDError logs org id error and writes corresponding http response
+func HandleOrgIDError(writer http.ResponseWriter, err error) {
 	log.Error().Err(err).Msg("error getting organization ID from request")
 	types.HandleServerError(writer, err)
 }
 
-func checkPermissions(writer http.ResponseWriter, request *http.Request, orgID types.OrgID, auth bool) bool {
+// CheckPermissions checks whether user with a provided token(from request) can access current organization
+// and handled the error on negative result by logging the error and writing a corresponding http response
+func CheckPermissions(writer http.ResponseWriter, request *http.Request, orgID types.OrgID, auth bool) bool {
 	identityContext := request.Context().Value(types.ContextKeyUser)
 
 	if identityContext != nil && auth {
@@ -205,7 +208,7 @@ func checkPermissions(writer http.ResponseWriter, request *http.Request, orgID t
 		if identity.Internal.OrgID != orgID {
 			const message = "you have no permissions to get or change info about this organization"
 			log.Error().Msg(message)
-			types.HandleServerError(writer, &types.AuthenticationError{ErrString: message})
+			types.HandleServerError(writer, &types.ForbiddenError{ErrString: message})
 
 			return false
 		}
@@ -213,9 +216,9 @@ func checkPermissions(writer http.ResponseWriter, request *http.Request, orgID t
 	return true
 }
 
-// validateClusterName checks that the cluster name is a valid UUID.
+// ValidateClusterName checks that the cluster name is a valid UUID.
 // Converted cluster name is returned if everything is okay, otherwise an error is returned.
-func validateClusterName(clusterName string) (types.ClusterName, error) {
+func ValidateClusterName(clusterName string) (types.ClusterName, error) {
 	if _, err := uuid.Parse(clusterName); err != nil {
 		message := fmt.Sprintf("invalid cluster name: '%s'. Error: %s", clusterName, err.Error())
 
@@ -241,7 +244,6 @@ func handleClusterNameError(writer http.ResponseWriter, err error) {
 
 // SplitRequestParamArray takes a single HTTP request parameter and splits it
 // into a slice of strings. This assumes that the parameter is a comma-separated array.
-
-func splitRequestParamArray(arrayParam string) []string {
+func SplitRequestParamArray(arrayParam string) []string {
 	return strings.Split(arrayParam, ",")
 }
