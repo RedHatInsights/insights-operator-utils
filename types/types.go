@@ -110,12 +110,12 @@ type ErrorKey string
 
 // Rule represents the content of rule table
 type Rule struct {
-	Module     RuleID `json:"module"`
-	Name       string `json:"name"`
-	Summary    string `json:"summary"`
-	Reason     string `json:"reason"`
-	Resolution string `json:"resolution"`
-	MoreInfo   string `json:"more_info"`
+	Module     RuleID          `json:"module"`
+	Name       string          `json:"name"`
+	Summary    string          `json:"summary"`
+	Reason     string          `json:"reason"`
+	Resolution string          `json:"resolution"`
+	MoreInfo   json.RawMessage `json:"more_info"`
 }
 
 // RuleErrorKey represents the content of rule_error_key table
@@ -134,22 +134,22 @@ type RuleErrorKey struct {
 
 // RuleWithContent represents a rule with content, basically the mix of rule and rule_error_key tables' content
 type RuleWithContent struct {
-	Module       RuleID    `json:"module"`
-	Name         string    `json:"name"`
-	Summary      string    `json:"summary"`
-	Reason       string    `json:"reason"`
-	Resolution   string    `json:"resolution"`
-	MoreInfo     string    `json:"more_info"`
-	ErrorKey     ErrorKey  `json:"error_key"`
-	Condition    string    `json:"condition"`
-	Description  string    `json:"description"`
-	TotalRisk    int       `json:"total_risk"`
-	RiskOfChange int       `json:"risk_of_change"`
-	PublishDate  time.Time `json:"publish_date"`
-	Active       bool      `json:"active"`
-	Internal     bool      `json:"internal"`
-	Generic      string    `json:"generic"`
-	Tags         []string  `json:"tags"`
+	Module       RuleID          `json:"module"`
+	Name         string          `json:"name"`
+	Summary      string          `json:"summary"`
+	Reason       string          `json:"reason"`
+	Resolution   string          `json:"resolution"`
+	MoreInfo     json.RawMessage `json:"more_info"`
+	ErrorKey     ErrorKey        `json:"error_key"`
+	Condition    string          `json:"condition"`
+	Description  string          `json:"description"`
+	TotalRisk    int             `json:"total_risk"`
+	RiskOfChange int             `json:"risk_of_change"`
+	PublishDate  time.Time       `json:"publish_date"`
+	Active       bool            `json:"active"`
+	Internal     bool            `json:"internal"`
+	Generic      string          `json:"generic"`
+	Tags         []string        `json:"tags"`
 }
 
 // ReportItem represents a single (hit) rule of the string encoded report
