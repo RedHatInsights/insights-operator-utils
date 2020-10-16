@@ -10,7 +10,7 @@ type RuleContent struct {
 	MoreInfo   json.RawMessage                `json:"more_info"`
 	Plugin     RulePluginInfo                 `json:"plugin"`
 	ErrorKeys  map[string]RuleErrorKeyContent `json:"error_keys"`
-	hasReason  bool
+	HasReason  bool
 }
 
 // RulePluginInfo is a Go representation of the `plugin.yaml`
