@@ -34,6 +34,11 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
+const (
+	cluster1ID = "715e10eb-e6ac-49b3-bd72-61734c35b6fb"
+	cluster2ID = "931f1495-7b16-4637-a41e-963e117bfd02"
+)
+
 func TestGetRouterPositiveIntParam_NonIntError(t *testing.T) {
 	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
 		"id": "non int",
@@ -350,4 +355,124 @@ func paramsToString(separator string, params ...interface{}) string {
 
 	res := strings.Join(stringParams, separator)
 	return res
+}
+
+// TestReadClusterListFromPathMissingClusterList function checks if missing
+// cluster list in path is detected and processed correctly by function
+// ReadClusterListFromPath.
+func TestReadClusterListFromPathMissingClusterList(t *testing.T) {
+	request, err := http.NewRequest(http.MethodGet, "", nil)
+	helpers.FailOnError(t, err)
+
+	// try to read list of clusters from path
+	_, successful := httputils.ReadClusterListFromPath(httptest.NewRecorder(), request)
+
+	// missing list means that the read operation should fail
+	assert.False(t, successful)
+}
+
+// TestReadClusterListFromPathEmptyClusterList function checks if empty cluster
+// list in path is detected and processed correctly by function
+// ReadClusterListFromPath.
+func TestReadClusterListFromPathEmptyClusterList(t *testing.T) {
+	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+		"cluster_list": "",
+	})
+
+	// try to read list of clusters from path
+	_, successful := httputils.ReadClusterListFromPath(httptest.NewRecorder(), request)
+
+	// empty list means that the read operation should fail
+	assert.False(t, successful)
+}
+
+// TestReadClusterListFromPathOneCluster function checks if list with one
+// cluster ID is processed correctly by function ReadClusterListFromPath.
+func TestReadClusterListFromPathOneCluster(t *testing.T) {
+	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+		"cluster_list": fmt.Sprintf("%v", cluster1ID),
+	})
+
+	// try to read list of clusters from path
+	list, successful := httputils.ReadClusterListFromPath(httptest.NewRecorder(), request)
+
+	// cluster list exists so the read operation should not fail
+	assert.True(t, successful)
+
+	// we expect do get list with one cluster ID
+	assert.ElementsMatch(t, list, []string{cluster1ID})
+}
+
+// TestReadClusterListFromPathTwoClusters function checks if list with two
+// cluster IDs is processed correctly by function ReadClusterListFromPath.
+func TestReadClusterListFromPathTwoClusters(t *testing.T) {
+	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+		"cluster_list": fmt.Sprintf("%v,%v", cluster1ID, cluster2ID),
+	})
+
+	// try to read list of clusters from path
+	list, successful := httputils.ReadClusterListFromPath(httptest.NewRecorder(), request)
+
+	// cluster list exists so the read operation should not fail
+	assert.True(t, successful)
+
+	// we expect do get list with two cluster IDs
+	assert.ElementsMatch(t, list, []string{cluster1ID, cluster2ID})
+}
+
+// TestReadClusterListFromBodyNoJSON function checks if reading list of
+// clusters from empty request body is detected properly by function
+// ReadClusterListFromBody.
+func TestReadClusterListFromBodyNoJSON(t *testing.T) {
+	request, err := http.NewRequest(
+		http.MethodGet,
+		"",
+		strings.NewReader(""),
+	)
+	helpers.FailOnError(t, err)
+
+	// try to read list of clusters from path
+	_, successful := httputils.ReadClusterListFromBody(httptest.NewRecorder(), request)
+
+	// the read should fail because of empty request body
+	assert.False(t, successful)
+}
+
+// TestReadClusterListFromBodyCorrectJSON function checks if reading list of
+// clusters from correct request body containing JSON data is done correctly by
+// function ReadClusterListFromBody.
+func TestReadClusterListFromBodyCorrectJSON(t *testing.T) {
+	request, err := http.NewRequest(
+		http.MethodGet,
+		"",
+		strings.NewReader(fmt.Sprintf(`{"clusters": ["%v","%v"]}`, cluster1ID, cluster2ID)),
+	)
+	helpers.FailOnError(t, err)
+
+	// try to read list of clusters from path
+	list, successful := httputils.ReadClusterListFromBody(httptest.NewRecorder(), request)
+
+	// cluster list exists so the call should not fail
+	assert.True(t, successful)
+
+	// we expect do get list with two cluster IDs
+	assert.ElementsMatch(t, list, []string{cluster1ID, cluster2ID})
+}
+
+// TestReadClusterListFromBodyWrongJSON function checks if reading list of
+// clusters from request body with improper format is processed correctly by
+// function ReadClusterListFromBody.
+func TestReadClusterListFromBodyWrongJSON(t *testing.T) {
+	request, err := http.NewRequest(
+		http.MethodGet,
+		"",
+		strings.NewReader("this-is-not-json"),
+	)
+	helpers.FailOnError(t, err)
+
+	// try to read list of clusters from path
+	_, successful := httputils.ReadClusterListFromBody(httptest.NewRecorder(), request)
+
+	// the read should fail because of broken JSON
+	assert.False(t, successful)
 }

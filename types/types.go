@@ -196,3 +196,8 @@ func (e *ValidationError) Error() string {
 		e.ParamName, e.ParamValue, e.ErrString,
 	)
 }
+
+// ClusterListInRequest represents request body containing list of clusters
+type ClusterListInRequest struct {
+	Clusters []string `json:"clusters"`
+}
