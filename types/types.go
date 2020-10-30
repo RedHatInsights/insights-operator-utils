@@ -206,9 +206,9 @@ type ClusterListInRequest struct {
 // errors and dictionary with results per cluster. This structure is used by
 // aggregator to return more reports.
 type ClusterReports struct {
-	ClusterList []types.ClusterName               `json:"clusters"`
-	Errors      []types.ClusterName               `json:"errors"`
-	Reports     map[types.ClusterName]interface{} `json:"reports"`
-	GeneratedAt string                            `json:"generated_at"`
-	Status      string                            `json:"status"`
+	ClusterList []ClusterName               `json:"clusters"`
+	Errors      []ClusterName               `json:"errors"`
+	Reports     map[ClusterName]interface{} `json:"reports"`
+	GeneratedAt string                      `json:"generated_at"`
+	Status      string                      `json:"status"`
 }
