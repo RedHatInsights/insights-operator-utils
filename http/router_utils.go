@@ -15,6 +15,8 @@
 package httputils
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -246,4 +248,42 @@ func handleClusterNameError(writer http.ResponseWriter, err error) {
 // into a slice of strings. This assumes that the parameter is a comma-separated array.
 func SplitRequestParamArray(arrayParam string) []string {
 	return strings.Split(arrayParam, ",")
+}
+
+// ReadClusterListFromPath retrieves list of clusters from request's path
+// if it's not possible, it writes http error to the writer and returns false
+func ReadClusterListFromPath(writer http.ResponseWriter, request *http.Request) ([]string, bool) {
+	rawClusterList, err := GetRouterParam(request, "cluster_list")
+	if err != nil {
+		types.HandleServerError(writer, err)
+		return []string{}, false
+	}
+
+	// basic check that should not happen in reality (because of Gorilla mux checks)
+	if rawClusterList == "" {
+		types.HandleServerError(writer, errors.New("cluster list is empty"))
+		return []string{}, false
+	}
+
+	// split the list into items
+	clusterList := strings.Split(rawClusterList, ",")
+
+	// everything seems ok -> return list of clusters
+	return clusterList, true
+}
+
+// ReadClusterListFromBody retrieves list of clusters from request's body
+// if it's not possible, it writes http error to the writer and returns false
+func ReadClusterListFromBody(writer http.ResponseWriter, request *http.Request) ([]string, bool) {
+	var clusterList types.ClusterListInRequest
+
+	// try to read cluster list from request parameter
+	err := json.NewDecoder(request.Body).Decode(&clusterList)
+	if err != nil {
+		types.HandleServerError(writer, err)
+		return []string{}, false
+	}
+
+	// everything seems ok -> return list of clusters
+	return clusterList.Clusters, true
 }
