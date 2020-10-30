@@ -201,3 +201,14 @@ func (e *ValidationError) Error() string {
 type ClusterListInRequest struct {
 	Clusters []string `json:"clusters"`
 }
+
+// ClusterReports is a data structure containing list of clusters, list of
+// errors and dictionary with results per cluster. This structure is used by
+// aggregator to return more reports.
+type ClusterReports struct {
+	ClusterList []types.ClusterName               `json:"clusters"`
+	Errors      []types.ClusterName               `json:"errors"`
+	Reports     map[types.ClusterName]interface{} `json:"reports"`
+	GeneratedAt string                            `json:"generated_at"`
+	Status      string                            `json:"status"`
+}
