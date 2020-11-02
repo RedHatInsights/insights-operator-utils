@@ -20,10 +20,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// FailOnError wraps result of function with one argument
-func FailOnError(t testing.TB, err error) {
+// FailOnError logs error and stops next test's execution if non nil value is passed to err
+// optionally, you can add a message
+func FailOnError(t testing.TB, err error, msgAndArgs ...interface{}) {
 	// assert.NoError is used to show human readable output
-	assert.NoError(t, err)
+	assert.NoError(t, err, msgAndArgs...)
 	// assert.NoError doesn't stop next test execution which can cause strange panic because
 	// there was error and some object was not constructed
 	if err != nil {
