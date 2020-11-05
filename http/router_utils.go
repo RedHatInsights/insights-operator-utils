@@ -279,8 +279,8 @@ func ReadClusterListFromBody(writer http.ResponseWriter, request *http.Request) 
 
 	// check if there's any body provided in the request sent by client
 	if request.ContentLength <= 0 {
-		err := &NoBodyError{}
-		types.handleServerError(writer, err)
+		err := &types.NoBodyError{}
+		types.HandleServerError(writer, err)
 		return []string{}, false
 	}
 
