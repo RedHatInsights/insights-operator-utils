@@ -115,6 +115,7 @@ type Rule struct {
 	Summary    string `json:"summary"`
 	Reason     string `json:"reason"`
 	Resolution string `json:"resolution"`
+	MoreInfo   string `json:"more_info"`
 }
 
 // RuleErrorKey represents the content of rule_error_key table
