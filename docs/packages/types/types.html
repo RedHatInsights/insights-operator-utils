@@ -314,12 +314,12 @@ a unique identifier of payloads. Empty string represents a missing request ID.</
 	<td class="doc"><p>Rule represents the content of rule table</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">Rule</div> <div class="keyword">struct</div> <div class="operator">{</div>
-	<div class="ident">Module</div>     <div class="ident">RuleID</div>          <div class="literal">`json:&#34;module&#34;`</div><div class="operator"></div>
-	<div class="ident">Name</div>       <div class="ident">string</div>          <div class="literal">`json:&#34;name&#34;`</div><div class="operator"></div>
-	<div class="ident">Summary</div>    <div class="ident">string</div>          <div class="literal">`json:&#34;summary&#34;`</div><div class="operator"></div>
-	<div class="ident">Reason</div>     <div class="ident">string</div>          <div class="literal">`json:&#34;reason&#34;`</div><div class="operator"></div>
-	<div class="ident">Resolution</div> <div class="ident">string</div>          <div class="literal">`json:&#34;resolution&#34;`</div><div class="operator"></div>
-	<div class="ident">MoreInfo</div>   <div class="ident">json</div><div class="operator">.</div><div class="ident">RawMessage</div> <div class="literal">`json:&#34;more_info&#34;`</div><div class="operator"></div>
+	<div class="ident">Module</div>     <div class="ident">RuleID</div> <div class="literal">`json:&#34;module&#34;`</div><div class="operator"></div>
+	<div class="ident">Name</div>       <div class="ident">string</div> <div class="literal">`json:&#34;name&#34;`</div><div class="operator"></div>
+	<div class="ident">Summary</div>    <div class="ident">string</div> <div class="literal">`json:&#34;summary&#34;`</div><div class="operator"></div>
+	<div class="ident">Reason</div>     <div class="ident">string</div> <div class="literal">`json:&#34;reason&#34;`</div><div class="operator"></div>
+	<div class="ident">Resolution</div> <div class="ident">string</div> <div class="literal">`json:&#34;resolution&#34;`</div><div class="operator"></div>
+	<div class="ident">MoreInfo</div>   <div class="ident">string</div> <div class="literal">`json:&#34;more_info&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
@@ -348,22 +348,22 @@ a unique identifier of payloads. Empty string represents a missing request ID.</
 	<td class="doc"><p>RuleWithContent represents a rule with content, basically the mix of rule and rule<em>error</em>key tables' content</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">RuleWithContent</div> <div class="keyword">struct</div> <div class="operator">{</div>
-	<div class="ident">Module</div>       <div class="ident">RuleID</div>          <div class="literal">`json:&#34;module&#34;`</div><div class="operator"></div>
-	<div class="ident">Name</div>         <div class="ident">string</div>          <div class="literal">`json:&#34;name&#34;`</div><div class="operator"></div>
-	<div class="ident">Summary</div>      <div class="ident">string</div>          <div class="literal">`json:&#34;summary&#34;`</div><div class="operator"></div>
-	<div class="ident">Reason</div>       <div class="ident">string</div>          <div class="literal">`json:&#34;reason&#34;`</div><div class="operator"></div>
-	<div class="ident">Resolution</div>   <div class="ident">string</div>          <div class="literal">`json:&#34;resolution&#34;`</div><div class="operator"></div>
-	<div class="ident">MoreInfo</div>     <div class="ident">json</div><div class="operator">.</div><div class="ident">RawMessage</div> <div class="literal">`json:&#34;more_info&#34;`</div><div class="operator"></div>
-	<div class="ident">ErrorKey</div>     <div class="ident">ErrorKey</div>        <div class="literal">`json:&#34;error_key&#34;`</div><div class="operator"></div>
-	<div class="ident">Condition</div>    <div class="ident">string</div>          <div class="literal">`json:&#34;condition&#34;`</div><div class="operator"></div>
-	<div class="ident">Description</div>  <div class="ident">string</div>          <div class="literal">`json:&#34;description&#34;`</div><div class="operator"></div>
-	<div class="ident">TotalRisk</div>    <div class="ident">int</div>             <div class="literal">`json:&#34;total_risk&#34;`</div><div class="operator"></div>
-	<div class="ident">RiskOfChange</div> <div class="ident">int</div>             <div class="literal">`json:&#34;risk_of_change&#34;`</div><div class="operator"></div>
-	<div class="ident">PublishDate</div>  <div class="ident">time</div><div class="operator">.</div><div class="ident">Time</div>       <div class="literal">`json:&#34;publish_date&#34;`</div><div class="operator"></div>
-	<div class="ident">Active</div>       <div class="ident">bool</div>            <div class="literal">`json:&#34;active&#34;`</div><div class="operator"></div>
-	<div class="ident">Internal</div>     <div class="ident">bool</div>            <div class="literal">`json:&#34;internal&#34;`</div><div class="operator"></div>
-	<div class="ident">Generic</div>      <div class="ident">string</div>          <div class="literal">`json:&#34;generic&#34;`</div><div class="operator"></div>
-	<div class="ident">Tags</div>         <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div>        <div class="literal">`json:&#34;tags&#34;`</div><div class="operator"></div>
+	<div class="ident">Module</div>       <div class="ident">RuleID</div>    <div class="literal">`json:&#34;module&#34;`</div><div class="operator"></div>
+	<div class="ident">Name</div>         <div class="ident">string</div>    <div class="literal">`json:&#34;name&#34;`</div><div class="operator"></div>
+	<div class="ident">Summary</div>      <div class="ident">string</div>    <div class="literal">`json:&#34;summary&#34;`</div><div class="operator"></div>
+	<div class="ident">Reason</div>       <div class="ident">string</div>    <div class="literal">`json:&#34;reason&#34;`</div><div class="operator"></div>
+	<div class="ident">Resolution</div>   <div class="ident">string</div>    <div class="literal">`json:&#34;resolution&#34;`</div><div class="operator"></div>
+	<div class="ident">MoreInfo</div>     <div class="ident">string</div>    <div class="literal">`json:&#34;more_info&#34;`</div><div class="operator"></div>
+	<div class="ident">ErrorKey</div>     <div class="ident">ErrorKey</div>  <div class="literal">`json:&#34;error_key&#34;`</div><div class="operator"></div>
+	<div class="ident">Condition</div>    <div class="ident">string</div>    <div class="literal">`json:&#34;condition&#34;`</div><div class="operator"></div>
+	<div class="ident">Description</div>  <div class="ident">string</div>    <div class="literal">`json:&#34;description&#34;`</div><div class="operator"></div>
+	<div class="ident">TotalRisk</div>    <div class="ident">int</div>       <div class="literal">`json:&#34;total_risk&#34;`</div><div class="operator"></div>
+	<div class="ident">RiskOfChange</div> <div class="ident">int</div>       <div class="literal">`json:&#34;risk_of_change&#34;`</div><div class="operator"></div>
+	<div class="ident">PublishDate</div>  <div class="ident">time</div><div class="operator">.</div><div class="ident">Time</div> <div class="literal">`json:&#34;publish_date&#34;`</div><div class="operator"></div>
+	<div class="ident">Active</div>       <div class="ident">bool</div>      <div class="literal">`json:&#34;active&#34;`</div><div class="operator"></div>
+	<div class="ident">Internal</div>     <div class="ident">bool</div>      <div class="literal">`json:&#34;internal&#34;`</div><div class="operator"></div>
+	<div class="ident">Generic</div>      <div class="ident">string</div>    <div class="literal">`json:&#34;generic&#34;`</div><div class="operator"></div>
+	<div class="ident">Tags</div>         <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div>  <div class="literal">`json:&#34;tags&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
