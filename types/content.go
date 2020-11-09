@@ -1,13 +1,11 @@
 package types
 
-import "encoding/json"
-
 // RuleContent wraps all the content available for a rule into a single structure.
 type RuleContent struct {
 	Summary    string                         `json:"summary"`
 	Reason     string                         `json:"reason"`
 	Resolution string                         `json:"resolution"`
-	MoreInfo   json.RawMessage                `json:"more_info"`
+	MoreInfo   string                         `json:"more_info"`
 	Plugin     RulePluginInfo                 `json:"plugin"`
 	ErrorKeys  map[string]RuleErrorKeyContent `json:"error_keys"`
 	HasReason  bool
