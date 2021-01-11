@@ -48,7 +48,7 @@ var (
 		http.MethodPost,
 		"Logs_20140328.DescribeLogStreams",
 		`{
-					"descending": false,
+					"descending": true,
 					"logGroupName": "` + cloudWatchConf.LogGroup + `",
 					"logStreamNamePrefix": "` + cloudWatchConf.StreamName + `",
 					"orderBy": "LogStreamName"
