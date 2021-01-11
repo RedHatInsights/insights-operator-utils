@@ -20,4 +20,4 @@ then
     GO111MODULE=off go get github.com/gordonklaus/ineffassign
 fi
 
-ineffassign .
+ineffassign ./...
