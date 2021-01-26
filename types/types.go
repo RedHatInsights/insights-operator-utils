@@ -213,6 +213,6 @@ type ClusterReports struct {
 	Status      string                      `json:"status"`
 }
 
-//Version is just a constant integer for now, max value 255. If we one day
+//SchemaVersion is just a constant integer for now, max value 255. If we one day
 //need more versions, better consider upgrading to semantic versioning.
 type SchemaVersion uint8
