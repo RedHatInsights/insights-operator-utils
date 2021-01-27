@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
- Copyright 2020 Red Hat, Inc
+ Copyright 2021 Red Hat, Inc
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@
     <tbody>
       
       <tr class="section">
-	<td class="doc"><p>Copyright 2020 Red Hat, Inc</p>
+	<td class="doc"><p>Copyright 2020, 2021  Red Hat, Inc</p>
 
 <p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -486,6 +486,15 @@ aggregator to return more reports.</p>
 	<div class="ident">GeneratedAt</div> <div class="ident">string</div>                      <div class="literal">`json:&#34;generated_at&#34;`</div><div class="operator"></div>
 	<div class="ident">Status</div>      <div class="ident">string</div>                      <div class="literal">`json:&#34;status&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>SchemaVersion is just a constant integer for now, max value 255. If we one day
+need more versions, better consider upgrading to semantic versioning.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">SchemaVersion</div> <div class="ident">uint8</div><div class="operator"></div>
 
 </code></pre></td>
       </tr>
