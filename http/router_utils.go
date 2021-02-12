@@ -94,7 +94,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (types.RuleID
 		const message = "unable to get rule id"
 		log.Error().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
-		return types.RuleID(0), false
+		return types.RuleID("0"), false
 	}
 
 	ruleIDValidator := regexp.MustCompile(`^[a-zA-Z_0-9.]+$`)
@@ -109,7 +109,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (types.RuleID
 			ParamValue: ruleID,
 			ErrString:  err.Error(),
 		})
-		return types.RuleID(0), false
+		return types.RuleID("0"), false
 	}
 
 	return types.RuleID(ruleID), true
@@ -123,7 +123,7 @@ func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (types.Erro
 		const message = "unable to get error_key"
 		log.Error().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
-		return types.ErrorKey(0), false
+		return types.ErrorKey("0"), false
 	}
 
 	return types.ErrorKey(errorKey), true
