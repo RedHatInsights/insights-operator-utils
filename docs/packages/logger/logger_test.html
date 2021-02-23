@@ -163,7 +163,7 @@ limitations under the License.</p>
 		<div class="ident">CreateStreamIfNotExists</div><div class="operator">:</div> <div class="ident">true</div><div class="operator">,</div>
 		<div class="ident">Debug</div><div class="operator">:</div>                   <div class="ident">false</div><div class="operator">,</div>
 	<div class="operator">}</div><div class="operator"></div>
-	<div class="ident">describeLogStreamsEvent</div> <div class="operator">=</div> <div class="ident">CloudWatchExpect</div><div class="operator">{</div>
+	<div class="ident">describeLogStreamsEvent</div> <div class="operator">=</div> <div class="ident">RemoteLoggingExpect</div><div class="operator">{</div>
 		<div class="ident">http</div><div class="operator">.</div><div class="ident">MethodPost</div><div class="operator">,</div>
 		<div class="literal">&#34;Logs_20140328.DescribeLogStreams&#34;</div><div class="operator">,</div>
 		<div class="literal">`{
@@ -193,7 +193,7 @@ limitations under the License.</p>
 	<div class="operator">}</div><div class="operator"></div>
 <div class="operator">)</div><div class="operator"></div>
 
-<div class="keyword">type</div> <div class="ident">CloudWatchExpect</div> <div class="keyword">struct</div> <div class="operator">{</div>
+<div class="keyword">type</div> <div class="ident">RemoteLoggingExpect</div> <div class="keyword">struct</div> <div class="operator">{</div>
 	<div class="ident">ExpectedMethod</div>   <div class="ident">string</div><div class="operator"></div>
 	<div class="ident">ExpectedTarget</div>   <div class="ident">string</div><div class="operator"></div>
 	<div class="ident">ExpectedBody</div>     <div class="ident">string</div><div class="operator"></div>
@@ -212,8 +212,10 @@ limitations under the License.</p>
 			<div class="ident">Debug</div><div class="operator">:</div>                      <div class="ident">false</div><div class="operator">,</div>
 			<div class="ident">LogLevel</div><div class="operator">:</div>                   <div class="literal">&#34;debug&#34;</div><div class="operator">,</div>
 			<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">false</div><div class="operator">,</div>
+			<div class="ident">LoggingToSentryEnabled</div><div class="operator">:</div>     <div class="ident">false</div><div class="operator">,</div>
 		<div class="operator">}</div><div class="operator">,</div>
 		<div class="ident">logger</div><div class="operator">.</div><div class="ident">CloudWatchConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
 		<div class="ident">zerolog</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">buf</div><div class="operator">)</div><div class="operator">,</div>
 	<div class="operator">)</div><div class="operator"></div>
 	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
@@ -250,6 +252,7 @@ limitations under the License.</p>
 					<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">false</div><div class="operator">,</div>
 				<div class="operator">}</div><div class="operator">,</div>
 				<div class="ident">logger</div><div class="operator">.</div><div class="ident">CloudWatchConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
+				<div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
 				<div class="ident">zerolog</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">buf</div><div class="operator">)</div><div class="operator">,</div>
 			<div class="operator">)</div><div class="operator"></div>
 			<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
@@ -310,6 +313,7 @@ limitations under the License.</p>
 			<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">true</div><div class="operator">,</div>
 		<div class="operator">}</div><div class="operator">,</div>
 		<div class="ident">logger</div><div class="operator">.</div><div class="ident">CloudWatchConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div>
 	<div class="operator">)</div><div class="operator"></div>
 	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
@@ -321,7 +325,7 @@ limitations under the License.</p>
 		<div class="keyword">const</div> <div class="ident">baseURL</div> <div class="operator">=</div> <div class="literal">&#34;http://localhost:9999&#34;</div><div class="operator"></div>
 		<div class="ident">logger</div><div class="operator">.</div><div class="ident">AWSCloudWatchEndpoint</div> <div class="operator">=</div> <div class="ident">baseURL</div> <div class="operator">&#43;</div> <div class="literal">&#34;/cloudwatch&#34;</div><div class="operator"></div>
 
-		<div class="ident">expects</div> <div class="operator">:=</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">CloudWatchExpect</div><div class="operator">{</div>
+		<div class="ident">expects</div> <div class="operator">:=</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">RemoteLoggingExpect</div><div class="operator">{</div>
 			<div class="operator">{</div>
 				<div class="ident">http</div><div class="operator">.</div><div class="ident">MethodPost</div><div class="operator">,</div>
 				<div class="literal">&#34;Logs_20140328.CreateLogStream&#34;</div><div class="operator">,</div>
@@ -396,11 +400,25 @@ limitations under the License.</p>
 			<div class="ident">Debug</div><div class="operator">:</div>                      <div class="ident">false</div><div class="operator">,</div>
 			<div class="ident">LogLevel</div><div class="operator">:</div>                   <div class="literal">&#34;debug&#34;</div><div class="operator">,</div>
 			<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">true</div><div class="operator">,</div>
-		<div class="operator">}</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div><div class="operator">,</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
 		<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 
 		<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;test message&#34;</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator">,</div> <div class="ident">testTimeout</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestInitZerolog_LogToSentry</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">sentryConf</div> <div class="operator">:=</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div>
+		<div class="ident">SentryDSN</div><div class="operator">:</div> <div class="literal">&#34;http://hash@localhost:9999/project/1&#34;</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">InitZerolog</div><div class="operator">(</div><div class="ident">logger</div><div class="operator">.</div><div class="ident">LoggingConfiguration</div><div class="operator">{</div>
+		<div class="ident">Debug</div><div class="operator">:</div>                      <div class="ident">false</div><div class="operator">,</div>
+		<div class="ident">LogLevel</div><div class="operator">:</div>                   <div class="literal">&#34;debug&#34;</div><div class="operator">,</div>
+		<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">false</div><div class="operator">,</div>
+		<div class="ident">LoggingToSentryEnabled</div><div class="operator">:</div>     <div class="ident">true</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">,</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">CloudWatchConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">sentryConf</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>

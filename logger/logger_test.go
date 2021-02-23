@@ -44,7 +44,7 @@ var (
 		CreateStreamIfNotExists: true,
 		Debug:                   false,
 	}
-	describeLogStreamsEvent = CloudWatchExpect{
+	describeLogStreamsEvent = RemoteLoggingExpect{
 		http.MethodPost,
 		"Logs_20140328.DescribeLogStreams",
 		`{
@@ -74,7 +74,7 @@ var (
 	}
 )
 
-type CloudWatchExpect struct {
+type RemoteLoggingExpect struct {
 	ExpectedMethod   string
 	ExpectedTarget   string
 	ExpectedBody     string
@@ -93,8 +93,10 @@ func TestSaramaZerologger(t *testing.T) {
 			Debug:                      false,
 			LogLevel:                   "debug",
 			LoggingToCloudWatchEnabled: false,
+			LoggingToSentryEnabled:     false,
 		},
 		logger.CloudWatchConfiguration{},
+		logger.SentryLoggingConfiguration{},
 		zerolog.New(buf),
 	)
 	helpers.FailOnError(t, err)
@@ -131,6 +133,7 @@ func TestLoggerSetLogLevel(t *testing.T) {
 					LoggingToCloudWatchEnabled: false,
 				},
 				logger.CloudWatchConfiguration{},
+				logger.SentryLoggingConfiguration{},
 				zerolog.New(buf),
 			)
 			helpers.FailOnError(t, err)
@@ -191,6 +194,7 @@ func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 			LoggingToCloudWatchEnabled: true,
 		},
 		logger.CloudWatchConfiguration{},
+		logger.SentryLoggingConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -202,7 +206,7 @@ func TestLoggingToCloudwatch(t *testing.T) {
 		const baseURL = "http://localhost:9999"
 		logger.AWSCloudWatchEndpoint = baseURL + "/cloudwatch"
 
-		expects := []CloudWatchExpect{
+		expects := []RemoteLoggingExpect{
 			{
 				http.MethodPost,
 				"Logs_20140328.CreateLogStream",
@@ -277,9 +281,23 @@ func TestLoggingToCloudwatch(t *testing.T) {
 			Debug:                      false,
 			LogLevel:                   "debug",
 			LoggingToCloudWatchEnabled: true,
-		}, cloudWatchConf)
+		}, cloudWatchConf, logger.SentryLoggingConfiguration{})
 		helpers.FailOnError(t, err)
 
 		log.Error().Msg("test message")
 	}, testTimeout)
+}
+
+func TestInitZerolog_LogToSentry(t *testing.T) {
+	sentryConf := logger.SentryLoggingConfiguration{
+		SentryDSN: "http://hash@localhost:9999/project/1",
+	}
+
+	err := logger.InitZerolog(logger.LoggingConfiguration{
+		Debug:                      false,
+		LogLevel:                   "debug",
+		LoggingToCloudWatchEnabled: false,
+		LoggingToSentryEnabled:     true,
+	}, logger.CloudWatchConfiguration{}, sentryConf)
+	helpers.FailOnError(t, err)
 }

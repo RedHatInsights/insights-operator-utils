@@ -27,6 +27,7 @@ import (
 
 	"github.com/RedHatInsights/cloudwatch"
 	"github.com/Shopify/sarama"
+	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -34,6 +35,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
+
+var needClose []io.Closer = []io.Closer{}
 
 // WorkaroundForRHIOPS729 keeps only those fields that are currently getting their way to Kibana
 // TODO: delete when RHIOPS-729 is fixed
@@ -79,7 +82,7 @@ var AWSCloudWatchEndpoint string
 
 // InitZerolog initializes zerolog with provided configs to use proper stdout and/or CloudWatch logging
 func InitZerolog(
-	loggingConf LoggingConfiguration, cloudWatchConf CloudWatchConfiguration, additionalWriters ...io.Writer,
+	loggingConf LoggingConfiguration, cloudWatchConf CloudWatchConfiguration, sentryConf SentryLoggingConfiguration, additionalWriters ...io.Writer,
 ) error {
 	setGlobalLogLevel(loggingConf)
 
@@ -137,6 +140,16 @@ func InitZerolog(
 		writers = append(writers, &WorkaroundForRHIOPS729{Writer: cloudWatchWriter})
 	}
 
+	if loggingConf.LoggingToSentryEnabled {
+		sentryWriter, err := zlogsentry.New(sentryConf.SentryDSN)
+		if err != nil {
+			return err
+		}
+
+		writers = append(writers, sentryWriter)
+		needClose = append(needClose, sentryWriter)
+	}
+
 	logsWriter := io.MultiWriter(writers...)
 
 	log.Logger = zerolog.New(logsWriter).With().Timestamp().Logger()
@@ -145,6 +158,16 @@ func InitZerolog(
 	sarama.Logger = &SaramaZerologger{zerologger: log.Logger}
 
 	return nil
+}
+
+// CloseZerolog closes properly the zerolog, if needed
+func CloseZerolog() {
+
+	for _, toClose := range needClose {
+		if err := toClose.Close(); err != nil {
+			log.Debug().Err(err).Msg("Error when closing")
+		}
+	}
 }
 
 func setGlobalLogLevel(configuration LoggingConfiguration) {

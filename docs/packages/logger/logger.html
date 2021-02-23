@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
- Copyright 2020 Red Hat, Inc
+ Copyright 2021 Red Hat, Inc
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -151,6 +151,7 @@ the access to CloudWatch server to sending the log messages there.</p>
 
 	<div class="literal">&#34;github.com/RedHatInsights/cloudwatch&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;github.com/Shopify/sarama&#34;</div><div class="operator"></div>
+	<div class="ident">zlogsentry</div> <div class="literal">&#34;github.com/archdx/zerolog-sentry&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;github.com/aws/aws-sdk-go/aws&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;github.com/aws/aws-sdk-go/aws/credentials&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</div><div class="operator"></div>
@@ -158,6 +159,8 @@ the access to CloudWatch server to sending the log messages there.</p>
 	<div class="literal">&#34;github.com/rs/zerolog&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;github.com/rs/zerolog/log&#34;</div><div class="operator"></div>
 <div class="operator">)</div><div class="operator"></div>
+
+<div class="keyword">var</div> <div class="ident">needClose</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">io</div><div class="operator">.</div><div class="ident">Closer</div> <div class="operator">=</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">io</div><div class="operator">.</div><div class="ident">Closer</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
       </tr>
@@ -228,7 +231,7 @@ TODO: delete when RHIOPS-729 is fixed</p>
 	<td class="doc"><p>InitZerolog initializes zerolog with provided configs to use proper stdout and/or CloudWatch logging</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">InitZerolog</div><div class="operator">(</div>
-	<div class="ident">loggingConf</div> <div class="ident">LoggingConfiguration</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div> <div class="ident">CloudWatchConfiguration</div><div class="operator">,</div> <div class="ident">additionalWriters</div> <div class="operator">...</div><div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator">,</div>
+	<div class="ident">loggingConf</div> <div class="ident">LoggingConfiguration</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div> <div class="ident">CloudWatchConfiguration</div><div class="operator">,</div> <div class="ident">sentryConf</div> <div class="ident">SentryLoggingConfiguration</div><div class="operator">,</div> <div class="ident">additionalWriters</div> <div class="operator">...</div><div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator">,</div>
 <div class="operator">)</div> <div class="ident">error</div> <div class="operator">{</div>
 	<div class="ident">setGlobalLogLevel</div><div class="operator">(</div><div class="ident">loggingConf</div><div class="operator">)</div><div class="operator"></div>
 
@@ -291,6 +294,16 @@ TODO: delete when RHIOPS-729 is fixed</p>
 		<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">WorkaroundForRHIOPS729</div><div class="operator">{</div><div class="ident">Writer</div><div class="operator">:</div> <div class="ident">cloudWatchWriter</div><div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
+	<div class="keyword">if</div> <div class="ident">loggingConf</div><div class="operator">.</div><div class="ident">LoggingToSentryEnabled</div> <div class="operator">{</div>
+		<div class="ident">sentryWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">zlogsentry</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">sentryConf</div><div class="operator">.</div><div class="ident">SentryDSN</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="ident">sentryWriter</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">needClose</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">needClose</div><div class="operator">,</div> <div class="ident">sentryWriter</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
 	<div class="ident">logsWriter</div> <div class="operator">:=</div> <div class="ident">io</div><div class="operator">.</div><div class="ident">MultiWriter</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">...</div><div class="operator">)</div><div class="operator"></div>
 
 	<div class="ident">log</div><div class="operator">.</div><div class="ident">Logger</div> <div class="operator">=</div> <div class="ident">zerolog</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">logsWriter</div><div class="operator">)</div><div class="operator">.</div><div class="ident">With</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Timestamp</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Logger</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
@@ -304,6 +317,21 @@ TODO: delete when RHIOPS-729 is fixed</p>
 	<td class="code"><pre><code>	<div class="ident">sarama</div><div class="operator">.</div><div class="ident">Logger</div> <div class="operator">=</div> <div class="operator">&amp;</div><div class="ident">SaramaZerologger</div><div class="operator">{</div><div class="ident">zerologger</div><div class="operator">:</div> <div class="ident">log</div><div class="operator">.</div><div class="ident">Logger</div><div class="operator">}</div><div class="operator"></div>
 
 	<div class="keyword">return</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>CloseZerolog closes properly the zerolog, if needed</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">CloseZerolog</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">toClose</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">needClose</div> <div class="operator">{</div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">toClose</div><div class="operator">.</div><div class="ident">Close</div><div class="operator">(</div><div class="operator">)</div><div class="operator">;</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">log</div><div class="operator">.</div><div class="ident">Debug</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Err</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Error when closing&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 <div class="keyword">func</div> <div class="ident">setGlobalLogLevel</div><div class="operator">(</div><div class="ident">configuration</div> <div class="ident">LoggingConfiguration</div><div class="operator">)</div> <div class="operator">{</div>

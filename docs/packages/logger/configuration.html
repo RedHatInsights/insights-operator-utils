@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
- Copyright 2020 Red Hat, Inc
+ Copyright 2021 Red Hat, Inc
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -173,6 +173,15 @@ limitations under the License.
 (configuration for CloudWatch is in CloudWatchConfiguration)</p>
 </td>
 	<td class="code"><pre><code>	<div class="ident">LoggingToCloudWatchEnabled</div> <div class="ident">bool</div> <div class="literal">`mapstructure:&#34;logging_to_cloud_watch_enabled&#34; toml:&#34;logging_to_cloud_watch_enabled&#34;`</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>LoggingToSentryEnable enables logging to Sentry
+(configuretion for Sentry is in SentryLoggingConfiguration)</p>
+</td>
+	<td class="code"><pre><code>	<div class="ident">LoggingToSentryEnabled</div> <div class="ident">bool</div> <div class="literal">`mapstructure:&#34;logging_to_sentry_enabled&#34; toml:&#34;logging_to_sentry_enabled&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
@@ -197,6 +206,16 @@ limitations under the License.
 	<td class="doc"><p>enable debug logs for debugging aws client itself</p>
 </td>
 	<td class="code"><pre><code>	<div class="ident">Debug</div> <div class="ident">bool</div> <div class="literal">`mapstructure:&#34;debug&#34; toml:&#34;debug&#34;`</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>SentryLoggingConfiguration represents the configuration of Sentry logger</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">SentryLoggingConfiguration</div> <div class="keyword">struct</div> <div class="operator">{</div>
+	<div class="ident">SentryDSN</div> <div class="ident">string</div> <div class="literal">`mapstructure:&#34;dsn&#34; toml:&#34;dsn&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
