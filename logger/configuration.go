@@ -34,6 +34,10 @@ type LoggingConfiguration struct {
 	// LoggingToCloudWatchEnabled enables logging to CloudWatch
 	// (configuration for CloudWatch is in CloudWatchConfiguration)
 	LoggingToCloudWatchEnabled bool `mapstructure:"logging_to_cloud_watch_enabled" toml:"logging_to_cloud_watch_enabled"`
+
+	// LoggingToSentryEnabled enables logging to Sentry
+	// (configuration for Sentry is in SentryLoggingConfiguration)
+	LoggingToSentryEnabled bool `mapstructure:"logging_to_sentry_enabled" toml:"logging_to_sentry_enabled"`
 }
 
 // CloudWatchConfiguration represents configuration of CloudWatch logger
@@ -48,4 +52,9 @@ type CloudWatchConfiguration struct {
 
 	// enable debug logs for debugging aws client itself
 	Debug bool `mapstructure:"debug" toml:"debug"`
+}
+
+// SentryLoggingConfiguration represents the configuration of Sentry logger
+type SentryLoggingConfiguration struct {
+	SentryDSN string `mapstructure:"dsn" toml:"dsn"`
 }
