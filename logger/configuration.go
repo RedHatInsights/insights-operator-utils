@@ -35,8 +35,8 @@ type LoggingConfiguration struct {
 	// (configuration for CloudWatch is in CloudWatchConfiguration)
 	LoggingToCloudWatchEnabled bool `mapstructure:"logging_to_cloud_watch_enabled" toml:"logging_to_cloud_watch_enabled"`
 
-	// LoggingToSentryEnable enables logging to Sentry
-	// (configuretion for Sentry is in SentryLoggingConfiguration)
+	// LoggingToSentryEnabled enables logging to Sentry
+	// (configuration for Sentry is in SentryLoggingConfiguration)
 	LoggingToSentryEnabled bool `mapstructure:"logging_to_sentry_enabled" toml:"logging_to_sentry_enabled"`
 }
 
