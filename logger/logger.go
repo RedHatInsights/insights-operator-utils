@@ -150,7 +150,7 @@ func InitZerolog(
 		needClose = append(needClose, sentryWriter)
 	}
 
-	logsWriter := io.MultiWriter(writers...)
+	logsWriter := zerolog.MultiLevelWriter(writers...)
 
 	log.Logger = zerolog.New(logsWriter).With().Timestamp().Logger()
 
