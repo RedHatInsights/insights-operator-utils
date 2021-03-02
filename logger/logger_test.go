@@ -301,3 +301,18 @@ func TestInitZerolog_LogToSentry(t *testing.T) {
 	}, logger.CloudWatchConfiguration{}, sentryConf)
 	helpers.FailOnError(t, err)
 }
+
+func TestCloseZerolog(t *testing.T) {
+	sentryConf := logger.SentryLoggingConfiguration{
+		SentryDSN: "http://hash@localhost:9999/project/1",
+	}
+
+	err := logger.InitZerolog(logger.LoggingConfiguration{
+		Debug:                      false,
+		LogLevel:                   "debug",
+		LoggingToCloudWatchEnabled: false,
+		LoggingToSentryEnabled:     true,
+	}, logger.CloudWatchConfiguration{}, sentryConf)
+	helpers.FailOnError(t, err)
+	logger.CloseZerolog()
+}
