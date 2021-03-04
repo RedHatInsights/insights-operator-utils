@@ -87,14 +87,19 @@ func InitZerolog(
 	setGlobalLogLevel(loggingConf)
 
 	var writers []io.Writer
+	selectedOutput := os.Stdout
 
 	writers = append(writers, additionalWriters...)
 
+	if loggingConf.UseStderr {
+		selectedOutput = os.Stderr
+	}
+
 	if loggingConf.Debug {
 		// nice colored output
-		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stdout})
+		writers = append(writers, zerolog.ConsoleWriter{Out: selectedOutput})
 	} else {
-		writers = append(writers, os.Stdout)
+		writers = append(writers, selectedOutput)
 	}
 
 	cloudWatchConf.StreamName = strings.ReplaceAll(cloudWatchConf.StreamName, "$HOSTNAME", os.Getenv("HOSTNAME"))

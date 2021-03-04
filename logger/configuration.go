@@ -19,7 +19,8 @@ package logger
 // LoggingConfiguration represents configuration for logging in general
 type LoggingConfiguration struct {
 	// Debug enables pretty colored logging
-	Debug bool `mapstructure:"debug" toml:"debug"`
+	Debug     bool `mapstructure:"debug" toml:"debug"`
+	UseStderr bool `mapstructure:"use_stderr" toml:"use_stderr"`
 
 	// LogLevel sets logging level to show. Possible values are:
 	// "debug"
