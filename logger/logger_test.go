@@ -379,3 +379,23 @@ func TestStderrLog(t *testing.T) {
 	assert.NotContains(t, string(stdOut), `"message":"Hello world"`)
 	assert.Contains(t, string(stdErr), `"message":"Hello world"`)
 }
+
+func TestKafkaLogging(t *testing.T) {
+	kafkaLoggingConf := logger.KafkaZerologConfiguration{
+		Broker: "kafka:9092",
+		Topic:  "log_topic",
+	}
+
+	err := logger.InitZerolog(logger.LoggingConfiguration{
+		Debug:                      false,
+		LogLevel:                   "debug",
+		LoggingToCloudWatchEnabled: false,
+		LoggingToSentryEnabled:     false,
+		LoggingToKafkaEnabled:      true,
+	},
+		logger.CloudWatchConfiguration{},
+		logger.SentryLoggingConfiguration{},
+		kafkaLoggingConf,
+	)
+	helpers.FailOnError(t, err)
+}
