@@ -316,3 +316,37 @@ func TestCloseZerolog(t *testing.T) {
 	helpers.FailOnError(t, err)
 	logger.CloseZerolog()
 }
+
+func TestStdoutLog(t *testing.T) {
+	stdOut, stdErr := helpers.CatchingOutputs(t, func() {
+		_ = logger.InitZerolog(logger.LoggingConfiguration{
+			Debug:                      false,
+			UseStderr:                  false,
+			LogLevel:                   "debug",
+			LoggingToCloudWatchEnabled: false,
+			LoggingToSentryEnabled:     false,
+		}, logger.CloudWatchConfiguration{}, logger.SentryLoggingConfiguration{})
+
+		log.Info().Msg("Hello world")
+	})
+
+	assert.Contains(t, string(stdOut), `"message":"Hello world"`)
+	assert.NotContains(t, string(stdErr), `"message":"Hello world"`)
+}
+
+func TestStderrLog(t *testing.T) {
+	stdOut, stdErr := helpers.CatchingOutputs(t, func() {
+		_ = logger.InitZerolog(logger.LoggingConfiguration{
+			Debug:                      false,
+			UseStderr:                  true,
+			LogLevel:                   "debug",
+			LoggingToCloudWatchEnabled: false,
+			LoggingToSentryEnabled:     false,
+		}, logger.CloudWatchConfiguration{}, logger.SentryLoggingConfiguration{})
+
+		log.Info().Msg("Hello world")
+	})
+
+	assert.NotContains(t, string(stdOut), `"message":"Hello world"`)
+	assert.Contains(t, string(stdErr), `"message":"Hello world"`)
+}

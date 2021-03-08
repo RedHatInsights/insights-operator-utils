@@ -421,6 +421,55 @@ limitations under the License.</p>
 	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
+<div class="keyword">func</div> <div class="ident">TestCloseZerolog</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">sentryConf</div> <div class="operator">:=</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div>
+		<div class="ident">SentryDSN</div><div class="operator">:</div> <div class="literal">&#34;http://hash@localhost:9999/project/1&#34;</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">InitZerolog</div><div class="operator">(</div><div class="ident">logger</div><div class="operator">.</div><div class="ident">LoggingConfiguration</div><div class="operator">{</div>
+		<div class="ident">Debug</div><div class="operator">:</div>                      <div class="ident">false</div><div class="operator">,</div>
+		<div class="ident">LogLevel</div><div class="operator">:</div>                   <div class="literal">&#34;debug&#34;</div><div class="operator">,</div>
+		<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">false</div><div class="operator">,</div>
+		<div class="ident">LoggingToSentryEnabled</div><div class="operator">:</div>     <div class="ident">true</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">,</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">CloudWatchConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">sentryConf</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">logger</div><div class="operator">.</div><div class="ident">CloseZerolog</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestStdoutLog</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">stdOut</div><div class="operator">,</div> <div class="ident">stdErr</div> <div class="operator">:=</div> <div class="ident">helpers</div><div class="operator">.</div><div class="ident">CatchingOutputs</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">logger</div><div class="operator">.</div><div class="ident">InitZerolog</div><div class="operator">(</div><div class="ident">logger</div><div class="operator">.</div><div class="ident">LoggingConfiguration</div><div class="operator">{</div>
+			<div class="ident">Debug</div><div class="operator">:</div>                      <div class="ident">false</div><div class="operator">,</div>
+			<div class="ident">UseStderr</div><div class="operator">:</div>                  <div class="ident">false</div><div class="operator">,</div>
+			<div class="ident">LogLevel</div><div class="operator">:</div>                   <div class="literal">&#34;debug&#34;</div><div class="operator">,</div>
+			<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">false</div><div class="operator">,</div>
+			<div class="ident">LoggingToSentryEnabled</div><div class="operator">:</div>     <div class="ident">false</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">CloudWatchConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Info</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Hello world&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">Contains</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">stdOut</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">`&#34;message&#34;:&#34;Hello world&#34;`</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">NotContains</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">stdErr</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">`&#34;message&#34;:&#34;Hello world&#34;`</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestStderrLog</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">stdOut</div><div class="operator">,</div> <div class="ident">stdErr</div> <div class="operator">:=</div> <div class="ident">helpers</div><div class="operator">.</div><div class="ident">CatchingOutputs</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">logger</div><div class="operator">.</div><div class="ident">InitZerolog</div><div class="operator">(</div><div class="ident">logger</div><div class="operator">.</div><div class="ident">LoggingConfiguration</div><div class="operator">{</div>
+			<div class="ident">Debug</div><div class="operator">:</div>                      <div class="ident">false</div><div class="operator">,</div>
+			<div class="ident">UseStderr</div><div class="operator">:</div>                  <div class="ident">true</div><div class="operator">,</div>
+			<div class="ident">LogLevel</div><div class="operator">:</div>                   <div class="literal">&#34;debug&#34;</div><div class="operator">,</div>
+			<div class="ident">LoggingToCloudWatchEnabled</div><div class="operator">:</div> <div class="ident">false</div><div class="operator">,</div>
+			<div class="ident">LoggingToSentryEnabled</div><div class="operator">:</div>     <div class="ident">false</div><div class="operator">,</div>
+		<div class="operator">}</div><div class="operator">,</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">CloudWatchConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">logger</div><div class="operator">.</div><div class="ident">SentryLoggingConfiguration</div><div class="operator">{</div><div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Info</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Hello world&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">NotContains</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">stdOut</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">`&#34;message&#34;:&#34;Hello world&#34;`</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">assert</div><div class="operator">.</div><div class="ident">Contains</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">stdErr</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">`&#34;message&#34;:&#34;Hello world&#34;`</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
 </code></pre></td>
       </tr>
       
