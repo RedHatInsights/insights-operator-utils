@@ -95,73 +95,39 @@ func InitZerolog(
 		selectedOutput = os.Stderr
 	}
 
+	var consoleWriter io.Writer
+	consoleWriter = selectedOutput
+
 	if loggingConf.Debug {
 		// nice colored output
-		writers = append(writers, zerolog.ConsoleWriter{Out: selectedOutput})
-	} else {
-		writers = append(writers, selectedOutput)
+		consoleWriter = zerolog.ConsoleWriter{Out: selectedOutput}
 	}
 
-	cloudWatchConf.StreamName = strings.ReplaceAll(cloudWatchConf.StreamName, "$HOSTNAME", os.Getenv("HOSTNAME"))
+	writers = append(writers, consoleWriter)
 
 	if loggingConf.LoggingToCloudWatchEnabled {
-		awsLogLevel := aws.LogOff
-		if cloudWatchConf.Debug {
-			awsLogLevel = aws.LogDebugWithSigning |
-				aws.LogDebugWithSigning |
-				aws.LogDebugWithHTTPBody |
-				aws.LogDebugWithEventStreamBody
-		}
-
-		awsConf := aws.NewConfig().
-			WithCredentials(credentials.NewStaticCredentials(
-				cloudWatchConf.AWSAccessID, cloudWatchConf.AWSSecretKey, cloudWatchConf.AWSSessionToken,
-			)).
-			WithRegion(cloudWatchConf.AWSRegion).
-			WithLogLevel(awsLogLevel)
-
-		if len(AWSCloudWatchEndpoint) > 0 {
-			awsConf = awsConf.WithEndpoint(AWSCloudWatchEndpoint)
-		}
-
-		cloudWatchSession := session.Must(session.NewSession(awsConf))
-		CloudWatchClient := cloudwatchlogs.New(cloudWatchSession)
-
-		var cloudWatchWriter io.Writer
-		if cloudWatchConf.CreateStreamIfNotExists {
-			group := cloudwatch.NewGroup(cloudWatchConf.LogGroup, CloudWatchClient)
-
-			var err error
-			cloudWatchWriter, err = group.Create(cloudWatchConf.StreamName)
-			if err != nil {
-				return err
-			}
-		} else {
-			cloudWatchWriter = cloudwatch.NewWriter(
-				cloudWatchConf.LogGroup, cloudWatchConf.StreamName, CloudWatchClient,
-			)
+		cloudWatchWriter, err := setupCloudwatchLogging(cloudWatchConf)
+		if err != nil {
+			return err
 		}
 
 		writers = append(writers, &WorkaroundForRHIOPS729{Writer: cloudWatchWriter})
 	}
 
 	if loggingConf.LoggingToSentryEnabled {
-		sentryWriter, err := zlogsentry.New(sentryConf.SentryDSN)
+		sentryWriter, err := setupSentryLogging(sentryConf)
 		if err != nil {
 			return err
 		}
-
 		writers = append(writers, sentryWriter)
 		needClose = append(needClose, sentryWriter)
 	}
 
 	logsWriter := zerolog.MultiLevelWriter(writers...)
-
 	log.Logger = zerolog.New(logsWriter).With().Timestamp().Logger()
 
 	// zerolog doesn't implement Println required by sarama
 	sarama.Logger = &SaramaZerologger{zerologger: log.Logger}
-
 	return nil
 }
 
@@ -190,6 +156,57 @@ func setGlobalLogLevel(configuration LoggingConfiguration) {
 	case "fatal":
 		zerolog.SetGlobalLevel(zerolog.FatalLevel)
 	}
+}
+
+func setupCloudwatchLogging(conf CloudWatchConfiguration) (io.Writer, error) {
+	conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", os.Getenv("HOSTNAME"))
+	awsLogLevel := aws.LogOff
+	if conf.Debug {
+		awsLogLevel = aws.LogDebugWithSigning |
+			aws.LogDebugWithSigning |
+			aws.LogDebugWithHTTPBody |
+			aws.LogDebugWithEventStreamBody
+	}
+
+	awsConf := aws.NewConfig().
+		WithCredentials(credentials.NewStaticCredentials(
+			conf.AWSAccessID, conf.AWSSecretKey, conf.AWSSessionToken,
+		)).
+		WithRegion(conf.AWSRegion).
+		WithLogLevel(awsLogLevel)
+
+	if len(AWSCloudWatchEndpoint) > 0 {
+		awsConf = awsConf.WithEndpoint(AWSCloudWatchEndpoint)
+	}
+
+	cloudWatchSession := session.Must(session.NewSession(awsConf))
+	CloudWatchClient := cloudwatchlogs.New(cloudWatchSession)
+
+	var cloudWatchWriter io.Writer
+	if conf.CreateStreamIfNotExists {
+		group := cloudwatch.NewGroup(conf.LogGroup, CloudWatchClient)
+
+		var err error
+		cloudWatchWriter, err = group.Create(conf.StreamName)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		cloudWatchWriter = cloudwatch.NewWriter(
+			conf.LogGroup, conf.StreamName, CloudWatchClient,
+		)
+	}
+
+	return cloudWatchWriter, nil
+}
+
+func setupSentryLogging(conf SentryLoggingConfiguration) (io.WriteCloser, error) {
+	sentryWriter, err := zlogsentry.New(conf.SentryDSN)
+	if err != nil {
+		return nil, err
+	}
+
+	return sentryWriter, nil
 }
 
 const kafkaErrorPrefix = "kafka: error"
