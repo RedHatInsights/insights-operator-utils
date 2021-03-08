@@ -319,7 +319,7 @@ func TestCloseZerolog(t *testing.T) {
 
 func TestStdoutLog(t *testing.T) {
 	stdOut, stdErr := helpers.CatchingOutputs(t, func() {
-		logger.InitZerolog(logger.LoggingConfiguration{
+		_ = logger.InitZerolog(logger.LoggingConfiguration{
 			Debug:                      false,
 			UseStderr:                  false,
 			LogLevel:                   "debug",
@@ -336,7 +336,7 @@ func TestStdoutLog(t *testing.T) {
 
 func TestStderrLog(t *testing.T) {
 	stdOut, stdErr := helpers.CatchingOutputs(t, func() {
-		logger.InitZerolog(logger.LoggingConfiguration{
+		_ = logger.InitZerolog(logger.LoggingConfiguration{
 			Debug:                      false,
 			UseStderr:                  true,
 			LogLevel:                   "debug",
