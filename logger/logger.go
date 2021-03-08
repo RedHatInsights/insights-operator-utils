@@ -26,6 +26,7 @@ import (
 	"strings"
 
 	"github.com/RedHatInsights/cloudwatch"
+	"github.com/RedHatInsights/kafka-zerolog/kafkazerolog"
 	"github.com/Shopify/sarama"
 	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/aws/aws-sdk-go/aws"
@@ -82,7 +83,8 @@ var AWSCloudWatchEndpoint string
 
 // InitZerolog initializes zerolog with provided configs to use proper stdout and/or CloudWatch logging
 func InitZerolog(
-	loggingConf LoggingConfiguration, cloudWatchConf CloudWatchConfiguration, sentryConf SentryLoggingConfiguration, additionalWriters ...io.Writer,
+	loggingConf LoggingConfiguration, cloudWatchConf CloudWatchConfiguration, sentryConf SentryLoggingConfiguration,
+	kafkazerologConf KafkaZerologConfiguration, additionalWriters ...io.Writer,
 ) error {
 	setGlobalLogLevel(loggingConf)
 
@@ -121,6 +123,15 @@ func InitZerolog(
 		}
 		writers = append(writers, sentryWriter)
 		needClose = append(needClose, sentryWriter)
+	}
+
+	if loggingConf.LoggingToKafkaEnabled {
+		kafkaWriter, err := setupKafkaZerolog(kafkazerologConf)
+		if err != nil {
+			return err
+		}
+		writers = append(writers, kafkaWriter)
+		needClose = append(needClose, kafkaWriter)
 	}
 
 	logsWriter := zerolog.MultiLevelWriter(writers...)
@@ -207,6 +218,15 @@ func setupSentryLogging(conf SentryLoggingConfiguration) (io.WriteCloser, error)
 	}
 
 	return sentryWriter, nil
+}
+
+func setupKafkaZerolog(conf KafkaZerologConfiguration) (io.WriteCloser, error) {
+	return kafkazerolog.NewKafkaLogger(kafkazerolog.KafkaLoggerConf{
+		Broker: conf.Broker,
+		Topic:  conf.Topic,
+		Cert:   conf.CertPath,
+		Level:  conf.Level,
+	})
 }
 
 const kafkaErrorPrefix = "kafka: error"
