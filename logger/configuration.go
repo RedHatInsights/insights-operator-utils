@@ -16,6 +16,8 @@ limitations under the License.
 
 package logger
 
+import "github.com/rs/zerolog"
+
 // LoggingConfiguration represents configuration for logging in general
 type LoggingConfiguration struct {
 	// Debug enables pretty colored logging
@@ -39,6 +41,10 @@ type LoggingConfiguration struct {
 	// LoggingToSentryEnabled enables logging to Sentry
 	// (configuration for Sentry is in SentryLoggingConfiguration)
 	LoggingToSentryEnabled bool `mapstructure:"logging_to_sentry_enabled" toml:"logging_to_sentry_enabled"`
+
+	// LoggingToKafkaEnabled enables logging to Kafka
+	// (configuration for Kafka logging is in KafkaZerologConfiguration)
+	LoggingToKafkaEnabled bool `mapstructure:"logging_to_kafka_enabled" toml:"logging_to_kafka_enabled"`
 }
 
 // CloudWatchConfiguration represents configuration of CloudWatch logger
@@ -58,4 +64,12 @@ type CloudWatchConfiguration struct {
 // SentryLoggingConfiguration represents the configuration of Sentry logger
 type SentryLoggingConfiguration struct {
 	SentryDSN string `mapstructure:"dsn" toml:"dsn"`
+}
+
+// KafkaZerologConfiguration represetns the configuration for sending log messages to a Kafka topic
+type KafkaZerologConfiguration struct {
+	Broker   string        `mapstructure:"broker" toml:"broker"`
+	Topic    string        `mapstructure:"topic" toml:"topic"`
+	CertPath string        `mapstructure:"cert_path" toml:"cert_path"`
+	Level    zerolog.Level `mapstructure:"level" toml:"level"`
 }

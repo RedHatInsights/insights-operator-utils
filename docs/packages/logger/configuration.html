@@ -135,6 +135,8 @@ limitations under the License.
 
 <div class="keyword">package</div> <div class="ident">logger</div><div class="operator"></div>
 
+<div class="keyword">import</div> <div class="literal">&#34;github.com/rs/zerolog&#34;</div><div class="operator"></div>
+
 </code></pre></td>
       </tr>
       
@@ -183,6 +185,15 @@ limitations under the License.
 (configuration for Sentry is in SentryLoggingConfiguration)</p>
 </td>
 	<td class="code"><pre><code>	<div class="ident">LoggingToSentryEnabled</div> <div class="ident">bool</div> <div class="literal">`mapstructure:&#34;logging_to_sentry_enabled&#34; toml:&#34;logging_to_sentry_enabled&#34;`</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>LoggingToKafkaEnabled enables logging to Kafka
+(configuration for Kafka logging is in KafkaZerologConfiguration)</p>
+</td>
+	<td class="code"><pre><code>	<div class="ident">LoggingToKafkaEnabled</div> <div class="ident">bool</div> <div class="literal">`mapstructure:&#34;logging_to_kafka_enabled&#34; toml:&#34;logging_to_kafka_enabled&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>
@@ -217,6 +228,19 @@ limitations under the License.
 </td>
 	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">SentryLoggingConfiguration</div> <div class="keyword">struct</div> <div class="operator">{</div>
 	<div class="ident">SentryDSN</div> <div class="ident">string</div> <div class="literal">`mapstructure:&#34;dsn&#34; toml:&#34;dsn&#34;`</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>KafkaZerologConfiguration represetns the configuration for sending log messages to a Kafka topic</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">KafkaZerologConfiguration</div> <div class="keyword">struct</div> <div class="operator">{</div>
+	<div class="ident">Broker</div>   <div class="ident">string</div>        <div class="literal">`mapstructure:&#34;broker&#34; toml:&#34;broker&#34;`</div><div class="operator"></div>
+	<div class="ident">Topic</div>    <div class="ident">string</div>        <div class="literal">`mapstructure:&#34;topic&#34; toml:&#34;topic&#34;`</div><div class="operator"></div>
+	<div class="ident">CertPath</div> <div class="ident">string</div>        <div class="literal">`mapstructure:&#34;cert_path&#34; toml:&#34;cert_path&#34;`</div><div class="operator"></div>
+	<div class="ident">Level</div>    <div class="ident">zerolog</div><div class="operator">.</div><div class="ident">Level</div> <div class="literal">`mapstructure:&#34;level&#34; toml:&#34;level&#34;`</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 </code></pre></td>

@@ -150,6 +150,7 @@ the access to CloudWatch server to sending the log messages there.</p>
 	<div class="literal">&#34;strings&#34;</div><div class="operator"></div>
 
 	<div class="literal">&#34;github.com/RedHatInsights/cloudwatch&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/RedHatInsights/kafka-zerolog/kafkazerolog&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;github.com/Shopify/sarama&#34;</div><div class="operator"></div>
 	<div class="ident">zlogsentry</div> <div class="literal">&#34;github.com/archdx/zerolog-sentry&#34;</div><div class="operator"></div>
 	<div class="literal">&#34;github.com/aws/aws-sdk-go/aws&#34;</div><div class="operator"></div>
@@ -231,7 +232,8 @@ TODO: delete when RHIOPS-729 is fixed</p>
 	<td class="doc"><p>InitZerolog initializes zerolog with provided configs to use proper stdout and/or CloudWatch logging</p>
 </td>
 	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">InitZerolog</div><div class="operator">(</div>
-	<div class="ident">loggingConf</div> <div class="ident">LoggingConfiguration</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div> <div class="ident">CloudWatchConfiguration</div><div class="operator">,</div> <div class="ident">sentryConf</div> <div class="ident">SentryLoggingConfiguration</div><div class="operator">,</div> <div class="ident">additionalWriters</div> <div class="operator">...</div><div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator">,</div>
+	<div class="ident">loggingConf</div> <div class="ident">LoggingConfiguration</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div> <div class="ident">CloudWatchConfiguration</div><div class="operator">,</div> <div class="ident">sentryConf</div> <div class="ident">SentryLoggingConfiguration</div><div class="operator">,</div>
+	<div class="ident">kafkazerologConf</div> <div class="ident">KafkaZerologConfiguration</div><div class="operator">,</div> <div class="ident">additionalWriters</div> <div class="operator">...</div><div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator">,</div>
 <div class="operator">)</div> <div class="ident">error</div> <div class="operator">{</div>
 	<div class="ident">setGlobalLogLevel</div><div class="operator">(</div><div class="ident">loggingConf</div><div class="operator">)</div><div class="operator"></div>
 
@@ -244,6 +246,9 @@ TODO: delete when RHIOPS-729 is fixed</p>
 		<div class="ident">selectedOutput</div> <div class="operator">=</div> <div class="ident">os</div><div class="operator">.</div><div class="ident">Stderr</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
+	<div class="keyword">var</div> <div class="ident">consoleWriter</div> <div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator"></div>
+	<div class="ident">consoleWriter</div> <div class="operator">=</div> <div class="ident">selectedOutput</div><div class="operator"></div>
+
 	<div class="keyword">if</div> <div class="ident">loggingConf</div><div class="operator">.</div><div class="ident">Debug</div> <div class="operator">{</div>
 </code></pre></td>
       </tr>
@@ -251,66 +256,39 @@ TODO: delete when RHIOPS-729 is fixed</p>
       <tr class="section">
 	<td class="doc"><p>nice colored output</p>
 </td>
-	<td class="code"><pre><code>		<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="ident">zerolog</div><div class="operator">.</div><div class="ident">ConsoleWriter</div><div class="operator">{</div><div class="ident">Out</div><div class="operator">:</div> <div class="ident">selectedOutput</div><div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
-	<div class="operator">}</div> <div class="keyword">else</div> <div class="operator">{</div>
-		<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="ident">selectedOutput</div><div class="operator">)</div><div class="operator"></div>
+	<td class="code"><pre><code>		<div class="ident">consoleWriter</div> <div class="operator">=</div> <div class="ident">zerolog</div><div class="operator">.</div><div class="ident">ConsoleWriter</div><div class="operator">{</div><div class="ident">Out</div><div class="operator">:</div> <div class="ident">selectedOutput</div><div class="operator">}</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
-	<div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">StreamName</div> <div class="operator">=</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">ReplaceAll</div><div class="operator">(</div><div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">StreamName</div><div class="operator">,</div> <div class="literal">&#34;$HOSTNAME&#34;</div><div class="operator">,</div> <div class="ident">os</div><div class="operator">.</div><div class="ident">Getenv</div><div class="operator">(</div><div class="literal">&#34;HOSTNAME&#34;</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="ident">consoleWriter</div><div class="operator">)</div><div class="operator"></div>
 
 	<div class="keyword">if</div> <div class="ident">loggingConf</div><div class="operator">.</div><div class="ident">LoggingToCloudWatchEnabled</div> <div class="operator">{</div>
-		<div class="ident">awsLogLevel</div> <div class="operator">:=</div> <div class="ident">aws</div><div class="operator">.</div><div class="ident">LogOff</div><div class="operator"></div>
-		<div class="keyword">if</div> <div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">Debug</div> <div class="operator">{</div>
-			<div class="ident">awsLogLevel</div> <div class="operator">=</div> <div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithSigning</div> <div class="operator">|</div>
-				<div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithSigning</div> <div class="operator">|</div>
-				<div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithHTTPBody</div> <div class="operator">|</div>
-				<div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithEventStreamBody</div><div class="operator"></div>
-		<div class="operator">}</div><div class="operator"></div>
-
-		<div class="ident">awsConf</div> <div class="operator">:=</div> <div class="ident">aws</div><div class="operator">.</div><div class="ident">NewConfig</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div>
-			<div class="ident">WithCredentials</div><div class="operator">(</div><div class="ident">credentials</div><div class="operator">.</div><div class="ident">NewStaticCredentials</div><div class="operator">(</div>
-				<div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">AWSAccessID</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">AWSSecretKey</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">AWSSessionToken</div><div class="operator">,</div>
-			<div class="operator">)</div><div class="operator">)</div><div class="operator">.</div>
-			<div class="ident">WithRegion</div><div class="operator">(</div><div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">AWSRegion</div><div class="operator">)</div><div class="operator">.</div>
-			<div class="ident">WithLogLevel</div><div class="operator">(</div><div class="ident">awsLogLevel</div><div class="operator">)</div><div class="operator"></div>
-
-		<div class="keyword">if</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">AWSCloudWatchEndpoint</div><div class="operator">)</div> <div class="operator">&gt;</div> <div class="literal">0</div> <div class="operator">{</div>
-			<div class="ident">awsConf</div> <div class="operator">=</div> <div class="ident">awsConf</div><div class="operator">.</div><div class="ident">WithEndpoint</div><div class="operator">(</div><div class="ident">AWSCloudWatchEndpoint</div><div class="operator">)</div><div class="operator"></div>
-		<div class="operator">}</div><div class="operator"></div>
-
-		<div class="ident">cloudWatchSession</div> <div class="operator">:=</div> <div class="ident">session</div><div class="operator">.</div><div class="ident">Must</div><div class="operator">(</div><div class="ident">session</div><div class="operator">.</div><div class="ident">NewSession</div><div class="operator">(</div><div class="ident">awsConf</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
-		<div class="ident">CloudWatchClient</div> <div class="operator">:=</div> <div class="ident">cloudwatchlogs</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">cloudWatchSession</div><div class="operator">)</div><div class="operator"></div>
-
-		<div class="keyword">var</div> <div class="ident">cloudWatchWriter</div> <div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator"></div>
-		<div class="keyword">if</div> <div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">CreateStreamIfNotExists</div> <div class="operator">{</div>
-			<div class="ident">group</div> <div class="operator">:=</div> <div class="ident">cloudwatch</div><div class="operator">.</div><div class="ident">NewGroup</div><div class="operator">(</div><div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">LogGroup</div><div class="operator">,</div> <div class="ident">CloudWatchClient</div><div class="operator">)</div><div class="operator"></div>
-
-			<div class="keyword">var</div> <div class="ident">err</div> <div class="ident">error</div><div class="operator"></div>
-			<div class="ident">cloudWatchWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">=</div> <div class="ident">group</div><div class="operator">.</div><div class="ident">Create</div><div class="operator">(</div><div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">StreamName</div><div class="operator">)</div><div class="operator"></div>
-			<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
-				<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
-			<div class="operator">}</div><div class="operator"></div>
-		<div class="operator">}</div> <div class="keyword">else</div> <div class="operator">{</div>
-			<div class="ident">cloudWatchWriter</div> <div class="operator">=</div> <div class="ident">cloudwatch</div><div class="operator">.</div><div class="ident">NewWriter</div><div class="operator">(</div>
-				<div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">LogGroup</div><div class="operator">,</div> <div class="ident">cloudWatchConf</div><div class="operator">.</div><div class="ident">StreamName</div><div class="operator">,</div> <div class="ident">CloudWatchClient</div><div class="operator">,</div>
-			<div class="operator">)</div><div class="operator"></div>
+		<div class="ident">cloudWatchWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">setupCloudwatchLogging</div><div class="operator">(</div><div class="ident">cloudWatchConf</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
 
 		<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">WorkaroundForRHIOPS729</div><div class="operator">{</div><div class="ident">Writer</div><div class="operator">:</div> <div class="ident">cloudWatchWriter</div><div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
 	<div class="keyword">if</div> <div class="ident">loggingConf</div><div class="operator">.</div><div class="ident">LoggingToSentryEnabled</div> <div class="operator">{</div>
-		<div class="ident">sentryWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">zlogsentry</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">sentryConf</div><div class="operator">.</div><div class="ident">SentryDSN</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">sentryWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">setupSentryLogging</div><div class="operator">(</div><div class="ident">sentryConf</div><div class="operator">)</div><div class="operator"></div>
 		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
 			<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
 		<div class="operator">}</div><div class="operator"></div>
-
 		<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="ident">sentryWriter</div><div class="operator">)</div><div class="operator"></div>
 		<div class="ident">needClose</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">needClose</div><div class="operator">,</div> <div class="ident">sentryWriter</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
 
-	<div class="ident">logsWriter</div> <div class="operator">:=</div> <div class="ident">zerolog</div><div class="operator">.</div><div class="ident">MultiLevelWriter</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">...</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">loggingConf</div><div class="operator">.</div><div class="ident">LoggingToKafkaEnabled</div> <div class="operator">{</div>
+		<div class="ident">kafkaWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">setupKafkaZerolog</div><div class="operator">(</div><div class="ident">kafkazerologConf</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+		<div class="ident">writers</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">,</div> <div class="ident">kafkaWriter</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">needClose</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">needClose</div><div class="operator">,</div> <div class="ident">kafkaWriter</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
 
+	<div class="ident">logsWriter</div> <div class="operator">:=</div> <div class="ident">zerolog</div><div class="operator">.</div><div class="ident">MultiLevelWriter</div><div class="operator">(</div><div class="ident">writers</div><div class="operator">...</div><div class="operator">)</div><div class="operator"></div>
 	<div class="ident">log</div><div class="operator">.</div><div class="ident">Logger</div> <div class="operator">=</div> <div class="ident">zerolog</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">logsWriter</div><div class="operator">)</div><div class="operator">.</div><div class="ident">With</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Timestamp</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Logger</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
 
 </code></pre></td>
@@ -320,7 +298,6 @@ TODO: delete when RHIOPS-729 is fixed</p>
 	<td class="doc"><p>zerolog doesn't implement Println required by sarama</p>
 </td>
 	<td class="code"><pre><code>	<div class="ident">sarama</div><div class="operator">.</div><div class="ident">Logger</div> <div class="operator">=</div> <div class="operator">&amp;</div><div class="ident">SaramaZerologger</div><div class="operator">{</div><div class="ident">zerologger</div><div class="operator">:</div> <div class="ident">log</div><div class="operator">.</div><div class="ident">Logger</div><div class="operator">}</div><div class="operator"></div>
-
 	<div class="keyword">return</div> <div class="ident">nil</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
@@ -354,6 +331,66 @@ TODO: delete when RHIOPS-729 is fixed</p>
 	<div class="keyword">case</div> <div class="literal">&#34;fatal&#34;</div><div class="operator">:</div>
 		<div class="ident">zerolog</div><div class="operator">.</div><div class="ident">SetGlobalLevel</div><div class="operator">(</div><div class="ident">zerolog</div><div class="operator">.</div><div class="ident">FatalLevel</div><div class="operator">)</div><div class="operator"></div>
 	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">setupCloudwatchLogging</div><div class="operator">(</div><div class="ident">conf</div> <div class="ident">CloudWatchConfiguration</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">conf</div><div class="operator">.</div><div class="ident">StreamName</div> <div class="operator">=</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">ReplaceAll</div><div class="operator">(</div><div class="ident">conf</div><div class="operator">.</div><div class="ident">StreamName</div><div class="operator">,</div> <div class="literal">&#34;$HOSTNAME&#34;</div><div class="operator">,</div> <div class="ident">os</div><div class="operator">.</div><div class="ident">Getenv</div><div class="operator">(</div><div class="literal">&#34;HOSTNAME&#34;</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">awsLogLevel</div> <div class="operator">:=</div> <div class="ident">aws</div><div class="operator">.</div><div class="ident">LogOff</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">conf</div><div class="operator">.</div><div class="ident">Debug</div> <div class="operator">{</div>
+		<div class="ident">awsLogLevel</div> <div class="operator">=</div> <div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithSigning</div> <div class="operator">|</div>
+			<div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithSigning</div> <div class="operator">|</div>
+			<div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithHTTPBody</div> <div class="operator">|</div>
+			<div class="ident">aws</div><div class="operator">.</div><div class="ident">LogDebugWithEventStreamBody</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">awsConf</div> <div class="operator">:=</div> <div class="ident">aws</div><div class="operator">.</div><div class="ident">NewConfig</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">WithCredentials</div><div class="operator">(</div><div class="ident">credentials</div><div class="operator">.</div><div class="ident">NewStaticCredentials</div><div class="operator">(</div>
+			<div class="ident">conf</div><div class="operator">.</div><div class="ident">AWSAccessID</div><div class="operator">,</div> <div class="ident">conf</div><div class="operator">.</div><div class="ident">AWSSecretKey</div><div class="operator">,</div> <div class="ident">conf</div><div class="operator">.</div><div class="ident">AWSSessionToken</div><div class="operator">,</div>
+		<div class="operator">)</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">WithRegion</div><div class="operator">(</div><div class="ident">conf</div><div class="operator">.</div><div class="ident">AWSRegion</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">WithLogLevel</div><div class="operator">(</div><div class="ident">awsLogLevel</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">if</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">AWSCloudWatchEndpoint</div><div class="operator">)</div> <div class="operator">&gt;</div> <div class="literal">0</div> <div class="operator">{</div>
+		<div class="ident">awsConf</div> <div class="operator">=</div> <div class="ident">awsConf</div><div class="operator">.</div><div class="ident">WithEndpoint</div><div class="operator">(</div><div class="ident">AWSCloudWatchEndpoint</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">cloudWatchSession</div> <div class="operator">:=</div> <div class="ident">session</div><div class="operator">.</div><div class="ident">Must</div><div class="operator">(</div><div class="ident">session</div><div class="operator">.</div><div class="ident">NewSession</div><div class="operator">(</div><div class="ident">awsConf</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">CloudWatchClient</div> <div class="operator">:=</div> <div class="ident">cloudwatchlogs</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">cloudWatchSession</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">var</div> <div class="ident">cloudWatchWriter</div> <div class="ident">io</div><div class="operator">.</div><div class="ident">Writer</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">conf</div><div class="operator">.</div><div class="ident">CreateStreamIfNotExists</div> <div class="operator">{</div>
+		<div class="ident">group</div> <div class="operator">:=</div> <div class="ident">cloudwatch</div><div class="operator">.</div><div class="ident">NewGroup</div><div class="operator">(</div><div class="ident">conf</div><div class="operator">.</div><div class="ident">LogGroup</div><div class="operator">,</div> <div class="ident">CloudWatchClient</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="keyword">var</div> <div class="ident">err</div> <div class="ident">error</div><div class="operator"></div>
+		<div class="ident">cloudWatchWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">=</div> <div class="ident">group</div><div class="operator">.</div><div class="ident">Create</div><div class="operator">(</div><div class="ident">conf</div><div class="operator">.</div><div class="ident">StreamName</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="keyword">return</div> <div class="ident">nil</div><div class="operator">,</div> <div class="ident">err</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div> <div class="keyword">else</div> <div class="operator">{</div>
+		<div class="ident">cloudWatchWriter</div> <div class="operator">=</div> <div class="ident">cloudwatch</div><div class="operator">.</div><div class="ident">NewWriter</div><div class="operator">(</div>
+			<div class="ident">conf</div><div class="operator">.</div><div class="ident">LogGroup</div><div class="operator">,</div> <div class="ident">conf</div><div class="operator">.</div><div class="ident">StreamName</div><div class="operator">,</div> <div class="ident">CloudWatchClient</div><div class="operator">,</div>
+		<div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">return</div> <div class="ident">cloudWatchWriter</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">setupSentryLogging</div><div class="operator">(</div><div class="ident">conf</div> <div class="ident">SentryLoggingConfiguration</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">io</div><div class="operator">.</div><div class="ident">WriteCloser</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">sentryWriter</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">zlogsentry</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">conf</div><div class="operator">.</div><div class="ident">SentryDSN</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="keyword">return</div> <div class="ident">nil</div><div class="operator">,</div> <div class="ident">err</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">return</div> <div class="ident">sentryWriter</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">setupKafkaZerolog</div><div class="operator">(</div><div class="ident">conf</div> <div class="ident">KafkaZerologConfiguration</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">io</div><div class="operator">.</div><div class="ident">WriteCloser</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">return</div> <div class="ident">kafkazerolog</div><div class="operator">.</div><div class="ident">NewKafkaLogger</div><div class="operator">(</div><div class="ident">kafkazerolog</div><div class="operator">.</div><div class="ident">KafkaLoggerConf</div><div class="operator">{</div>
+		<div class="ident">Broker</div><div class="operator">:</div> <div class="ident">conf</div><div class="operator">.</div><div class="ident">Broker</div><div class="operator">,</div>
+		<div class="ident">Topic</div><div class="operator">:</div>  <div class="ident">conf</div><div class="operator">.</div><div class="ident">Topic</div><div class="operator">,</div>
+		<div class="ident">Cert</div><div class="operator">:</div>   <div class="ident">conf</div><div class="operator">.</div><div class="ident">CertPath</div><div class="operator">,</div>
+		<div class="ident">Level</div><div class="operator">:</div>  <div class="ident">conf</div><div class="operator">.</div><div class="ident">Level</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
 <div class="operator">}</div><div class="operator"></div>
 
 <div class="keyword">const</div> <div class="ident">kafkaErrorPrefix</div> <div class="operator">=</div> <div class="literal">&#34;kafka: error&#34;</div><div class="operator"></div>
