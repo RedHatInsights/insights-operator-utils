@@ -5,6 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/RedHatInsights/insights-operator-utils)](https://goreportcard.com/report/github.com/RedHatInsights/insights-operator-utils)
 [![Build Status](https://travis-ci.org/RedHatInsights/insights-operator-utils.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-operator-utils)
 [![codecov](https://codecov.io/gh/RedHatInsights/insights-operator-utils/branch/master/graph/badge.svg)](https://codecov.io/gh/RedHatInsights/insights-operator-utils)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/RedHatInsights/insights-operator-utils)
 
 
 ## Description
