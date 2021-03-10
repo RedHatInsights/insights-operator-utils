@@ -153,20 +153,26 @@ func CloseZerolog() {
 }
 
 func setGlobalLogLevel(configuration LoggingConfiguration) {
-	logLevel := strings.ToLower(strings.TrimSpace(configuration.LogLevel))
+	logLevel := convertLogLevel(configuration.LogLevel)
+	zerolog.SetGlobalLevel(logLevel)
+}
 
-	switch logLevel {
+func convertLogLevel(level string) zerolog.Level {
+	level = strings.ToLower(strings.TrimSpace(level))
+	switch level {
 	case "debug":
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		return zerolog.DebugLevel
 	case "info":
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		return zerolog.InfoLevel
 	case "warn", "warning":
-		zerolog.SetGlobalLevel(zerolog.WarnLevel)
+		return zerolog.WarnLevel
 	case "error":
-		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+		return zerolog.ErrorLevel
 	case "fatal":
-		zerolog.SetGlobalLevel(zerolog.FatalLevel)
+		return zerolog.FatalLevel
 	}
+
+	return zerolog.DebugLevel
 }
 
 func setupCloudwatchLogging(conf CloudWatchConfiguration) (io.Writer, error) {
@@ -225,7 +231,7 @@ func setupKafkaZerolog(conf KafkaZerologConfiguration) (io.WriteCloser, error) {
 		Broker: conf.Broker,
 		Topic:  conf.Topic,
 		Cert:   conf.CertPath,
-		Level:  conf.Level,
+		Level:  convertLogLevel(conf.Level),
 	})
 }
 

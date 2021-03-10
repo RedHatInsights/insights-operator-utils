@@ -16,8 +16,6 @@ limitations under the License.
 
 package logger
 
-import "github.com/rs/zerolog"
-
 // LoggingConfiguration represents configuration for logging in general
 type LoggingConfiguration struct {
 	// Debug enables pretty colored logging
@@ -68,8 +66,8 @@ type SentryLoggingConfiguration struct {
 
 // KafkaZerologConfiguration represetns the configuration for sending log messages to a Kafka topic
 type KafkaZerologConfiguration struct {
-	Broker   string        `mapstructure:"broker" toml:"broker"`
-	Topic    string        `mapstructure:"topic" toml:"topic"`
-	CertPath string        `mapstructure:"cert_path" toml:"cert_path"`
-	Level    zerolog.Level `mapstructure:"level" toml:"level"`
+	Broker   string `mapstructure:"broker" toml:"broker"`
+	Topic    string `mapstructure:"topic" toml:"topic"`
+	CertPath string `mapstructure:"cert_path" toml:"cert_path"`
+	Level    string `mapstructure:"level" toml:"level"`
 }
