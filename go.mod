@@ -14,7 +14,7 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0
 	github.com/mozillazg/request v0.8.0
-	github.com/prometheus/client_golang v1.7.1
+	github.com/prometheus/client_golang v1.10.0
 	github.com/prometheus/client_model v0.2.0
 	github.com/rs/zerolog v1.20.0
 	github.com/stretchr/testify v1.6.1
