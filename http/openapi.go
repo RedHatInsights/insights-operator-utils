@@ -1,5 +1,8 @@
 package httputils
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi.html
+
 import (
 	"io/ioutil"
 	"net/http"
