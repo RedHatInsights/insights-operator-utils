@@ -4,6 +4,9 @@
 // Package mock_io is a generated GoMock package.
 package mock_io
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tests/mock_io/read_closer.html
+
 import (
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
