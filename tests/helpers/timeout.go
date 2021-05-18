@@ -16,6 +16,9 @@ limitations under the License.
 
 package helpers
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tests/helpers/timeout.html
+
 import (
 	"testing"
 	"time"
