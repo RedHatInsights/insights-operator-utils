@@ -16,6 +16,9 @@
 // used elsewhere in the aggregator code.
 package types
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/types/types.html
+
 import (
 	"encoding/json"
 	"fmt"
