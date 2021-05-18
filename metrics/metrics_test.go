@@ -14,6 +14,9 @@
 
 package metrics_test
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/metrics/metrics_test.html
+
 import (
 	"fmt"
 	"net/http"

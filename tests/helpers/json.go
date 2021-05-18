@@ -14,6 +14,9 @@
 
 package helpers
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tests/helpers/json.html
+
 import "encoding/json"
 
 // ToJSONString converts anything to JSON or panics if it's not possible

@@ -16,6 +16,9 @@ limitations under the License.
 
 package collections_test
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/collections/slices_test.html
+
 import (
 	"testing"
 
