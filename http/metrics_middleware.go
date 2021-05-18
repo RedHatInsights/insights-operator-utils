@@ -14,6 +14,9 @@
 
 package httputils
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/http/metrics_middleware.html
+
 import (
 	"fmt"
 	"net/http"
