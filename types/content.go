@@ -1,5 +1,8 @@
 package types
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/types/content.html
+
 // RuleContent wraps all the content available for a rule into a single structure.
 type RuleContent struct {
 	Summary    string                         `json:"summary"`
