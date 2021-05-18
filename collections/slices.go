@@ -16,6 +16,9 @@ limitations under the License.
 
 package collections
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/collections/slices.html
+
 // StringInSlice tests whether the given string is contained in slice of strings
 func StringInSlice(a string, list []string) bool {
 	for _, b := range list {
