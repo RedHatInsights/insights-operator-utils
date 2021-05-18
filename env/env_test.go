@@ -16,6 +16,9 @@ limitations under the License.
 
 package env_test
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/env/env_test.html
+
 import (
 	"os"
 	"testing"
