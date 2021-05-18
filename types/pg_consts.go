@@ -14,6 +14,9 @@
 
 package types
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/types/pg_const.html
+
 const (
 	pgDuplicateTableErrorCode      = "42P07"
 	pgUndefinedTableErrorCode      = "42P01"

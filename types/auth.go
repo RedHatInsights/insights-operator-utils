@@ -14,6 +14,9 @@
 
 package types
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/types/auth.html
+
 // ContextKey is a type for user authentication token in request
 type ContextKey string
 
