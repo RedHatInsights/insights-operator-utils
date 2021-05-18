@@ -18,6 +18,9 @@ limitations under the License.
 
 package responses
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/responses/responses.html
+
 import (
 	"encoding/json"
 	"net/http"
