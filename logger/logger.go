@@ -18,6 +18,9 @@ limitations under the License.
 // the access to CloudWatch server to sending the log messages there.
 package logger
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/logger/logger.html
+
 import (
 	"encoding/json"
 	"fmt"

@@ -14,6 +14,9 @@
 
 package saramahelpers
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tests/saramahelpers/mock_consumer_group_claim.html
+
 import (
 	"time"
 
