@@ -16,6 +16,9 @@ limitations under the License.
 
 package logger
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/logger/configuration.html
+
 // LoggingConfiguration represents configuration for logging in general
 type LoggingConfiguration struct {
 	// Debug enables pretty colored logging
