@@ -14,6 +14,9 @@
 
 package helpers_test
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tests/helpers/catchoutput_test.html
+
 import (
 	"fmt"
 	"os"
