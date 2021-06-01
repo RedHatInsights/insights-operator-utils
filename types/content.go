@@ -41,7 +41,9 @@ type RulePluginInfo struct {
 type RuleErrorKeyContent struct {
 	Generic   string           `json:"generic"`
 	Metadata  ErrorKeyMetadata `json:"metadata"`
+	TotalRisk int              `json:"total_risk"`
 	Reason    string           `json:"reason"`
+	// DONTFIX has_reason until CCXDEV-5021
 	HasReason bool
 }
 
