@@ -50,7 +50,6 @@ type RuleErrorKeyContent struct {
 // ErrorKeyMetadata is a Go representation of the `metadata.yaml`
 // file inside of an error key content directory.
 type ErrorKeyMetadata struct {
-	Condition   string   `yaml:"condition" json:"condition"`
 	Description string   `yaml:"description" json:"description"`
 	Impact      string   `yaml:"impact" json:"impact"`
 	Likelihood  int      `yaml:"likelihood" json:"likelihood"`
