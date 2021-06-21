@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<!--
+ Copyright 2021 Red Hat, Inc
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html>
+<head>
+<title>openapi_test.go</title>
+<meta charset="utf-8"/>
+<style type="text/css">body {
+    background: rgb(225, 225, 225);
+    margin: 0px;
+    padding: 0px;
+}
+
+#docgo p {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo div {
+    display: inline;
+}
+
+#docgo #background {
+    position: fixed;
+    top: 0; left: 525px; right: 0; bottom: 0;
+    background: rgb(47, 47, 47);
+    border-left: 1px solid #e5e5ee;
+    z-index: -1;
+}
+
+#docgo .keyword {
+    color: rgb(250, 200, 100);
+}
+
+#docgo .literal {
+    color: rgb(140, 190, 100);
+}
+
+#docgo .ident {
+    color: white;
+}
+
+#docgo .operator {
+    color: white;
+}
+
+#docgo .comment {
+}
+
+#docgo h1, h2, h3, h4, h5 {
+    text-align: left;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo h1 {
+    margin-top: 40px;
+}
+
+#docgo .doc {
+    vertical-align: top;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: black;
+    min-width: 450px;
+    max-width: 450px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-bottom: 1px;
+    padding-left: 50px;
+    overflow-x: hidden;
+}
+
+#docgo .code {
+    min-width: 650px;
+    max-width: 650px;
+    padding-left: 25px;
+    padding-right: 15px;
+    border-left: 1px;
+    overflow-x: hidden;
+    vertical-align: top;
+}
+
+#docgo .code pre code  {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    color: rgb(120, 120, 120);
+}
+</style>
+</head>
+<body>
+<div id="docgo">
+  <div id="background"></div>
+  <table>
+    <thead><tr><th class="doc"><h1>openapi_test.go</h1></th><th class="code"></th></tr></thead>
+    <tbody>
+      
+      <tr class="section">
+	<td class="doc"><p>Copyright 2020 Red Hat, Inc</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">httputils_test</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Documentation in literate-programming-style is available at:
+https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi_test.html</p>
+</td>
+	<td class="code"><pre><code>
+<div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;testing&#34;</div><div class="operator"></div>
+
+	<div class="literal">&#34;github.com/stretchr/testify/assert&#34;</div><div class="operator"></div>
+
+	<div class="ident">httputils</div> <div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/http&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/tests/helpers&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">TestFilterOutDebugMethods</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;OK&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="keyword">for</div> <div class="ident">input</div><div class="operator">,</div> <div class="ident">expectedOutput</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div>
+			<div class="ident">openAPIFile</div><div class="operator">:</div> <div class="ident">openAPIFileWithoutDebugEndpoints</div><div class="operator">,</div>
+		<div class="operator">}</div> <div class="operator">{</div>
+			<div class="ident">output</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">FilterOutDebugMethods</div><div class="operator">(</div><div class="ident">input</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">helpers</div><div class="operator">.</div><div class="ident">FailOnError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">assert</div><div class="operator">.</div><div class="ident">JSONEq</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">expectedOutput</div><div class="operator">,</div> <div class="ident">output</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;Error&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">expectedErr</div> <div class="operator">:=</div> <div class="literal">`error unmarshaling JSON: Failed to unmarshal extension properties: `</div> <div class="operator">&#43;</div>
+			<div class="literal">`json: cannot unmarshal string into Go value of type map[string]json.RawMessage`</div> <div class="operator">&#43;</div> <div class="literal">&#34;\n&#34;</div> <div class="operator">&#43;</div>
+			<div class="literal">`Input: &#34;definitely-not-json&#34;`</div><div class="operator"></div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">httputils</div><div class="operator">.</div><div class="ident">FilterOutDebugMethods</div><div class="operator">(</div><div class="literal">&#34;definitely-not-json&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">EqualError</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">,</div> <div class="ident">expectedErr</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">const</div> <div class="operator">(</div>
+	<div class="ident">openAPIFile</div> <div class="operator">=</div> <div class="literal">`
+{
+	&#34;openapi&#34;: &#34;3.0.0&#34;,
+	&#34;info&#34;: {
+		&#34;title&#34;: &#34;title&#34;,
+		&#34;description&#34;: &#34;description&#34;,
+		&#34;version&#34;: &#34;1.0.0&#34;
+	},
+	&#34;components&#34;: {},
+	&#34;paths&#34;: {
+		&#34;/openapi.json&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;Returns the OpenAPI specification JSON.&#34;,
+				&#34;operationId&#34;: &#34;getOpenApi&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;A JSON containing the OpenAPI specification for this service.&#34;
+					}
+				}
+			}
+		},
+		&#34;/metrics&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;Read all metrics exposed by this service&#34;,
+				&#34;description&#34;: &#34;Currently the following metrics are exposed to be consumed by Prometheus or any other tool compatible with it: &#39;consumed_messages&#39; the total number of messages consumed from Kafka, &#39;consuming_errors&#39; the total number of errors during consuming messages from Kafka, &#39;successful_messages_processing_time&#39; the time to process successfully message, &#39;failed_messages_processing_time&#39; the time to process message fail, &#39;last_checked_timestamp_lag_minutes&#39; shows how slow we get messages from clusters, &#39;produced_messages&#39; the total number of produced messages, &#39;written_reports&#39; the total number of reports written to the storage, &#39;feedback_on_rules&#39; the total number of left feedback, &#39;sql_queries_counter&#39; the total number of SQL queries, &#39;sql_queries_durations&#39; the SQL queries durations.  Additionally it is possible to consume all metrics provided by Go runtime. There metrics start with &#39;go_&#39; and &#39;process_ &#39;prefixes.&#34;,
+				&#34;operationId&#34;: &#34;getMetrics&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;Default response containing all metrics in semi-structured text format&#34;
+					}
+				}
+			}
+		},
+		&#34;/organizations&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;Returns a list of available organization IDs.&#34;,
+				&#34;operationId&#34;: &#34;getOrganizations&#34;,
+				&#34;description&#34;: &#34;[DEBUG ONLY] List of organizations for which at least one Insights report is available via the API.&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;A JSON array of organization IDs.&#34;
+					}
+				},
+				&#34;tags&#34;: [
+					&#34;debug&#34;
+				]
+			}
+		},
+		&#34;/test&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;test&#34;,
+				&#34;operationId&#34;: &#34;test&#34;,
+				&#34;description&#34;: &#34;test&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;test&#34;
+					}
+				},
+				&#34;tags&#34;: [
+					&#34;debug&#34;
+				]
+			},
+			&#34;post&#34;: {
+				&#34;summary&#34;: &#34;test&#34;,
+				&#34;operationId&#34;: &#34;test2&#34;,
+				&#34;description&#34;: &#34;test&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;test&#34;
+					}
+				},
+			}
+		},
+		&#34;/organizations/{orgId}/clusters&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;Returns a list of clusters associated with the specified organization ID.&#34;,
+				&#34;operationId&#34;: &#34;getClustersForOrganization&#34;,
+				&#34;parameters&#34;: [
+					{
+						&#34;name&#34;: &#34;orgId&#34;,
+						&#34;in&#34;: &#34;path&#34;,
+						&#34;required&#34;: true,
+						&#34;description&#34;: &#34;ID of the requested organization.&#34;,
+						&#34;schema&#34;: {
+							&#34;type&#34;: &#34;integer&#34;,
+							&#34;format&#34;: &#34;int64&#34;,
+							&#34;minimum&#34;: 0
+						}
+					}
+				],
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;A JSON array of clusters that belong to the specified organization.&#34;
+					}
+				},
+				&#34;tags&#34;: [
+					&#34;prod&#34;
+				]
+			}
+		}
+	}
+}`</div><div class="operator"></div>
+
+	<div class="ident">openAPIFileWithoutDebugEndpoints</div> <div class="operator">=</div> <div class="literal">`
+{
+	&#34;openapi&#34;: &#34;3.0.0&#34;,
+	&#34;info&#34;: {
+		&#34;title&#34;: &#34;title&#34;,
+		&#34;description&#34;: &#34;description&#34;,
+		&#34;version&#34;: &#34;1.0.0&#34;
+	},
+	&#34;components&#34;: {},
+	&#34;paths&#34;: {
+		&#34;/openapi.json&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;Returns the OpenAPI specification JSON.&#34;,
+				&#34;operationId&#34;: &#34;getOpenApi&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;A JSON containing the OpenAPI specification for this service.&#34;
+					}
+				}
+			}
+		},
+		&#34;/metrics&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;Read all metrics exposed by this service&#34;,
+				&#34;description&#34;: &#34;Currently the following metrics are exposed to be consumed by Prometheus or any other tool compatible with it: &#39;consumed_messages&#39; the total number of messages consumed from Kafka, &#39;consuming_errors&#39; the total number of errors during consuming messages from Kafka, &#39;successful_messages_processing_time&#39; the time to process successfully message, &#39;failed_messages_processing_time&#39; the time to process message fail, &#39;last_checked_timestamp_lag_minutes&#39; shows how slow we get messages from clusters, &#39;produced_messages&#39; the total number of produced messages, &#39;written_reports&#39; the total number of reports written to the storage, &#39;feedback_on_rules&#39; the total number of left feedback, &#39;sql_queries_counter&#39; the total number of SQL queries, &#39;sql_queries_durations&#39; the SQL queries durations.  Additionally it is possible to consume all metrics provided by Go runtime. There metrics start with &#39;go_&#39; and &#39;process_ &#39;prefixes.&#34;,
+				&#34;operationId&#34;: &#34;getMetrics&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;Default response containing all metrics in semi-structured text format&#34;
+					}
+				}
+			}
+		},
+		&#34;/test&#34;: {
+			&#34;post&#34;: {
+				&#34;summary&#34;: &#34;test&#34;,
+				&#34;operationId&#34;: &#34;test2&#34;,
+				&#34;description&#34;: &#34;test&#34;,
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;test&#34;
+					}
+				}
+			}
+		},
+		&#34;/organizations/{orgId}/clusters&#34;: {
+			&#34;get&#34;: {
+				&#34;summary&#34;: &#34;Returns a list of clusters associated with the specified organization ID.&#34;,
+				&#34;operationId&#34;: &#34;getClustersForOrganization&#34;,
+				&#34;parameters&#34;: [
+					{
+						&#34;name&#34;: &#34;orgId&#34;,
+						&#34;in&#34;: &#34;path&#34;,
+						&#34;required&#34;: true,
+						&#34;description&#34;: &#34;ID of the requested organization.&#34;,
+						&#34;schema&#34;: {
+							&#34;type&#34;: &#34;integer&#34;,
+							&#34;format&#34;: &#34;int64&#34;,
+							&#34;minimum&#34;: 0
+						}
+					}
+				],
+				&#34;responses&#34;: {
+					&#34;200&#34;: {
+						&#34;description&#34;: &#34;A JSON array of clusters that belong to the specified organization.&#34;
+					}
+				},
+				&#34;tags&#34;: [
+					&#34;prod&#34;
+				]
+			}
+		}
+	}
+}`</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

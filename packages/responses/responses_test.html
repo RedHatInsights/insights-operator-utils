@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<!--
+ Copyright 2021 Red Hat, Inc
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html>
+<head>
+<title>responses_test.go</title>
+<meta charset="utf-8"/>
+<style type="text/css">body {
+    background: rgb(225, 225, 225);
+    margin: 0px;
+    padding: 0px;
+}
+
+#docgo p {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo div {
+    display: inline;
+}
+
+#docgo #background {
+    position: fixed;
+    top: 0; left: 525px; right: 0; bottom: 0;
+    background: rgb(47, 47, 47);
+    border-left: 1px solid #e5e5ee;
+    z-index: -1;
+}
+
+#docgo .keyword {
+    color: rgb(250, 200, 100);
+}
+
+#docgo .literal {
+    color: rgb(140, 190, 100);
+}
+
+#docgo .ident {
+    color: white;
+}
+
+#docgo .operator {
+    color: white;
+}
+
+#docgo .comment {
+}
+
+#docgo h1, h2, h3, h4, h5 {
+    text-align: left;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo h1 {
+    margin-top: 40px;
+}
+
+#docgo .doc {
+    vertical-align: top;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: black;
+    min-width: 450px;
+    max-width: 450px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-bottom: 1px;
+    padding-left: 50px;
+    overflow-x: hidden;
+}
+
+#docgo .code {
+    min-width: 650px;
+    max-width: 650px;
+    padding-left: 25px;
+    padding-right: 15px;
+    border-left: 1px;
+    overflow-x: hidden;
+    vertical-align: top;
+}
+
+#docgo .code pre code  {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    color: rgb(120, 120, 120);
+}
+</style>
+</head>
+<body>
+<div id="docgo">
+  <div id="background"></div>
+  <table>
+    <thead><tr><th class="doc"><h1>responses_test.go</h1></th><th class="code"></th></tr></thead>
+    <tbody>
+      
+      <tr class="section">
+	<td class="doc"></td>
+	<td class="code"><pre><code><div class="comment">/*
+Copyright © 2019, 2020 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/</div>
+
+<div class="keyword">package</div> <div class="ident">responses_test</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Documentation in literate-programming-style is available at:
+https://redhatinsights.github.io/insights-operator-utils/packages/responses/responses_test.html</p>
+</td>
+	<td class="code"><pre><code>
+<div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;encoding/json&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;fmt&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/responses&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;io/ioutil&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;net/http&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;net/http/httptest&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;reflect&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;strings&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;testing&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Define types used in table tests struct</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">type</div> <div class="ident">functionWithData</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">http</div><div class="operator">.</div><div class="ident">ResponseWriter</div><div class="operator">,</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">)</div> <div class="ident">error</div><div class="operator"></div>
+
+<div class="keyword">type</div> <div class="ident">functionWithoutData</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">http</div><div class="operator">.</div><div class="ident">ResponseWriter</div><div class="operator">,</div> <div class="ident">string</div><div class="operator">)</div> <div class="ident">error</div><div class="operator"></div>
+
+<div class="keyword">const</div> <div class="operator">(</div>
+	<div class="ident">contentType</div> <div class="operator">=</div> <div class="literal">&#34;Content-Type&#34;</div><div class="operator"></div>
+	<div class="ident">appJSON</div>     <div class="operator">=</div> <div class="literal">&#34;application/json; charset=utf-8&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Mock payload to be sent as data</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">var</div> <div class="ident">mockPayload</div> <div class="operator">=</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div>
+	<div class="literal">&#34;color_s&#34;</div><div class="operator">:</div> <div class="literal">&#34;blue&#34;</div><div class="operator">,</div>
+	<div class="literal">&#34;extra_data_m&#34;</div><div class="operator">:</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div>
+		<div class="literal">&#34;param1&#34;</div><div class="operator">:</div> <div class="literal">1</div><div class="operator">,</div>
+		<div class="literal">&#34;param2&#34;</div><div class="operator">:</div> <div class="ident">false</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">,</div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="comment">/*
+Table tests - two structs are used so that different type of function can be used
+It would be possible to only have one struct with both func types and a flag e.g. testPayload bool
+determining which one to call.
+*/</div>
+<div class="keyword">var</div> <div class="ident">headerTestsWithData</div> <div class="operator">=</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+	<div class="ident">testName</div>       <div class="ident">string</div><div class="operator"></div>
+	<div class="ident">fName</div>          <div class="ident">functionWithData</div><div class="operator"></div>
+	<div class="ident">expectedHeader</div> <div class="ident">int</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator">{</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendOK&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendOK</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusOK</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendCreated&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendCreated</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusCreated</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendAccepted&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendAccepted</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusAccepted</div><div class="operator">}</div><div class="operator">,</div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">var</div> <div class="ident">headerTestsWithoutData</div> <div class="operator">=</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+	<div class="ident">testName</div>       <div class="ident">string</div><div class="operator"></div>
+	<div class="ident">fName</div>          <div class="ident">functionWithoutData</div><div class="operator"></div>
+	<div class="ident">expectedHeader</div> <div class="ident">int</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator">{</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendBadRequest&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendBadRequest</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusBadRequest</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendUnauthorized&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendUnauthorized</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusUnauthorized</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendForbidden&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendForbidden</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusForbidden</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendForbidden&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendForbidden</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusForbidden</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendNotFound&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendNotFound</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusNotFound</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendInternalServerError&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendInternalServerError</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusInternalServerError</div><div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div><div class="literal">&#34;responses.SendServiceUnavailable&#34;</div><div class="operator">,</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">SendServiceUnavailable</div><div class="operator">,</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">StatusServiceUnavailable</div><div class="operator">}</div><div class="operator">,</div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">var</div> <div class="ident">sendTests</div> <div class="operator">=</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">struct</div> <div class="operator">{</div>
+	<div class="ident">testName</div>       <div class="ident">string</div><div class="operator"></div>
+	<div class="ident">statusCode</div>     <div class="ident">int</div><div class="operator"></div>
+	<div class="ident">expectedStatus</div> <div class="ident">int</div><div class="operator"></div>
+	<div class="ident">data</div>           <div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+	<div class="ident">expectedData</div>   <div class="ident">string</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator">{</div>
+	<div class="operator">{</div>
+		<div class="literal">&#34;responses.Send(http.StatusInternalServerError, ...)&#34;</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusInternalServerError</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusInternalServerError</div><div class="operator">,</div>
+		<div class="literal">&#34;unable to connect to the database&#34;</div><div class="operator">,</div>
+		<div class="literal">`{&#34;status&#34;: &#34;unable to connect to the database&#34;}`</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div>
+		<div class="literal">&#34;responses.Send(http.StatusInternalServerError, ...)&#34;</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusBadRequest</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusBadRequest</div><div class="operator">,</div>
+		<div class="literal">&#34;wrong ID format&#34;</div><div class="operator">,</div>
+		<div class="literal">`{&#34;status&#34;: &#34;wrong ID format&#34;}`</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div>
+		<div class="literal">&#34;responses.Send(http.StatusOK, ...)&#34;</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusOK</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusOK</div><div class="operator">,</div>
+		<div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div><div class="literal">&#34;list_of_something&#34;</div><div class="operator">:</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div><div class="operator">}</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="literal">`{&#34;list_of_something&#34;: []}`</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">,</div>
+	<div class="operator">{</div>
+		<div class="literal">&#34;responses.Send(http.StatusOK, ...)&#34;</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusOK</div><div class="operator">,</div>
+		<div class="ident">http</div><div class="operator">.</div><div class="ident">StatusOK</div><div class="operator">,</div>
+		<div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">{</div><div class="literal">123</div><div class="operator">,</div> <div class="literal">34</div><div class="operator">,</div> <div class="literal">107</div><div class="operator">,</div> <div class="literal">101</div><div class="operator">,</div> <div class="literal">121</div><div class="operator">,</div> <div class="literal">49</div><div class="operator">,</div> <div class="literal">34</div><div class="operator">,</div> <div class="literal">58</div><div class="operator">,</div> <div class="literal">32</div><div class="operator">,</div> <div class="literal">34</div><div class="operator">,</div> <div class="literal">104</div><div class="operator">,</div> <div class="literal">101</div><div class="operator">,</div> <div class="literal">108</div><div class="operator">,</div> <div class="literal">108</div><div class="operator">,</div> <div class="literal">111</div><div class="operator">,</div> <div class="literal">32</div><div class="operator">,</div> <div class="literal">119</div><div class="operator">,</div> <div class="literal">111</div><div class="operator">,</div> <div class="literal">114</div><div class="operator">,</div> <div class="literal">108</div><div class="operator">,</div> <div class="literal">100</div><div class="operator">,</div> <div class="literal">34</div><div class="operator">,</div> <div class="literal">125</div><div class="operator">}</div><div class="operator">,</div>
+		<div class="literal">`{&#34;key1&#34;: &#34;hello world&#34;}`</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator">,</div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">closeResponseBody</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div> <div class="ident">response</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Response</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">response</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">.</div><div class="ident">Close</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>checkResponse checks status code against the expected one and check content-type + payload</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">checkResponse</div><div class="operator">(</div>
+	<div class="ident">url</div> <div class="ident">string</div><div class="operator">,</div>
+	<div class="ident">expectedStatusCode</div> <div class="ident">int</div><div class="operator">,</div>
+	<div class="ident">checkPayload</div> <div class="ident">bool</div><div class="operator">,</div>
+	<div class="ident">expectedBody</div> <div class="ident">string</div><div class="operator">,</div>
+	<div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">,</div>
+<div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">res</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">Get</div><div class="operator">(</div><div class="ident">url</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">if</div> <div class="ident">res</div><div class="operator">.</div><div class="ident">StatusCode</div> <div class="operator">!=</div> <div class="ident">expectedStatusCode</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;Expected status code %v, got %v&#34;</div><div class="operator">,</div> <div class="ident">expectedStatusCode</div><div class="operator">,</div> <div class="ident">res</div><div class="operator">.</div><div class="ident">StatusCode</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">if</div> <div class="ident">checkPayload</div> <div class="operator">{</div>
+		<div class="ident">contentType</div> <div class="operator">:=</div> <div class="ident">res</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">.</div><div class="ident">Get</div><div class="operator">(</div><div class="ident">contentType</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">contentType</div> <div class="operator">!=</div> <div class="ident">appJSON</div> <div class="operator">{</div>
+			<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;Unexpected content type. Expected %v, got %v&#34;</div><div class="operator">,</div> <div class="ident">appJSON</div><div class="operator">,</div> <div class="ident">contentType</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="ident">body</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadAll</div><div class="operator">(</div><div class="ident">res</div><div class="operator">.</div><div class="ident">Body</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+		<div class="keyword">defer</div> <div class="ident">closeResponseBody</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">res</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">fmt</div><div class="operator">.</div><div class="ident">Println</div><div class="operator">(</div><div class="ident">body</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="keyword">var</div> <div class="ident">expected</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+		<div class="ident">err</div> <div class="operator">=</div> <div class="ident">json</div><div class="operator">.</div><div class="ident">NewDecoder</div><div class="operator">(</div><div class="ident">strings</div><div class="operator">.</div><div class="ident">NewReader</div><div class="operator">(</div><div class="ident">expectedBody</div><div class="operator">)</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Decode</div><div class="operator">(</div><div class="operator">&amp;</div><div class="ident">expected</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatalf</div><div class="operator">(</div><div class="literal">&#34;Response body is not JSON&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="keyword">var</div> <div class="ident">response</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+		<div class="ident">err</div> <div class="operator">=</div> <div class="ident">json</div><div class="operator">.</div><div class="ident">Unmarshal</div><div class="operator">(</div><div class="ident">body</div><div class="operator">,</div> <div class="operator">&amp;</div><div class="ident">response</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="keyword">if</div> <div class="ident">equal</div> <div class="operator">:=</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">DeepEqual</div><div class="operator">(</div><div class="ident">response</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">)</div><div class="operator">;</div> <div class="operator">!</div><div class="ident">equal</div> <div class="operator">{</div>
+			<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">`Expected response &#34;%&#43;v&#34;, got &#34;%&#43;v&#34;`</div><div class="operator">,</div> <div class="ident">expected</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestBuildResponse tests BuildResponse func that returns simple map with key &quot;status&quot; and given value</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestBuildResponse</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">statusStr</div> <div class="operator">:=</div> <div class="literal">&#34;I&#39;m a teapot&#34;</div><div class="operator"></div>
+	<div class="ident">expectedResponse</div> <div class="operator">:=</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div>
+		<div class="literal">&#34;status&#34;</div><div class="operator">:</div> <div class="ident">statusStr</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">response</div> <div class="operator">:=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">BuildResponse</div><div class="operator">(</div><div class="ident">statusStr</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">equal</div> <div class="operator">:=</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">DeepEqual</div><div class="operator">(</div><div class="ident">expectedResponse</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">)</div><div class="operator">;</div> <div class="operator">!</div><div class="ident">equal</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;Expected response %v&#34;</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestBuildOkResponse tests BuildResponse that returns simple map with key &quot;status&quot; and value &quot;ok&quot;</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestBuildOkResponse</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">expectedResponse</div> <div class="operator">:=</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div>
+		<div class="literal">&#34;status&#34;</div><div class="operator">:</div> <div class="literal">&#34;ok&#34;</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">response</div> <div class="operator">:=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">BuildOkResponse</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">equal</div> <div class="operator">:=</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">DeepEqual</div><div class="operator">(</div><div class="ident">expectedResponse</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">)</div><div class="operator">;</div> <div class="operator">!</div><div class="ident">equal</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;Expected response %v&#34;</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestBuildOkResponseWithData tests that the func returns simple map with key status: ok and given data</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestBuildOkResponseWithData</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">expectedResponse</div> <div class="operator">:=</div> <div class="keyword">map</div><div class="operator">[</div><div class="ident">string</div><div class="operator">]</div><div class="keyword">interface</div><div class="operator">{</div><div class="operator">}</div><div class="operator">{</div>
+		<div class="literal">&#34;data&#34;</div><div class="operator">:</div>   <div class="ident">mockPayload</div><div class="operator">,</div>
+		<div class="literal">&#34;status&#34;</div><div class="operator">:</div> <div class="literal">&#34;ok&#34;</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">response</div> <div class="operator">:=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">BuildOkResponseWithData</div><div class="operator">(</div><div class="literal">&#34;data&#34;</div><div class="operator">,</div> <div class="ident">mockPayload</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">equal</div> <div class="operator">:=</div> <div class="ident">reflect</div><div class="operator">.</div><div class="ident">DeepEqual</div><div class="operator">(</div><div class="ident">expectedResponse</div><div class="operator">,</div> <div class="ident">response</div><div class="operator">)</div><div class="operator">;</div> <div class="operator">!</div><div class="ident">equal</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Errorf</div><div class="operator">(</div><div class="literal">&#34;Expected response %v&#34;</div><div class="operator">,</div> <div class="ident">expectedResponse</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestHeaders run table tests to test StatusCodes and payloads.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestHeaders</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">test</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">headerTestsWithData</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">test</div><div class="operator">.</div><div class="ident">testName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">testServer</div> <div class="operator">:=</div> <div class="ident">httptest</div><div class="operator">.</div><div class="ident">NewServer</div><div class="operator">(</div><div class="ident">http</div><div class="operator">.</div><div class="ident">HandlerFunc</div><div class="operator">(</div><div class="keyword">func</div><div class="operator">(</div><div class="ident">w</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">ResponseWriter</div><div class="operator">,</div> <div class="ident">r</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">{</div>
+				<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">test</div><div class="operator">.</div><div class="ident">fName</div><div class="operator">(</div><div class="ident">w</div><div class="operator">,</div> <div class="ident">mockPayload</div><div class="operator">)</div> <div class="operator"></div><div class="comment">// call the function</div>
+				<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+					<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+				<div class="operator">}</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">defer</div> <div class="ident">testServer</div><div class="operator">.</div><div class="ident">Close</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="keyword">const</div> <div class="ident">expectedBody</div> <div class="operator">=</div> <div class="literal">`{&#34;color_s&#34;:&#34;blue&#34;,&#34;extra_data_m&#34;:{&#34;param1&#34;:1,&#34;param2&#34;:false}}`</div><div class="operator"></div>
+			<div class="ident">checkResponse</div><div class="operator">(</div>
+				<div class="ident">testServer</div><div class="operator">.</div><div class="ident">URL</div><div class="operator">,</div>
+				<div class="ident">test</div><div class="operator">.</div><div class="ident">expectedHeader</div><div class="operator">,</div>
+				<div class="ident">true</div><div class="operator">,</div>
+				<div class="ident">expectedBody</div><div class="operator">,</div>
+				<div class="ident">t</div><div class="operator">,</div>
+			<div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">test</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">headerTestsWithoutData</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">test</div><div class="operator">.</div><div class="ident">testName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">testServer</div> <div class="operator">:=</div> <div class="ident">httptest</div><div class="operator">.</div><div class="ident">NewServer</div><div class="operator">(</div><div class="ident">http</div><div class="operator">.</div><div class="ident">HandlerFunc</div><div class="operator">(</div><div class="keyword">func</div><div class="operator">(</div><div class="ident">w</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">ResponseWriter</div><div class="operator">,</div> <div class="ident">r</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">{</div>
+				<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">test</div><div class="operator">.</div><div class="ident">fName</div><div class="operator">(</div><div class="ident">w</div><div class="operator">,</div> <div class="literal">&#34;Test Status&#34;</div><div class="operator">)</div> <div class="operator"></div><div class="comment">// call the function</div>
+				<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+					<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+				<div class="operator">}</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">defer</div> <div class="ident">testServer</div><div class="operator">.</div><div class="ident">Close</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="ident">checkResponse</div><div class="operator">(</div>
+				<div class="ident">testServer</div><div class="operator">.</div><div class="ident">URL</div><div class="operator">,</div>
+				<div class="ident">test</div><div class="operator">.</div><div class="ident">expectedHeader</div><div class="operator">,</div>
+				<div class="ident">false</div><div class="operator">,</div>
+				<div class="literal">&#34;&#34;</div><div class="operator">,</div>
+				<div class="ident">t</div><div class="operator">,</div>
+			<div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">test</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">sendTests</div> <div class="operator">{</div>
+		<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="ident">test</div><div class="operator">.</div><div class="ident">testName</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">testServer</div> <div class="operator">:=</div> <div class="ident">httptest</div><div class="operator">.</div><div class="ident">NewServer</div><div class="operator">(</div><div class="ident">http</div><div class="operator">.</div><div class="ident">HandlerFunc</div><div class="operator">(</div><div class="keyword">func</div><div class="operator">(</div><div class="ident">w</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">ResponseWriter</div><div class="operator">,</div> <div class="ident">r</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">{</div>
+				<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">responses</div><div class="operator">.</div><div class="ident">Send</div><div class="operator">(</div><div class="ident">test</div><div class="operator">.</div><div class="ident">statusCode</div><div class="operator">,</div> <div class="ident">w</div><div class="operator">,</div> <div class="ident">test</div><div class="operator">.</div><div class="ident">data</div><div class="operator">)</div><div class="operator"></div>
+				<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+					<div class="ident">t</div><div class="operator">.</div><div class="ident">Fatal</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+				<div class="operator">}</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">defer</div> <div class="ident">testServer</div><div class="operator">.</div><div class="ident">Close</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+
+			<div class="ident">checkResponse</div><div class="operator">(</div>
+				<div class="ident">testServer</div><div class="operator">.</div><div class="ident">URL</div><div class="operator">,</div>
+				<div class="ident">test</div><div class="operator">.</div><div class="ident">expectedStatus</div><div class="operator">,</div>
+				<div class="ident">true</div><div class="operator">,</div>
+				<div class="ident">test</div><div class="operator">.</div><div class="ident">expectedData</div><div class="operator">,</div>
+				<div class="ident">t</div><div class="operator">,</div>
+			<div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

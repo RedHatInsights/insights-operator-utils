@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--
+ Copyright 2021 Red Hat, Inc
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html>
+<head>
+<title>openapi.go</title>
+<meta charset="utf-8"/>
+<style type="text/css">body {
+    background: rgb(225, 225, 225);
+    margin: 0px;
+    padding: 0px;
+}
+
+#docgo p {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo div {
+    display: inline;
+}
+
+#docgo #background {
+    position: fixed;
+    top: 0; left: 525px; right: 0; bottom: 0;
+    background: rgb(47, 47, 47);
+    border-left: 1px solid #e5e5ee;
+    z-index: -1;
+}
+
+#docgo .keyword {
+    color: rgb(250, 200, 100);
+}
+
+#docgo .literal {
+    color: rgb(140, 190, 100);
+}
+
+#docgo .ident {
+    color: white;
+}
+
+#docgo .operator {
+    color: white;
+}
+
+#docgo .comment {
+}
+
+#docgo h1, h2, h3, h4, h5 {
+    text-align: left;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo h1 {
+    margin-top: 40px;
+}
+
+#docgo .doc {
+    vertical-align: top;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: black;
+    min-width: 450px;
+    max-width: 450px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-bottom: 1px;
+    padding-left: 50px;
+    overflow-x: hidden;
+}
+
+#docgo .code {
+    min-width: 650px;
+    max-width: 650px;
+    padding-left: 25px;
+    padding-right: 15px;
+    border-left: 1px;
+    overflow-x: hidden;
+    vertical-align: top;
+}
+
+#docgo .code pre code  {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    color: rgb(120, 120, 120);
+}
+</style>
+</head>
+<body>
+<div id="docgo">
+  <div id="background"></div>
+  <table>
+    <thead><tr><th class="doc"><h1>openapi.go</h1></th><th class="code"></th></tr></thead>
+    <tbody>
+      
+      <tr class="section">
+	<td class="doc"><p>Copyright 2020 Red Hat, Inc</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">httputils</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Documentation in literate-programming-style is available at:
+https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi.html</p>
+</td>
+	<td class="code"><pre><code>
+<div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;io/ioutil&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;net/http&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;strings&#34;</div><div class="operator"></div>
+
+	<div class="literal">&#34;github.com/getkin/kin-openapi/openapi3&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/rs/zerolog/log&#34;</div><div class="operator"></div>
+
+	<div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/types&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>FilterOutDebugMethods returns the same openapi spec, but without endpoints tagged as debug.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">FilterOutDebugMethods</div><div class="operator">(</div><div class="ident">openAPIFileContent</div> <div class="ident">string</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">string</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">swagger</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">openapi3</div><div class="operator">.</div><div class="ident">NewSwaggerLoader</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">LoadSwaggerFromData</div><div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">(</div><div class="ident">openAPIFileContent</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="keyword">return</div> <div class="literal">&#34;&#34;</div><div class="operator">,</div> <div class="ident">err</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">newPaths</div> <div class="operator">:=</div> <div class="ident">make</div><div class="operator">(</div><div class="ident">openapi3</div><div class="operator">.</div><div class="ident">Paths</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">for</div> <div class="ident">path</div><div class="operator">,</div> <div class="ident">pathItem</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">swagger</div><div class="operator">.</div><div class="ident">Paths</div> <div class="operator">{</div>
+		<div class="keyword">for</div> <div class="ident">method</div><div class="operator">,</div> <div class="ident">operation</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">pathItem</div><div class="operator">.</div><div class="ident">Operations</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">{</div>
+			<div class="ident">debugTagFound</div> <div class="operator">:=</div> <div class="ident">false</div><div class="operator"></div>
+			<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">tag</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">operation</div><div class="operator">.</div><div class="ident">Tags</div> <div class="operator">{</div>
+				<div class="keyword">if</div> <div class="ident">strings</div><div class="operator">.</div><div class="ident">ToLower</div><div class="operator">(</div><div class="ident">strings</div><div class="operator">.</div><div class="ident">TrimSpace</div><div class="operator">(</div><div class="ident">tag</div><div class="operator">)</div><div class="operator">)</div> <div class="operator">==</div> <div class="literal">&#34;debug&#34;</div> <div class="operator">{</div>
+					<div class="ident">debugTagFound</div> <div class="operator">=</div> <div class="ident">true</div><div class="operator"></div>
+					<div class="keyword">break</div><div class="operator"></div>
+				<div class="operator">}</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator"></div>
+
+			<div class="keyword">if</div> <div class="ident">debugTagFound</div> <div class="operator">{</div>
+				<div class="ident">pathItem</div><div class="operator">.</div><div class="ident">SetOperation</div><div class="operator">(</div><div class="ident">method</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator">)</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="keyword">if</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">pathItem</div><div class="operator">.</div><div class="ident">Operations</div><div class="operator">(</div><div class="operator">)</div><div class="operator">)</div> <div class="operator">&gt;</div> <div class="literal">0</div> <div class="operator">{</div>
+			<div class="ident">newPaths</div><div class="operator">[</div><div class="ident">path</div><div class="operator">]</div> <div class="operator">=</div> <div class="ident">pathItem</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">swagger</div><div class="operator">.</div><div class="ident">Paths</div> <div class="operator">=</div> <div class="ident">newPaths</div><div class="operator"></div>
+
+	<div class="ident">openAPIBytes</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">swagger</div><div class="operator">.</div><div class="ident">MarshalJSON</div><div class="operator">(</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">string</div><div class="operator">(</div><div class="ident">openAPIBytes</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">err</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>CreateOpenAPIHandler creates a handler for a server to send OpenAPI file.
+Optionally, you can turn on or off debug to filter out debug endpoints.
+Optionally, you can turn on caching by setting cacheFile to true,
+then you will have to restart a server on each file change</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">CreateOpenAPIHandler</div><div class="operator">(</div><div class="ident">filePath</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">debug</div> <div class="ident">bool</div><div class="operator">,</div> <div class="ident">cacheFile</div> <div class="ident">bool</div><div class="operator">)</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">writer</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">ResponseWriter</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">var</div> <div class="ident">fileContent</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator"></div>
+
+	<div class="keyword">return</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">writer</div> <div class="ident">http</div><div class="operator">.</div><div class="ident">ResponseWriter</div><div class="operator">,</div> <div class="ident">request</div> <div class="operator">*</div><div class="ident">http</div><div class="operator">.</div><div class="ident">Request</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">writer</div><div class="operator">.</div><div class="ident">Header</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Set</div><div class="operator">(</div><div class="literal">&#34;Content-Type&#34;</div><div class="operator">,</div> <div class="literal">&#34;application/json&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="keyword">if</div> <div class="operator">!</div><div class="ident">cacheFile</div> <div class="operator">||</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">fileContent</div><div class="operator">)</div> <div class="operator">==</div> <div class="literal">0</div> <div class="operator">{</div>
+			<div class="keyword">var</div> <div class="ident">err</div> <div class="ident">error</div><div class="operator"></div>
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>it's not supposed that we'll accept the path from a user</p>
+
+<h1>nosec G304</h1>
+</td>
+	<td class="code"><pre><code>			<div class="ident">fileContent</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">=</div> <div class="ident">ioutil</div><div class="operator">.</div><div class="ident">ReadFile</div><div class="operator">(</div><div class="ident">filePath</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+				<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Err</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;error reading openapi.json file&#34;</div><div class="operator">)</div><div class="operator"></div>
+				<div class="ident">types</div><div class="operator">.</div><div class="ident">HandleServerError</div><div class="operator">(</div><div class="ident">writer</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+				<div class="keyword">return</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator"></div>
+
+			<div class="keyword">if</div> <div class="operator">!</div><div class="ident">debug</div> <div class="operator">{</div>
+				<div class="ident">filteredFileContent</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">FilterOutDebugMethods</div><div class="operator">(</div><div class="ident">string</div><div class="operator">(</div><div class="ident">fileContent</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+				<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+					<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Err</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;error filtering openapi.json file, using the original version&#34;</div><div class="operator">)</div><div class="operator"></div>
+				<div class="operator">}</div> <div class="keyword">else</div> <div class="operator">{</div>
+					<div class="ident">fileContent</div> <div class="operator">=</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">byte</div><div class="operator">(</div><div class="ident">filteredFileContent</div><div class="operator">)</div><div class="operator"></div>
+				<div class="operator">}</div><div class="operator"></div>
+			<div class="operator">}</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">writer</div><div class="operator">.</div><div class="ident">Write</div><div class="operator">(</div><div class="ident">fileContent</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">log</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Err</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;error writing openapi.json file&#34;</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">types</div><div class="operator">.</div><div class="ident">HandleServerError</div><div class="operator">(</div><div class="ident">writer</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">return</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
