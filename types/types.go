@@ -209,11 +209,11 @@ type ClusterListInRequest struct {
 // errors and dictionary with results per cluster. This structure is used by
 // aggregator to return more reports.
 type ClusterReports struct {
-	ClusterList []ClusterName               `json:"clusters"`
-	Errors      []ClusterName               `json:"errors"`
-	Reports     map[ClusterName]interface{} `json:"reports"`
-	GeneratedAt string                      `json:"generated_at"`
-	Status      string                      `json:"status"`
+	ClusterList []ClusterName                   `json:"clusters"`
+	Errors      []ClusterName                   `json:"errors"`
+	Reports     map[ClusterName]json.RawMessage `json:"reports"`
+	GeneratedAt string                          `json:"generated_at"`
+	Status      string                          `json:"status"`
 }
 
 //SchemaVersion is just a constant integer for now, max value 255. If we one day
