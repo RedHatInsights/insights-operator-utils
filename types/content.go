@@ -19,12 +19,13 @@ package types
 
 // RuleContent wraps all the content available for a rule into a single structure.
 type RuleContent struct {
-	Summary    string                         `json:"summary"`
-	Reason     string                         `json:"reason"`
-	Resolution string                         `json:"resolution"`
-	MoreInfo   string                         `json:"more_info"`
 	Plugin     RulePluginInfo                 `json:"plugin"`
 	ErrorKeys  map[string]RuleErrorKeyContent `json:"error_keys"`
+	Generic    string                         `json:"generic"`
+	Summary    string                         `json:"summary"`
+	Resolution string                         `json:"resolution"`
+	MoreInfo   string                         `json:"more_info"`
+	Reason     string                         `json:"reason"`
 	HasReason  bool
 }
 
@@ -39,10 +40,13 @@ type RulePluginInfo struct {
 
 // RuleErrorKeyContent wraps content of a single error key.
 type RuleErrorKeyContent struct {
-	Generic   string           `json:"generic"`
-	Metadata  ErrorKeyMetadata `json:"metadata"`
-	TotalRisk int              `json:"total_risk"`
-	Reason    string           `json:"reason"`
+	Metadata   ErrorKeyMetadata `json:"metadata"`
+	TotalRisk  int              `json:"total_risk"`
+	Generic    string           `json:"generic"`
+	Summary    string           `json:"summary"`
+	Resolution string           `json:"resolution"`
+	MoreInfo   string           `json:"more_info"`
+	Reason     string           `json:"reason"`
 	// DONTFIX has_reason until CCXDEV-5021
 	HasReason bool
 }
