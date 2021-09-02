@@ -115,6 +115,7 @@ type ErrorKey string
 type Rule struct {
 	Module     RuleID `json:"module"`
 	Name       string `json:"name"`
+	Generic    string `json:"generic"`
 	Summary    string `json:"summary"`
 	Reason     string `json:"reason"`
 	Resolution string `json:"resolution"`
@@ -132,6 +133,10 @@ type RuleErrorKey struct {
 	PublishDate time.Time `json:"publish_date"`
 	Active      bool      `json:"active"`
 	Generic     string    `json:"generic"`
+	Summary     string    `json:"summary"`
+	Reason      string    `json:"reason"`
+	Resolution  string    `json:"resolution"`
+	MoreInfo    string    `json:"more_info"`
 	Tags        []string  `json:"tags"`
 }
 
