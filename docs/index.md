@@ -25,6 +25,8 @@ insights-operator and insights-aggregator repositories.
 * [metrics/metrics.go](packages/metrics/metrics.html)
 * [responses/responses_test.go](packages/responses/responses_test.html)
 * [responses/responses.go](packages/responses/responses.html)
+* [parsers/date_test.go](packages/parsers/date_test.html)
+* [parsers/date.go](packages/parsers/date.html)
 * [tests/helpers/serialization.go](packages/tests/helpers/serialization.html)
 * [tests/helpers/strings.go](packages/tests/helpers/strings.html)
 * [tests/helpers/timeout.go](packages/tests/helpers/timeout.html)
