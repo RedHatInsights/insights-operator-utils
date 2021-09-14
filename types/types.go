@@ -247,7 +247,7 @@ type AcknowledgementsMetadata struct {
 // serialization format
 type AcknowledgementsResponse struct {
 	Metadata AcknowledgementsMetadata `json:"meta"`
-	Data     []Acknowledge            `json:"data"`
+	Data     []Acknowledgement        `json:"data"`
 }
 
 // AcknowledgementJustification data structure represents body of request with
