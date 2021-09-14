@@ -80,6 +80,56 @@ namespace httputils {
 "http.ResponseWriter" *-- "httputils.loggingResponseWriter"
 
 
+namespace logger {
+    class CloudWatchConfiguration << (S,Aquamarine) >> {
+        + AWSAccessID string
+        + AWSSecretKey string
+        + AWSSessionToken string
+        + AWSRegion string
+        + LogGroup string
+        + StreamName string
+        + CreateStreamIfNotExists bool
+        + Debug bool
+
+    }
+    class KafkaZerologConfiguration << (S,Aquamarine) >> {
+        + Broker string
+        + Topic string
+        + CertPath string
+        + Level string
+
+    }
+    class LoggingConfiguration << (S,Aquamarine) >> {
+        + Debug bool
+        + UseStderr bool
+        + LogLevel string
+        + LoggingToCloudWatchEnabled bool
+        + LoggingToSentryEnabled bool
+        + LoggingToKafkaEnabled bool
+
+    }
+    class SaramaZerologger << (S,Aquamarine) >> {
+        - zerologger zerolog.Logger
+
+        - logMessage(format string, params ...<font color=blue>interface</font>{}) 
+
+        + Print(params ...<font color=blue>interface</font>{}) 
+        + Printf(format string, params ...<font color=blue>interface</font>{}) 
+        + Println(v ...<font color=blue>interface</font>{}) 
+
+    }
+    class SentryLoggingConfiguration << (S,Aquamarine) >> {
+        + SentryDSN string
+
+    }
+    class WorkaroundForRHIOPS729 << (S,Aquamarine) >> {
+        + Write(bytes []byte) (int, error)
+
+    }
+}
+"io.Writer" *-- "logger.WorkaroundForRHIOPS729"
+
+
 namespace mock_io {
     class MockReadCloser << (S,Aquamarine) >> {
         - ctrl *gomock.Controller
@@ -152,11 +202,42 @@ namespace mock_testing {
 }
 
 
-namespace types {
-    class AuthenticationError << (S,Aquamarine) >> {
-        + ErrString string
+namespace saramahelpers {
+    class MockConsumerGroupClaim << (S,Aquamarine) >> {
+        - channel <font color=blue>chan</font> *sarama.ConsumerMessage
 
-        + Error() string
+        + Topic() string
+        + Partition() int32
+        + InitialOffset() int64
+        + HighWaterMarkOffset() int64
+        + Messages() <font color=blue>chan</font> *sarama.ConsumerMessage
+
+    }
+    class MockConsumerGroupSession << (S,Aquamarine) >> {
+        + Claims() <font color=blue>map</font>[string][]int32
+        + MemberID() string
+        + GenerationID() int32
+        + MarkOffset(topic string, partition int32, offset int64, metadata string) 
+        + ResetOffset(topic string, partition int32, offset int64, metadata string) 
+        + MarkMessage(msg *sarama.ConsumerMessage, metadata string) 
+        + Context() context.Context
+        + Commit() 
+
+    }
+}
+
+
+namespace types {
+    class ClusterListInRequest << (S,Aquamarine) >> {
+        + Clusters []string
+
+    }
+    class ClusterReports << (S,Aquamarine) >> {
+        + ClusterList []ClusterName
+        + Errors []ClusterName
+        + Reports <font color=blue>map</font>[ClusterName]json.RawMessage
+        + GeneratedAt string
+        + Status string
 
     }
     class DisabledRuleResponse << (S,Aquamarine) >> {
@@ -164,6 +245,25 @@ namespace types {
         + Description string
         + Generic string
         + DisabledAt string
+
+    }
+    class ErrorKeyMetadata << (S,Aquamarine) >> {
+        + Description string
+        + Impact string
+        + Likelihood int
+        + PublishDate string
+        + Status string
+        + Tags []string
+
+    }
+    class ForbiddenError << (S,Aquamarine) >> {
+        + ErrString string
+
+        + Error() string
+
+    }
+    class GlobalRuleConfig << (S,Aquamarine) >> {
+        + Impact <font color=blue>map</font>[string]int
 
     }
     class Identity << (S,Aquamarine) >> {
@@ -230,10 +330,27 @@ namespace types {
     class Rule << (S,Aquamarine) >> {
         + Module RuleID
         + Name string
+        + Generic string
         + Summary string
         + Reason string
         + Resolution string
         + MoreInfo string
+
+    }
+    class RuleContent << (S,Aquamarine) >> {
+        + Plugin RulePluginInfo
+        + ErrorKeys <font color=blue>map</font>[string]RuleErrorKeyContent
+        + Generic string
+        + Summary string
+        + Resolution string
+        + MoreInfo string
+        + Reason string
+        + HasReason bool
+
+    }
+    class RuleContentDirectory << (S,Aquamarine) >> {
+        + Config GlobalRuleConfig
+        + Rules <font color=blue>map</font>[string]RuleContent
 
     }
     class RuleContentResponse << (S,Aquamarine) >> {
@@ -263,7 +380,22 @@ namespace types {
         + PublishDate time.Time
         + Active bool
         + Generic string
+        + Summary string
+        + Reason string
+        + Resolution string
+        + MoreInfo string
         + Tags []string
+
+    }
+    class RuleErrorKeyContent << (S,Aquamarine) >> {
+        + Metadata ErrorKeyMetadata
+        + TotalRisk int
+        + Generic string
+        + Summary string
+        + Resolution string
+        + MoreInfo string
+        + Reason string
+        + HasReason bool
 
     }
     class RuleOnReport << (S,Aquamarine) >> {
@@ -271,7 +403,16 @@ namespace types {
         + ErrorKey ErrorKey
         + UserVote UserVote
         + Disabled bool
+        + DisableFeedback string
+        + DisabledAt Timestamp
         + TemplateData <font color=blue>interface</font>{}
+
+    }
+    class RulePluginInfo << (S,Aquamarine) >> {
+        + Name string
+        + NodeID string
+        + ProductCode string
+        + PythonModule string
 
     }
     class RuleWithContent << (S,Aquamarine) >> {
@@ -295,6 +436,12 @@ namespace types {
     }
     class Token << (S,Aquamarine) >> {
         + Identity Identity
+
+    }
+    class UnauthorizedError << (S,Aquamarine) >> {
+        + ErrString string
+
+        + Error() string
 
     }
     class ValidationError << (S,Aquamarine) >> {
@@ -323,6 +470,8 @@ namespace types {
     }
     class types.RuleID << (T, #FF7700) >>  {
     }
+    class types.SchemaVersion << (T, #FF7700) >>  {
+    }
     class types.Timestamp << (T, #FF7700) >>  {
     }
     class types.UserID << (T, #FF7700) >>  {
@@ -344,6 +493,7 @@ namespace types {
 "__builtin__.string" #.. "types.Timestamp"
 "__builtin__.string" #.. "types.UserID"
 "__builtin__.uint32" #.. "types.OrgID"
+"__builtin__.uint8" #.. "types.SchemaVersion"
 "helpers.fontcolorbluefuncfonttestingTB" #.. "helpers.TestFunctionPtr"
 "helpers.fontcolorbluefuncfonttestingTBbytebyte" #.. "helpers.BodyChecker"
 @enduml
