@@ -14,6 +14,8 @@
 
 package parsers
 
+// Various text parser utility functions.
+
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/parsers/date.html
 
