@@ -15,6 +15,32 @@ Utils that are shared between different insights-operator repositories.
 
 ## How to use this library
 
+Use selected sub-module from this library in your `import` statement. For example:
+
+```
+import (
+	"encoding/json"
+	"strings"
+
+	"github.com/RedHatInsights/insights-operator-utils/types"
+	"github.com/RedHatInsights/insights-results-aggregator-data/testdata"
+)
+```
+
+or:
+
+```
+import (
+	"context"
+	"database/sql"
+	"encoding/json"
+
+	"github.com/RedHatInsights/insights-operator-utils/logger"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/sync/errgroup"
+)
+```
+
 ## Configuration
 
 No further configuration is needed at this moment.
