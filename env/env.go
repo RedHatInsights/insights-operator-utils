@@ -16,6 +16,8 @@ limitations under the License.
 
 package env
 
+// Functions to work with environment variables.
+
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/env/env.html
 

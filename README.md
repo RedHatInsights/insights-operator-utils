@@ -8,12 +8,98 @@
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/RedHatInsights/insights-operator-utils)
 [![License](https://img.shields.io/badge/license-Apache-blue)](https://github.com/RedHatInsights/insights-operator-utils/blob/master/LICENSE)
 
+<!-- vim-markdown-toc GFM -->
+
+* [Description](#description)
+* [Sub-modules in this library](#sub-modules-in-this-library)
+    * [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
+    * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
+    * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
+    * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
+    * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
+    * [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
+    * [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
+    * [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
+    * [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
+* [How to use this library](#how-to-use-this-library)
+* [Configuration](#configuration)
+* [Contribution](#contribution)
+* [Testing](#testing)
+* [CI](#ci)
+
+<!-- vim-markdown-toc -->
 
 ## Description
 
 Utils that are shared between different insights-operator repositories.
 
+## Sub-modules in this library
+
+### `github.com/RedHatInsights/insights-operator-utils/collections`
+
+Helper functions to work with collections.
+
+### `github.com/RedHatInsights/insights-operator-utils/env`
+
+Functions to work with environment variables.
+
+### `github.com/RedHatInsights/insights-operator-utils/http`
+
+HTTP-related utility functions.
+
+### `github.com/RedHatInsights/insights-operator-utils/logger`
+
+Configuration structures needed to configure the access to CloudWatch server to sending the log messages there.
+
+### `github.com/RedHatInsights/insights-operator-utils/metrics`
+
+Package metrics contains all metrics that needs to be exposed to Prometheus and indirectly to Grafana.
+
+### `github.com/RedHatInsights/insights-operator-utils/parsers`
+
+Various text parser utility functions.
+
+### `github.com/RedHatInsights/insights-operator-utils/responses`
+
+Handlers for HTTP response.
+
+### `github.com/RedHatInsights/insights-operator-utils/tests`
+
+Contains sub-modules to make unit tests easier to write.
+
+### `github.com/RedHatInsights/insights-operator-utils/types`
+
+Declaration of various data types (usually structures) used elsewhere in the aggregator code.
+
+
+
 ## How to use this library
+
+Use selected sub-module from this library in your `import` statement. For example:
+
+```
+import (
+	"encoding/json"
+	"strings"
+
+	"github.com/RedHatInsights/insights-operator-utils/types"
+	"github.com/RedHatInsights/insights-results-aggregator-data/testdata"
+)
+```
+
+or:
+
+```
+import (
+	"context"
+	"database/sql"
+	"encoding/json"
+
+	"github.com/RedHatInsights/insights-operator-utils/logger"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/sync/errgroup"
+)
+```
 
 ## Configuration
 
