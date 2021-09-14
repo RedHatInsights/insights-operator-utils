@@ -18,6 +18,8 @@ limitations under the License.
 
 package responses
 
+// Handlers for HTTP response.
+
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/responses/responses.html
 
