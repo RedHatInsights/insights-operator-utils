@@ -228,8 +228,8 @@ type ClusterReports struct {
 //need more versions, better consider upgrading to semantic versioning.
 type SchemaVersion uint8
 
-// Acknowledge represents user acknowledgement of given rule
-type Acknowledge struct {
+// Acknowledgement represents user acknowledgement of given rule
+type Acknowledgement struct {
 	Acknowledged  bool   `json:"-"` // let's skip this one in responses
 	Rule          string `json:"rule"`
 	Justification string `json:"justification"`
