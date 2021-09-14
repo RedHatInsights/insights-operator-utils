@@ -51,6 +51,9 @@ type RequestID string
 // RuleID represents type for rule id
 type RuleID string
 
+// RuleSelector represents component + error key
+type RuleSelector string
+
 // RuleOnReport represents a single (hit) rule of the string encoded report
 type RuleOnReport struct {
 	Module          RuleID      `json:"component"`
@@ -224,3 +227,39 @@ type ClusterReports struct {
 //SchemaVersion is just a constant integer for now, max value 255. If we one day
 //need more versions, better consider upgrading to semantic versioning.
 type SchemaVersion uint8
+
+// Acknowledge represents user acknowledgement of given rule
+type Acknowledge struct {
+	Acknowledged  bool   `json:"-"` // let's skip this one in responses
+	Rule          string `json:"rule"`
+	Justification string `json:"justification"`
+	CreatedBy     string `json:"created_by"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+}
+
+// AcknowledgementsMetadata contains metadata about list of acknowledgements
+type AcknowledgementsMetadata struct {
+	Count int `json:"count"`
+}
+
+// AcknowledgementsResponse is structure returned to client in JSON
+// serialization format
+type AcknowledgementsResponse struct {
+	Metadata AcknowledgementsMetadata `json:"meta"`
+	Data     []Acknowledge            `json:"data"`
+}
+
+// AcknowledgementJustification data structure represents body of request with
+// specified justification of given acknowledgement
+type AcknowledgementJustification struct {
+	Value string `json:"justification"`
+}
+
+// AcknowledgementRuleSelectorJustification data structure represents body of
+// request with specified rule selector and justification of given
+// acknowledgement
+type AcknowledgementRuleSelectorJustification struct {
+	RuleSelector RuleSelector `json:"rule_id"`
+	Value        string       `json:"justification"`
+}
