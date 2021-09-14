@@ -8,6 +8,26 @@
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/RedHatInsights/insights-operator-utils)
 [![License](https://img.shields.io/badge/license-Apache-blue)](https://github.com/RedHatInsights/insights-operator-utils/blob/master/LICENSE)
 
+<!-- vim-markdown-toc GFM -->
+
+* [Description](#description)
+* [Sub-modules in this library](#sub-modules-in-this-library)
+    * [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
+    * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
+    * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
+    * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
+    * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
+    * [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
+    * [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
+    * [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
+    * [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
+* [How to use this library](#how-to-use-this-library)
+* [Configuration](#configuration)
+* [Contribution](#contribution)
+* [Testing](#testing)
+* [CI](#ci)
+
+<!-- vim-markdown-toc -->
 
 ## Description
 
@@ -39,7 +59,7 @@ Package metrics contains all metrics that needs to be exposed to Prometheus and 
 
 Various text parser utility functions.
 
-### `github.com/RedHatInsights/insights-operator-utils/responses
+### `github.com/RedHatInsights/insights-operator-utils/responses`
 
 Handlers for HTTP response.
 
