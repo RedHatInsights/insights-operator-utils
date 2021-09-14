@@ -16,6 +16,8 @@ limitations under the License.
 
 package collections
 
+// Helper functions to work with collections.
+
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/collections/slices.html
 
