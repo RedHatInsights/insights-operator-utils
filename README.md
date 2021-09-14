@@ -13,6 +13,46 @@
 
 Utils that are shared between different insights-operator repositories.
 
+## Sub-modules in this library
+
+### `github.com/RedHatInsights/insights-operator-utils/collections`
+
+Helper functions to work with collections.
+
+### `github.com/RedHatInsights/insights-operator-utils/env`
+
+Functions to work with environment variables.
+
+### `github.com/RedHatInsights/insights-operator-utils/http`
+
+HTTP-related utility functions.
+
+### `github.com/RedHatInsights/insights-operator-utils/logger`
+
+Configuration structures needed to configure the access to CloudWatch server to sending the log messages there.
+
+### `github.com/RedHatInsights/insights-operator-utils/metrics`
+
+Package metrics contains all metrics that needs to be exposed to Prometheus and indirectly to Grafana.
+
+### `github.com/RedHatInsights/insights-operator-utils/parsers`
+
+Various text parser utility functions.
+
+### `github.com/RedHatInsights/insights-operator-utils/responses
+
+Handlers for HTTP response.
+
+### `github.com/RedHatInsights/insights-operator-utils/tests`
+
+Contains sub-modules to make unit tests easier to write.
+
+### `github.com/RedHatInsights/insights-operator-utils/types`
+
+Declaration of various data types (usually structures) used elsewhere in the aggregator code.
+
+
+
 ## How to use this library
 
 Use selected sub-module from this library in your `import` statement. For example:
