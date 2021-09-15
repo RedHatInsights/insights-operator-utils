@@ -54,6 +54,9 @@ type RuleID string
 // RuleSelector represents component + error key
 type RuleSelector string
 
+// Component represent name of component (of rule)
+type Component string
+
 // RuleOnReport represents a single (hit) rule of the string encoded report
 type RuleOnReport struct {
 	Module          RuleID      `json:"component"`
