@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2021 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/parsers"
 )
 
-// TestParseDates check the function parsers.ParseDates for valid input.
+// TestParseDates checks the function parsers.ParseDates for valid input.
 func TestParseDates(t *testing.T) {
 	dateFormat := "02/01/2006"
 	startDate := "01/01/2021"
