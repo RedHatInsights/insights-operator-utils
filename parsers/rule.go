@@ -22,7 +22,7 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
-// ParseRuleSelector function parse the rule selector which consists of
+// ParseRuleSelector function parses the rule selector which consists of
 // component name and error key separaed by "|" character.
 func ParseRuleSelector(ruleSelector types.RuleSelector) (types.Component, types.ErrorKey, error) {
 	// component and error key is to be separated by "|"
@@ -40,8 +40,13 @@ func ParseRuleSelector(ruleSelector types.RuleSelector) (types.Component, types.
 	isRuleIDValid := IDValidator.MatchString(splitedRuleID[0])
 	isErrorKeyValid := IDValidator.MatchString(splitedRuleID[1])
 
-	if !isRuleIDValid || !isErrorKeyValid {
-		err := fmt.Errorf("invalid rule ID, each part of ID must contain only latin characters, number, underscores or dots")
+	if !isRuleIDValid {
+		err := fmt.Errorf("invalid component name: each part of ID must contain only latin characters, number, underscores or dots")
+		return types.Component(""), types.ErrorKey(""), err
+	}
+
+	if !isErrorKeyValid {
+		err := fmt.Errorf("invalid error key: each part of ID must contain only latin characters, number, underscores or dots")
 		return types.Component(""), types.ErrorKey(""), err
 	}
 
