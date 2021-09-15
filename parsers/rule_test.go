@@ -59,7 +59,7 @@ func TestParseRuleSelectorEmptyInput(t *testing.T) {
 // parsers.ParseRuleSelector for input with more separators.
 func TestParseRuleSelectorMoreSeparators(t *testing.T) {
 	t.Run("foo|bar|baz", func(t *testing.T) {
-		_, _, err := parsers.ParseRuleSelector("")
+		_, _, err := parsers.ParseRuleSelector("foo|bar|baz")
 
 		assert.Equal(t, err.Error(), "invalid rule ID, it must contain only rule ID and error key separated by |")
 	})
@@ -71,16 +71,16 @@ func TestParseRuleSelectorImproperInput(t *testing.T) {
 	t.Run("rule without error key", func(t *testing.T) {
 		_, _, err := parsers.ParseRuleSelector("foo|")
 
-		assert.Equal(t, err.Error(), "invalid rule ID, each part of ID must contain only latin characters, number, underscores or dots")
+		assert.Equal(t, err.Error(), "invalid error key: each part of ID must contain only latin characters, number, underscores or dots")
 	})
 	t.Run("rule without component", func(t *testing.T) {
 		_, _, err := parsers.ParseRuleSelector("|bar")
 
-		assert.Equal(t, err.Error(), "invalid rule ID, each part of ID must contain only latin characters, number, underscores or dots")
+		assert.Equal(t, err.Error(), "invalid component name: each part of ID must contain only latin characters, number, underscores or dots")
 	})
 	t.Run("rule with improper characters", func(t *testing.T) {
 		_, _, err := parsers.ParseRuleSelector("ěšč|řžý")
 
-		assert.Equal(t, err.Error(), "invalid rule ID, each part of ID must contain only latin characters, number, underscores or dots")
+		assert.Equal(t, err.Error(), "invalid component name: each part of ID must contain only latin characters, number, underscores or dots")
 	})
 }
