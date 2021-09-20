@@ -20,6 +20,7 @@ package types
 // https://redhatinsights.github.io/insights-operator-utils/packages/types/types.html
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -265,4 +266,18 @@ type AcknowledgementJustification struct {
 type AcknowledgementRuleSelectorJustification struct {
 	RuleSelector RuleSelector `json:"rule_id"`
 	Value        string       `json:"justification"`
+}
+
+// RuleToggle is a type for user's vote
+type RuleToggle int
+
+// DisabledRule represents a record from rule_cluster_toggle
+type DisabledRule struct {
+	ClusterID  ClusterName
+	RuleID     RuleID
+	ErrorKey   ErrorKey
+	Disabled   RuleToggle
+	DisabledAt sql.NullTime
+	EnabledAt  sql.NullTime
+	UpdatedAt  sql.NullTime
 }
