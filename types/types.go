@@ -285,9 +285,9 @@ type DisabledRule struct {
 // DisabledRuleReason represents a record from
 // cluster_user_rule_disable_feedback table
 type DisabledRuleReason struct {
-	ClusterID types.ClusterName
-	RuleID    types.RuleID
-	ErrorKey  types.ErrorKey
+	ClusterID ClusterName
+	RuleID    RuleID
+	ErrorKey  ErrorKey
 	Message   string
 	AddedAt   sql.NullTime
 	UpdatedAt sql.NullTime
