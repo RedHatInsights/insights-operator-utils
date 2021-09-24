@@ -292,3 +292,14 @@ type DisabledRuleReason struct {
 	AddedAt   sql.NullTime
 	UpdatedAt sql.NullTime
 }
+
+// SystemWideRuleDisable represents a record from rule_disable table
+type SystemWideRuleDisable struct {
+	OrgID         OrgID        `json:"org_id"`
+	UserID        UserID       `json:"user_id"`
+	RuleID        RuleID       `json:"rule_id"`
+	ErrorKey      ErrorKey     `json:"error_key"`
+	Justification string       `json:"justification"`
+	CreatedAt     sql.NullTime `json:"created_at"`
+	UpdatedAT     sql.NullTime `json:"updated_at"`
+}
