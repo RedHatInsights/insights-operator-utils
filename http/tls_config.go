@@ -25,6 +25,10 @@ func NewTLSConfig(certPath string) (*tls.Config, error) {
 		return nil, err
 	}
 	caCertPool := x509.NewCertPool()
+	if caCert == nil {
+		return nil, fmt.Errorf("pointer to new CertPool is nil")
+	}
+
 	ok := caCertPool.AppendCertsFromPEM(caCert)
 	if !ok {
 		return nil, fmt.Errorf("error appending the specified certificate")
