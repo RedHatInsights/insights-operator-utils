@@ -1,7 +1,6 @@
 package httputils_test
 
 import (
-	"fmt"
 	"testing"
 
 	httputils "github.com/RedHatInsights/insights-operator-utils/http"
@@ -27,7 +26,6 @@ func TestNewTLSConfig(t *testing.T) {
 		} else {
 			assert.NoError(t, err)
 			assert.NotNil(t, cfg)
-			fmt.Println(cfg)
 		}
 	}
 }
