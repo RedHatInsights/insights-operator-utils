@@ -1,0 +1,4 @@
+# Global allowlist
+[allowlist]
+    description = "Files containing keys used only for testing"
+    files = ["testdata/cert.pem"]
