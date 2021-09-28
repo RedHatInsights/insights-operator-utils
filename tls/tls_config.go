@@ -1,4 +1,4 @@
-package httputils
+package tlsutil
 
 import (
 	"crypto/tls"

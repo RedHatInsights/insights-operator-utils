@@ -1,10 +1,11 @@
-package httputils_test
+package tlsutil_test
 
 import (
 	"testing"
 
-	httputils "github.com/RedHatInsights/insights-operator-utils/http"
 	"github.com/stretchr/testify/assert"
+
+	tlsutil "github.com/RedHatInsights/insights-operator-utils/tls"
 )
 
 // TestNewTLSConfig tests the NewTLSConfig method
@@ -19,7 +20,7 @@ func TestNewTLSConfig(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		cfg, err := httputils.NewTLSConfig(tc.input)
+		cfg, err := tlsutil.NewTLSConfig(tc.input)
 		if tc.expectedErr {
 			assert.Error(t, err)
 			assert.Nil(t, cfg)
