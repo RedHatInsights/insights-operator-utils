@@ -55,17 +55,11 @@ type RuleErrorKeyContent struct {
 // file inside of an error key content directory.
 type ErrorKeyMetadata struct {
 	Description string   `yaml:"description" json:"description"`
-	Impact      Impact   `yaml:"impact" json:"impact"`
+	Impact      int      `yaml:"impact" json:"impact"`
 	Likelihood  int      `yaml:"likelihood" json:"likelihood"`
 	PublishDate string   `yaml:"publish_date" json:"publish_date"`
 	Status      string   `yaml:"status" json:"status"`
 	Tags        []string `yaml:"tags" json:"tags"`
-}
-
-// Impact is contained in ErrorKeyMetadata
-type Impact struct {
-	Name  string `yaml:"name" json:"name"`
-	Value int    `yaml:"value" json:"value"`
 }
 
 // RuleContentDirectory contains content for all available rules in a directory.
