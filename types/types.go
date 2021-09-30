@@ -303,3 +303,9 @@ type SystemWideRuleDisable struct {
 	CreatedAt     sql.NullTime `json:"created_at"`
 	UpdatedAT     sql.NullTime `json:"updated_at"`
 }
+
+// RuleRating represents the body request of request to the rating endpoint
+type RuleRating struct {
+	Rule   string   `json:"rule"`
+	Rating UserVote `json:"rating"`
+}
