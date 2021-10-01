@@ -52,6 +52,9 @@ type RequestID string
 // RuleID represents type for rule id
 type RuleID string
 
+// RuleFQDN represents type for rule FQDN (rule module)
+type RuleFQDN string
+
 // RuleSelector represents component + error key
 type RuleSelector string
 
@@ -302,4 +305,27 @@ type SystemWideRuleDisable struct {
 	Justification string       `json:"justification"`
 	CreatedAt     sql.NullTime `json:"created_at"`
 	UpdatedAT     sql.NullTime `json:"updated_at"`
+}
+
+// ImpactedClustersCnt represents the number of clusters impacted by a rule
+type ImpactedClustersCnt uint32
+
+// RecommendationImpactedClusters is returned by aggregator for the purposes of /rule/ recommendation list endpoint
+type RecommendationImpactedClusters map[RuleID]ImpactedClustersCnt
+
+// RecommendationRow represents a single row in the recommendation table
+type RecommendationRow struct {
+	// RuleID is in "|" format
+	RuleID    RuleID      `json:"rule_id"`
+	RuleFQDN  RuleFQDN    `json:"rule_fqdn"`
+	ErrorKey  ErrorKey    `json:"error_key"`
+	OrgID     OrgID       `json:"org_id"`
+	ClusterID ClusterName `json:"cluster_id"`
+}
+
+// RecommendationListRow represents a single row retrieved from recommendation table
+// for the purposes of Recommendations List (list of rules + number of impacted clusters)
+type RecommendationListRow struct {
+	RuleID              RuleID              `json:"rule_id"`
+	ImpactedClustersCnt ImpactedClustersCnt `json:"impacted_clusters_cnt"`
 }
