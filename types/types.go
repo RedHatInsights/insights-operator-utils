@@ -316,11 +316,12 @@ type RecommendationImpactedClusters map[RuleID]ImpactedClustersCnt
 // RecommendationRow represents a single row in the recommendation table
 type RecommendationRow struct {
 	// RuleID is in "|" format
-	RuleID    RuleID      `json:"rule_id"`
-	RuleFQDN  RuleFQDN    `json:"rule_fqdn"`
-	ErrorKey  ErrorKey    `json:"error_key"`
-	OrgID     OrgID       `json:"org_id"`
-	ClusterID ClusterName `json:"cluster_id"`
+	RuleID    RuleID       `json:"rule_id"`
+	RuleFQDN  RuleFQDN     `json:"rule_fqdn"`
+	ErrorKey  ErrorKey     `json:"error_key"`
+	OrgID     OrgID        `json:"org_id"`
+	ClusterID ClusterName  `json:"cluster_id"`
+	CreatedAt sql.NullTime `json:"created_at"`
 }
 
 // RecommendationListRow represents a single row retrieved from recommendation table
