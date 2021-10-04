@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2020 Red Hat, Inc
+# Copyright 2020, 2021 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+RED_BG=$(tput setab 1)
+GREEN_BG=$(tput setab 2)
+BLUE=$(tput setaf 4)
+NC=$(tput sgr0) # No Color
+
+GO_SEC_ARGS=""
+
+if [[ $* != *verbose* ]] && [[ -z "${VERBOSE}" ]]; then
+    GO_SEC_ARGS="-quiet"
+fi
 
 cd "$(dirname "$0")" || exit
 
@@ -25,14 +31,22 @@ echo -e "${BLUE}Security issues detection${NC}"
 if ! [ -x "$(command -v gosec)" ]
 then
     echo -e "${BLUE}Installing ${NC}"
-    GO111MODULE=off go get github.com/securego/gosec/cmd/gosec 2> /dev/null
+    curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v2.8.1
+    # shellcheck disable=SC2181
+    if [ $? -eq 0 ]
+    then
+        echo -e "${BLUE}Installed ${NC}"
+    else
+        echo -e "${RED_BG}[FAIL]${NC} Installation failure"
+        exit 2
+    fi
 fi
 
-if ! gosec ./...
+if ! gosec $GO_SEC_ARGS ./...
 then
-    echo -e "${RED}Potential security issues detected!${NC}"
+    echo -e "${RED_BG}[FAIL]${NC} Potential security issues detected!"
     exit 1
 else
-    echo -e "${GREEN}No potential security issues has been detected${NC}"
+    echo -e "${GREEN_BG}[OK]${NC} No potential security issues has been detected"
     exit 0
 fi
