@@ -330,3 +330,9 @@ type RecommendationListRow struct {
 	RuleID              RuleID              `json:"rule_id"`
 	ImpactedClustersCnt ImpactedClustersCnt `json:"impacted_clusters_cnt"`
 }
+
+// RuleRating represents the body request of request to the rating endpoint
+type RuleRating struct {
+	Rule   string   `json:"rule"`
+	Rating UserVote `json:"rating"`
+}
