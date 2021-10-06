@@ -344,3 +344,8 @@ type RuleContentStatus struct {
 	Loaded   bool             `json:"loaded"`
 	Error    RuleParsingError `json:"error"`
 }
+
+// RuleType identifies whether the rule is external or internal one
+// INFO: might be stored as a bool, but number of rule types might be enhanced
+// later
+type RuleType string
