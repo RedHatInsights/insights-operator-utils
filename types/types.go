@@ -349,3 +349,8 @@ type RuleContentStatus struct {
 // INFO: might be stored as a bool, but number of rule types might be enhanced
 // later
 type RuleType string
+
+// RuleParsingError represents textual and human-readable form of (any) error
+// occured during reading, parsing, and checking rule content in Content
+// Service
+type RuleParsingError string
