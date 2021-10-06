@@ -336,3 +336,11 @@ type RuleRating struct {
 	Rule   string   `json:"rule"`
 	Rating UserVote `json:"rating"`
 }
+
+// RuleContentStatus type store information about rule content parsed and
+// checked by Content Service
+type RuleContentStatus struct {
+	RuleType RuleType         `json:"type"`
+	Loaded   bool             `json:"loaded"`
+	Error    RuleParsingError `json:"error"`
+}
