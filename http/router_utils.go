@@ -38,8 +38,8 @@ var (
 
 	// Basically any string that has alphanumeric characters separated by at
 	// least one dot (".") before a vertical line ("|"), followed by only
-	// uppercase characters, numbers, or underscores ("_")
-	RuleSelectorValidator = regexp.MustCompile(`[a-zA-Z_0-9]+\.[a-zA-Z_0-9.]+\|[A-Z_0-9]+$`)
+	// characters, numbers, or underscores ("_")
+	RuleSelectorValidator = regexp.MustCompile(`[a-zA-Z_0-9]+\.[a-zA-Z_0-9.]+\|[a-zA-Z_0-9]+$`)
 )
 
 // GetRouterParam retrieves parameter from URL like `/organization/{org_id}`
