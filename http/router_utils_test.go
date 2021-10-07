@@ -108,7 +108,7 @@ func TestReadParam(t *testing.T) {
 			ParamName:  "organizations",
 			ParamValue: []interface{}{testdata.OrgID, testdata.OrgID},
 		},
-		{TestName: "rule_fqdn", ParamName: "rule_id", ParamValue: []interface{}{testdata.Rule1ID+"|"+testdata.ErrorKey1, testdata.Rule1ID}},
+		{TestName: "rule_fqdn", ParamName: "rule_id", ParamValue: []interface{}{testdata.Rule1ID + "|" + testdata.ErrorKey1}},
 	} {
 		expectedParamValue := paramsToString(",", testCase.ParamValue...)
 
@@ -237,7 +237,7 @@ func TestReadRuleFQDN_Error(t *testing.T) {
 		{
 			TestCaseName: "RuleComponentAsRuleFQDN",
 			Args: map[string]string{
-				"rule_id": string(testdata.Rule1ID+"|"),
+				"rule_id": string(testdata.Rule1ID + "|"),
 			},
 			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
 				string(testdata.Rule1ID+"|") +

@@ -34,11 +34,15 @@ import (
 )
 
 var (
+	//RuleIDValidator points to a Regexp expression that matches any
+	// string that has alphanumeric characters separated by at least one dot
+	// (".")
 	RuleIDValidator = regexp.MustCompile(`^[a-zA-Z_0-9.]+$`)
 
-	// Basically any string that has alphanumeric characters separated by at
-	// least one dot (".") before a vertical line ("|"), followed by only
-	// characters, numbers, or underscores ("_")
+	// RuleSelectorValidator points to a Regexp expression that matches any
+	// string that has alphanumeric characters separated by at least one dot
+	// (".") before a vertical line ("|"), followed by only characters,
+	// numbers, or underscores ("_")
 	RuleSelectorValidator = regexp.MustCompile(`[a-zA-Z_0-9]+\.[a-zA-Z_0-9.]+\|[a-zA-Z_0-9]+$`)
 )
 
