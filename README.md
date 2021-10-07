@@ -26,6 +26,7 @@
 * [Contribution](#contribution)
 * [Testing](#testing)
 * [CI](#ci)
+* [Package manifest](#package-manifest)
 
 <!-- vim-markdown-toc -->
 
@@ -145,3 +146,7 @@ It is also possible to specify CLI options for Go test. For example, if you need
 Please note that all checks mentioned above have to pass for the change to be merged into the main branch (look into Settings to check which branch has been set as main one).
 
 History of checks performed by CI is available at [RedHatInsights / insights-operator-utils](https://travis-ci.org/RedHatInsights/insights-operator-utils).
+
+## Package manifest
+
+Package manifest is available at [docs/manifest.txt](docs/manifest.txt).
