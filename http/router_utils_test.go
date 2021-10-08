@@ -83,6 +83,7 @@ func TestGetRouterPositiveIntParam_Missing(t *testing.T) {
 	assert.EqualError(t, err, "Missing required param from request: test")
 }
 
+//gocyclo:ignore
 func TestReadParam(t *testing.T) {
 	for _, testCase := range []struct {
 		TestName   string
