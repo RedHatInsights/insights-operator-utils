@@ -109,7 +109,7 @@ func TestReadParam(t *testing.T) {
 			ParamName:  "organizations",
 			ParamValue: []interface{}{testdata.OrgID, testdata.OrgID},
 		},
-		{TestName: "rule_fqdn", ParamName: "rule_id", ParamValue: []interface{}{testdata.Rule1ID + "|" + testdata.ErrorKey1}},
+		{TestName: "rule_fqdn", ParamName: "rule_selector", ParamValue: []interface{}{testdata.Rule1ID + "|" + testdata.ErrorKey1}},
 	} {
 		expectedParamValue := paramsToString(",", testCase.ParamValue...)
 
@@ -216,33 +216,33 @@ func TestReadRuleSelector_Error(t *testing.T) {
 		Args          map[string]string
 		ExpectedError string
 	}{
-		{TestCaseName: "Missing", Args: nil, ExpectedError: `{"status":"Missing required param from request: rule_id"}`},
+		{TestCaseName: "Missing", Args: nil, ExpectedError: `{"status":"Missing required param from request: rule_selector"}`},
 		{
 			TestCaseName: "BadRuleSelector",
 			Args: map[string]string{
-				"rule_id": string(testdata.BadRuleID),
+				"rule_selector": string(testdata.BadRuleID),
 			},
-			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
+			ExpectedError: `{"status":"Error during parsing param 'rule_selector' with value '` +
 				string(testdata.BadRuleID) +
-				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
+				`'. Error: 'Param rule_selector is not a valid rule selector (plugin_name|error_key)'"}`,
 		},
 		{
 			TestCaseName: "RuleComponentAsRuleSelector",
 			Args: map[string]string{
-				"rule_id": string(testdata.Rule1ID),
+				"rule_selector": string(testdata.Rule1ID),
 			},
-			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
+			ExpectedError: `{"status":"Error during parsing param 'rule_selector' with value '` +
 				string(testdata.Rule1ID) +
-				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
+				`'. Error: 'Param rule_selector is not a valid rule selector (plugin_name|error_key)'"}`,
 		},
 		{
 			TestCaseName: "RuleComponentAsRuleSelector",
 			Args: map[string]string{
-				"rule_id": string(testdata.Rule1ID + "|"),
+				"rule_selector": string(testdata.Rule1ID + "|"),
 			},
-			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
+			ExpectedError: `{"status":"Error during parsing param 'rule_selector' with value '` +
 				string(testdata.Rule1ID+"|") +
-				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
+				`'. Error: 'Param rule_selector is not a valid rule selector (plugin_name|error_key)'"}`,
 		},
 	} {
 		t.Run(testCase.TestCaseName, func(t *testing.T) {

@@ -233,17 +233,18 @@ type ClusterReports struct {
 
 // HittingClustersMetadata used to store metadata of clusters hit by a concrete rule
 type HittingClustersMetadata struct {
-	Count       int       `json:"count"`
-	Component   Component `json:"component"`
-	ErrorKey    ErrorKey  `json:"error_key"`
+	Count     int       `json:"count"`
+	Component Component `json:"component"`
+	ErrorKey  ErrorKey  `json:"error_key"`
 }
 
 // HittingClustersData used to store data of clusters hit by a concrete rule
 type HittingClustersData struct {
-	Cluster  ClusterName `json:"cluster"`
-	//Version  string      `json:"version"`
-	GeneratedAt string   `json:"generated_at"`
+	Cluster ClusterName `json:"cluster"`
+	//GeneratedAt string      `json:"generated_at"`
+	//Version     string      `json:"version"`
 }
+
 // HittingClusters is a data structure containing list of clusters hit by a concrete rule
 // hitting the given rule.
 type HittingClusters struct {
