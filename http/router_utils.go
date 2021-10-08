@@ -147,9 +147,9 @@ func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (types.Erro
 // url or writes an error to writer.
 // The function returns the selector and a bool indicating if it was successful.
 func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (types.RuleSelector, bool) {
-	ruleSelector, err := GetRouterParam(request, "rule_id")
+	ruleSelector, err := GetRouterParam(request, "rule_selector")
 	if err != nil {
-		const message = "unable to get rule selector from rule_id parameter"
+		const message = "Unable to get rule selector from request"
 		log.Error().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
 		return "", false
@@ -158,10 +158,10 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (types.
 	isRuleSelectorValid := RuleSelectorValidator.Match([]byte(ruleSelector))
 
 	if !isRuleSelectorValid {
-		errMsg := "Param rule_id is not a valid rule selector (plugin_name|error_key)"
+		errMsg := "Param rule_selector is not a valid rule selector (plugin_name|error_key)"
 		log.Error().Msg(errMsg)
 		types.HandleServerError(writer, &types.RouterParsingError{
-			ParamName:  "rule_id",
+			ParamName:  "rule_selector",
 			ParamValue: ruleSelector,
 			ErrString:  errMsg,
 		})
