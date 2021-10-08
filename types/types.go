@@ -231,6 +231,26 @@ type ClusterReports struct {
 	Status      string                          `json:"status"`
 }
 
+// HittingClustersMetadata used to store metadata of clusters hit by a concrete rule
+type HittingClustersMetadata struct {
+	Count       int       `json:"count"`
+	Component   Component `json:"component"`
+	ErrorKey    ErrorKey  `json:"error_key"`
+}
+
+// HittingClustersData used to store data of clusters hit by a concrete rule
+type HittingClustersData struct {
+	Cluster  ClusterName `json:"cluster"`
+	//Version  string      `json:"version"`
+	GeneratedAt string   `json:"generated_at"`
+}
+// HittingClusters is a data structure containing list of clusters hit by a concrete rule
+// hitting the given rule.
+type HittingClusters struct {
+	Metadata    HittingClustersMetadata `json:"meta"`
+	ClusterList []HittingClustersData   `json:"data"`
+}
+
 //SchemaVersion is just a constant integer for now, max value 255. If we one day
 //need more versions, better consider upgrading to semantic versioning.
 type SchemaVersion uint8
