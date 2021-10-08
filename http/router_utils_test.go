@@ -210,7 +210,7 @@ func TestReadErrorKey_Error(t *testing.T) {
 	)
 }
 
-func TestReadRuleFQDN_Error(t *testing.T) {
+func TestReadRuleSelector_Error(t *testing.T) {
 	for _, testCase := range []struct {
 		TestCaseName  string
 		Args          map[string]string
@@ -218,35 +218,35 @@ func TestReadRuleFQDN_Error(t *testing.T) {
 	}{
 		{TestCaseName: "Missing", Args: nil, ExpectedError: `{"status":"Missing required param from request: rule_id"}`},
 		{
-			TestCaseName: "BadRuleFQDN",
+			TestCaseName: "BadRuleSelector",
 			Args: map[string]string{
 				"rule_id": string(testdata.BadRuleID),
 			},
 			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
 				string(testdata.BadRuleID) +
-				`'. Error: 'Param rule_id is not a valid rule FQDN'"}`,
+				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
 		},
 		{
-			TestCaseName: "RuleComponentAsRuleFQDN",
+			TestCaseName: "RuleComponentAsRuleSelector",
 			Args: map[string]string{
 				"rule_id": string(testdata.Rule1ID),
 			},
 			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
 				string(testdata.Rule1ID) +
-				`'. Error: 'Param rule_id is not a valid rule FQDN'"}`,
+				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
 		},
 		{
-			TestCaseName: "RuleComponentAsRuleFQDN",
+			TestCaseName: "RuleComponentAsRuleSelector",
 			Args: map[string]string{
 				"rule_id": string(testdata.Rule1ID + "|"),
 			},
 			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
 				string(testdata.Rule1ID+"|") +
-				`'. Error: 'Param rule_id is not a valid rule FQDN'"}`,
+				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
 		},
 	} {
 		t.Run(testCase.TestCaseName, func(t *testing.T) {
-			testReadParamError(t, "rule_fqdn", testCase.Args, testCase.ExpectedError)
+			testReadParamError(t, "rule_selector", testCase.Args, testCase.ExpectedError)
 		})
 	}
 }
@@ -363,7 +363,7 @@ func testReadParamError(t *testing.T, paramName string, args map[string]string, 
 		_, successful = httputils.ReadOrganizationIDs(recorder, request)
 	case "clusters":
 		_, successful = httputils.ReadClusterNames(recorder, request)
-	case "rule_fqdn":
+	case "rule_selector":
 		_, successful = httputils.ReadRuleSelector(recorder, request)
 	default:
 		panic("testReadParamError is not implemented for param '" + paramName + "'")

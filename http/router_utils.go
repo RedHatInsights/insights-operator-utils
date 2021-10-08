@@ -149,23 +149,23 @@ func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (types.Erro
 func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (types.RuleSelector, bool) {
 	ruleSelector, err := GetRouterParam(request, "rule_id")
 	if err != nil {
-		const message = "unable to get rule FQDN"
+		const message = "unable to get rule selector from rule_id parameter"
 		log.Error().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
-		return "0", false
+		return "", false
 	}
 
 	isRuleSelectorValid := RuleSelectorValidator.Match([]byte(ruleSelector))
 
 	if !isRuleSelectorValid {
-		errMsg := "Param rule_id is not a valid rule FQDN"
+		errMsg := "Param rule_id is not a valid rule selector (plugin_name|error_key)"
 		log.Error().Msg(errMsg)
 		types.HandleServerError(writer, &types.RouterParsingError{
 			ParamName:  "rule_id",
 			ParamValue: ruleSelector,
 			ErrString:  errMsg,
 		})
-		return "0", false
+		return "", false
 	}
 
 	return types.RuleSelector(ruleSelector), true
