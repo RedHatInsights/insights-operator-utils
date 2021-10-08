@@ -33,6 +33,19 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
+var (
+	//RuleIDValidator points to a Regexp expression that matches any
+	// string that has alphanumeric characters separated by at least one dot
+	// (".")
+	RuleIDValidator = regexp.MustCompile(`^[a-zA-Z_0-9.]+$`)
+
+	// RuleSelectorValidator points to a Regexp expression that matches any
+	// string that has alphanumeric characters separated by at least one dot
+	// (".") before a vertical line ("|"), followed by only characters,
+	// numbers, or underscores ("_")
+	RuleSelectorValidator = regexp.MustCompile(`[a-zA-Z_0-9]+\.[a-zA-Z_0-9.]+\|[a-zA-Z_0-9]+$`)
+)
+
 // GetRouterParam retrieves parameter from URL like `/organization/{org_id}`
 func GetRouterParam(request *http.Request, paramName string) (string, error) {
 	value, found := mux.Vars(request)[paramName]
@@ -100,9 +113,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (types.RuleID
 		return types.RuleID("0"), false
 	}
 
-	ruleIDValidator := regexp.MustCompile(`^[a-zA-Z_0-9.]+$`)
-
-	isRuleIDValid := ruleIDValidator.Match([]byte(ruleID))
+	isRuleIDValid := RuleIDValidator.Match([]byte(ruleID))
 
 	if !isRuleIDValid {
 		err = fmt.Errorf("invalid rule ID, it must contain only from latin characters, number, underscores or dots")
@@ -130,6 +141,34 @@ func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (types.Erro
 	}
 
 	return types.ErrorKey(errorKey), true
+}
+
+// ReadRuleSelector retrieves the rule selector (rule_id|error_key) from request's
+// url or writes an error to writer.
+// The function returns the selector and a bool indicating if it was successful.
+func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (types.RuleSelector, bool) {
+	ruleSelector, err := GetRouterParam(request, "rule_id")
+	if err != nil {
+		const message = "unable to get rule selector from rule_id parameter"
+		log.Error().Err(err).Msg(message)
+		types.HandleServerError(writer, err)
+		return "", false
+	}
+
+	isRuleSelectorValid := RuleSelectorValidator.Match([]byte(ruleSelector))
+
+	if !isRuleSelectorValid {
+		errMsg := "Param rule_id is not a valid rule selector (plugin_name|error_key)"
+		log.Error().Msg(errMsg)
+		types.HandleServerError(writer, &types.RouterParsingError{
+			ParamName:  "rule_id",
+			ParamValue: ruleSelector,
+			ErrString:  errMsg,
+		})
+		return "", false
+	}
+
+	return types.RuleSelector(ruleSelector), true
 }
 
 // ReadOrganizationID retrieves organization id from request

@@ -83,6 +83,7 @@ func TestGetRouterPositiveIntParam_Missing(t *testing.T) {
 	assert.EqualError(t, err, "Missing required param from request: test")
 }
 
+//gocyclo:ignore
 func TestReadParam(t *testing.T) {
 	for _, testCase := range []struct {
 		TestName   string
@@ -108,6 +109,7 @@ func TestReadParam(t *testing.T) {
 			ParamName:  "organizations",
 			ParamValue: []interface{}{testdata.OrgID, testdata.OrgID},
 		},
+		{TestName: "rule_fqdn", ParamName: "rule_id", ParamValue: []interface{}{testdata.Rule1ID + "|" + testdata.ErrorKey1}},
 	} {
 		expectedParamValue := paramsToString(",", testCase.ParamValue...)
 
@@ -142,6 +144,8 @@ func TestReadParam(t *testing.T) {
 				var results []types.OrgID
 				results, successful = httputils.ReadOrganizationIDs(recorder, request)
 				result = paramsToString(",", results)
+			case "rule_fqdn":
+				result, successful = httputils.ReadRuleSelector(recorder, request)
 			}
 
 			assert.True(t, successful)
@@ -204,6 +208,47 @@ func TestReadErrorKey_Error(t *testing.T) {
 		nil,
 		`{"status":"Missing required param from request: error_key"}`,
 	)
+}
+
+func TestReadRuleSelector_Error(t *testing.T) {
+	for _, testCase := range []struct {
+		TestCaseName  string
+		Args          map[string]string
+		ExpectedError string
+	}{
+		{TestCaseName: "Missing", Args: nil, ExpectedError: `{"status":"Missing required param from request: rule_id"}`},
+		{
+			TestCaseName: "BadRuleSelector",
+			Args: map[string]string{
+				"rule_id": string(testdata.BadRuleID),
+			},
+			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
+				string(testdata.BadRuleID) +
+				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
+		},
+		{
+			TestCaseName: "RuleComponentAsRuleSelector",
+			Args: map[string]string{
+				"rule_id": string(testdata.Rule1ID),
+			},
+			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
+				string(testdata.Rule1ID) +
+				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
+		},
+		{
+			TestCaseName: "RuleComponentAsRuleSelector",
+			Args: map[string]string{
+				"rule_id": string(testdata.Rule1ID + "|"),
+			},
+			ExpectedError: `{"status":"Error during parsing param 'rule_id' with value '` +
+				string(testdata.Rule1ID+"|") +
+				`'. Error: 'Param rule_id is not a valid rule selector (plugin_name|error_key)'"}`,
+		},
+	} {
+		t.Run(testCase.TestCaseName, func(t *testing.T) {
+			testReadParamError(t, "rule_selector", testCase.Args, testCase.ExpectedError)
+		})
+	}
 }
 
 func TestReadOrganization_Error(t *testing.T) {
@@ -318,6 +363,8 @@ func testReadParamError(t *testing.T, paramName string, args map[string]string, 
 		_, successful = httputils.ReadOrganizationIDs(recorder, request)
 	case "clusters":
 		_, successful = httputils.ReadClusterNames(recorder, request)
+	case "rule_selector":
+		_, successful = httputils.ReadRuleSelector(recorder, request)
 	default:
 		panic("testReadParamError is not implemented for param '" + paramName + "'")
 	}
