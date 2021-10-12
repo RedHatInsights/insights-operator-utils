@@ -250,7 +250,8 @@ func CheckPermissions(writer http.ResponseWriter, request *http.Request, orgID t
 	if identityContext != nil && auth {
 		identity := identityContext.(types.Identity)
 		if identity.Internal.OrgID != orgID {
-			const message = "you have no permissions to get or change info about this organization"
+			message := fmt.Sprintf("you have no permissions to get or change info about the organization "+
+				"with ID %d; you can access info about organization with ID %d", orgID, identity.Internal.OrgID)
 			log.Error().Msg(message)
 			types.HandleServerError(writer, &types.ForbiddenError{ErrString: message})
 

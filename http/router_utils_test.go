@@ -264,7 +264,9 @@ func TestReadOrganization_Error(t *testing.T) {
 		map[string]string{
 			"organization": fmt.Sprint(testdata.OrgID),
 		},
-		`{"status":"you have no permissions to get or change info about this organization"}`,
+		`{"status":"you have no permissions to get or change info about the organization with ID `+
+			fmt.Sprint(testdata.OrgID)+`; you can access info about organization with ID `+
+			fmt.Sprint(testdata.Org2ID)+`"}`,
 	)
 }
 
