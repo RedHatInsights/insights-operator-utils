@@ -36,8 +36,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
+	"github.com/evalphobia/logrus_sentry"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/sirupsen/logrus"
 )
 
 var needClose []io.Closer = []io.Closer{}
@@ -100,8 +102,7 @@ func InitZerolog(
 		selectedOutput = os.Stderr
 	}
 
-	var consoleWriter io.Writer
-	consoleWriter = selectedOutput
+	var consoleWriter io.Writer = selectedOutput
 
 	if loggingConf.Debug {
 		// nice colored output
@@ -143,6 +144,39 @@ func InitZerolog(
 	// zerolog doesn't implement Println required by sarama
 	sarama.Logger = &SaramaZerologger{zerologger: log.Logger}
 	return nil
+}
+
+// InitLogrus initializes logrus with provided configs
+func InitLogrus(loggingConf LoggingConfiguration,
+	sentryConf SentryLoggingConfiguration) error {
+
+	level, err := logrus.ParseLevel(loggingConf.LogLevel)
+	if err == nil {
+		logrus.SetLevel(level)
+	} else {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
+
+	if loggingConf.UseStderr {
+		logrus.SetOutput(os.Stderr)
+	} else {
+		logrus.SetOutput(os.Stdout)
+	}
+
+	if loggingConf.LoggingToSentryEnabled {
+		sentryDNS := sentryConf.SentryDSN
+		hook, err := logrus_sentry.NewSentryHook(sentryDNS, []logrus.Level{
+			logrus.PanicLevel,
+			logrus.FatalLevel,
+			logrus.ErrorLevel,
+		})
+
+		if err == nil {
+			logrus.AddHook(hook)
+		}
+	}
+
+	return err
 }
 
 // CloseZerolog closes properly the zerolog, if needed

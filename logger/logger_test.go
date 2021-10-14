@@ -402,3 +402,18 @@ func TestKafkaLogging(t *testing.T) {
 	)
 	helpers.FailOnError(t, err)
 }
+
+func TestInitLogrus(t *testing.T) {
+	testLoggingConf := logger.LoggingConfiguration{
+		Debug:                  true,
+		UseStderr:              false,
+		LogLevel:               "debug",
+		LoggingToSentryEnabled: false,
+	}
+	err := logger.InitLogrus(testLoggingConf, logger.SentryLoggingConfiguration{})
+	helpers.FailOnError(t, err)
+
+	testLoggingConf.LogLevel = "info"
+	err = logger.InitLogrus(testLoggingConf, logger.SentryLoggingConfiguration{})
+	helpers.FailOnError(t, err)
+}
