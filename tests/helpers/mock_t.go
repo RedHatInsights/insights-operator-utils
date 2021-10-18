@@ -48,7 +48,7 @@ func NewMockT(t *testing.T) *MockT {
 
 // Finish cleans up after the MockT
 func (t *MockT) Finish() {
-	defer t.mockController.Finish()
+	t.mockController.Finish()
 }
 
 // ExpectFailOnError adds expects corresponding to those called by helpers.FailOnError function
