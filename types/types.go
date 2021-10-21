@@ -233,9 +233,8 @@ type ClusterReports struct {
 
 // HittingClustersMetadata used to store metadata of clusters hit by a concrete rule
 type HittingClustersMetadata struct {
-	Count     int       `json:"count"`
-	Component Component `json:"component"`
-	ErrorKey  ErrorKey  `json:"error_key"`
+	Count    int          `json:"count"`
+	Selector RuleSelector `json:"rule_selector"`
 }
 
 // HittingClustersData used to store data of clusters hit by a concrete rule
@@ -250,6 +249,7 @@ type HittingClustersData struct {
 type HittingClusters struct {
 	Metadata    HittingClustersMetadata `json:"meta"`
 	ClusterList []HittingClustersData   `json:"data"`
+	Status      string                  `json:"status"`
 }
 
 //SchemaVersion is just a constant integer for now, max value 255. If we one day
