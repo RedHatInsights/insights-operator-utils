@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/RedHatInsights/cloudwatch v0.0.0-20210111105023-1df2bdfe3291
-	github.com/RedHatInsights/insights-results-aggregator-data v1.3.1
+	github.com/RedHatInsights/insights-results-aggregator-data v1.3.2
 	github.com/RedHatInsights/kafka-zerolog v0.0.0-20210304172207-928f026dc7ec
 	github.com/Shopify/sarama v1.27.1
 	github.com/archdx/zerolog-sentry v0.0.1
