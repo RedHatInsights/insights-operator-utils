@@ -442,7 +442,7 @@ func TestReadClusterListFromPathEmptyClusterList(t *testing.T) {
 // cluster ID is processed correctly by function ReadClusterListFromPath.
 func TestReadClusterListFromPathOneCluster(t *testing.T) {
 	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
-		"cluster_list": fmt.Sprintf("%v", cluster1ID),
+		"cluster_list": cluster1ID,
 	})
 
 	// try to read list of clusters from path
