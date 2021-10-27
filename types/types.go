@@ -234,7 +234,7 @@ type ClusterReports struct {
 // HittingClustersMetadata used to store metadata of clusters hit by a concrete rule
 type HittingClustersMetadata struct {
 	Count    int          `json:"count"`
-	Selector RuleSelector `json:"rule_selector"`
+	Selector RuleSelector `json:"rule_id"`
 }
 
 // HittingClustersData used to store data of clusters hit by a concrete rule
