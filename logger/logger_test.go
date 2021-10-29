@@ -305,7 +305,8 @@ func TestLoggingToCloudwatch(t *testing.T) {
 
 func TestInitZerolog_LogToSentry(t *testing.T) {
 	sentryConf := logger.SentryLoggingConfiguration{
-		SentryDSN: "http://hash@localhost:9999/project/1",
+		SentryDSN:         "http://hash@localhost:9999/project/1",
+		SentryEnvironment: "test_environment",
 	}
 
 	err := logger.InitZerolog(logger.LoggingConfiguration{
@@ -323,7 +324,8 @@ func TestInitZerolog_LogToSentry(t *testing.T) {
 
 func TestCloseZerolog(t *testing.T) {
 	sentryConf := logger.SentryLoggingConfiguration{
-		SentryDSN: "http://hash@localhost:9999/project/1",
+		SentryDSN:         "http://hash@localhost:9999/project/1",
+		SentryEnvironment: "test_environment",
 	}
 
 	err := logger.InitZerolog(logger.LoggingConfiguration{
