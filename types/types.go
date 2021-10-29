@@ -252,6 +252,16 @@ type HittingClusters struct {
 	Status      string                  `json:"status"`
 }
 
+// DatabaseVersion specifies the latest version the database has been migrated
+// to. It might be zero in case of any migration issue.
+type DatabaseVersion uint
+
+// DatabaseVersionStruct is a data structure to be returned in JSON format by
+// Insights Results Aggregator.
+type DatabaseVersionStruct struct {
+	DatabaseVersion DatabaseVersion `json:"database_version"`
+}
+
 //SchemaVersion is just a constant integer for now, max value 255. If we one day
 //need more versions, better consider upgrading to semantic versioning.
 type SchemaVersion uint8
