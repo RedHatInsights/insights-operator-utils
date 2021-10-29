@@ -221,7 +221,7 @@ func setupCloudwatchLogging(conf CloudWatchConfiguration) (io.Writer, error) {
 }
 
 func setupSentryLogging(conf SentryLoggingConfiguration) (io.WriteCloser, error) {
-	sentryWriter, err := zlogsentry.New(conf.SentryDSN)
+	sentryWriter, err := zlogsentry.New(conf.SentryDSN, zlogsentry.WithEnvironment(conf.SentryEnvironment))
 	if err != nil {
 		return nil, err
 	}

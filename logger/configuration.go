@@ -64,7 +64,8 @@ type CloudWatchConfiguration struct {
 
 // SentryLoggingConfiguration represents the configuration of Sentry logger
 type SentryLoggingConfiguration struct {
-	SentryDSN string `mapstructure:"dsn" toml:"dsn"`
+	SentryDSN         string `mapstructure:"dsn" toml:"dsn"`
+	SentryEnvironment string `mapstructure:"environment" toml:"environment"`
 }
 
 // KafkaZerologConfiguration represetns the configuration for sending log messages to a Kafka topic
