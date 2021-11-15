@@ -38,9 +38,8 @@ func UnregisterMetrics() error {
 		if ok := prometheus.Unregister(c); !ok {
 			log.Warn().Msg(errMsg)
 			return errors.New(errMsg)
-		} else {
-			log.Debug().Msg("metric unregistered")
 		}
+		log.Debug().Msg("metric unregistered")
 
 		log.Debug().
 			Int("total", len(collectors)).
