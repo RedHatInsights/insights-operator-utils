@@ -18,8 +18,8 @@
 		- [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
 		- [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
 		- [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
+		- [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
 		- [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
-		- [`github.com/RedHatInsights/insights-operator-utils/push_metrics`](#githubcomredhatinsightsinsights-operator-utilspush_metrics)
 		- [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
 		- [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
 		- [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
@@ -58,13 +58,13 @@ Configuration structures needed to configure the access to CloudWatch server to 
 
 Package metrics contains all metrics that needs to be exposed to Prometheus and indirectly to Grafana.
 
+### `github.com/RedHatInsights/insights-operator-utils/metrics/push`
+
+Package metrics/push contains some helping functions to push metrics to a Prometheus Pushgateway.
+
 ### `github.com/RedHatInsights/insights-operator-utils/parsers`
 
 Various text parser utility functions.
-
-### `github.com/RedHatInsights/insights-operator-utils/push_metrics`
-
-Package push_metrics contains some helping functions to push metrics to a Prometheus Pushgateway.
 
 ### `github.com/RedHatInsights/insights-operator-utils/responses`
 
