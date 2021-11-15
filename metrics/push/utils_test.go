@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package push_metrics_test
+package push_test
 
 import (
 	"testing"
 
-	"github.com/RedHatInsights/insights-operator-utils/push_metrics"
+	"github.com/RedHatInsights/insights-operator-utils/metrics/push"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/stretchr/testify/assert"
 )
@@ -30,12 +30,12 @@ var (
 func TestNewCounterWithError(t *testing.T) {
 	t.Run("invalid counter", func(t *testing.T) {
 
-		_, err := push_metrics.NewCounterWithError(prometheus.CounterOpts{Name: invalidName})
+		_, err := push.NewCounterWithError(prometheus.CounterOpts{Name: invalidName})
 		assert.Error(t, err)
 	})
 
 	t.Run("valid counter", func(t *testing.T) {
-		_, err := push_metrics.NewCounterWithError(prometheus.CounterOpts{Name: validPrefix + "counter"})
+		_, err := push.NewCounterWithError(prometheus.CounterOpts{Name: validPrefix + "counter"})
 		assert.NoError(t, err)
 	})
 }
@@ -43,12 +43,12 @@ func TestNewCounterWithError(t *testing.T) {
 func TestNewGaugeWithError(t *testing.T) {
 	t.Run("invalid gauge", func(t *testing.T) {
 
-		_, err := push_metrics.NewGaugeWithError(prometheus.GaugeOpts{Name: invalidName})
+		_, err := push.NewGaugeWithError(prometheus.GaugeOpts{Name: invalidName})
 		assert.Error(t, err)
 	})
 
 	t.Run("valid gauge", func(t *testing.T) {
-		_, err := push_metrics.NewGaugeWithError(prometheus.GaugeOpts{Name: validPrefix + "gauge"})
+		_, err := push.NewGaugeWithError(prometheus.GaugeOpts{Name: validPrefix + "gauge"})
 		assert.NoError(t, err)
 	})
 }
@@ -56,12 +56,12 @@ func TestNewGaugeWithError(t *testing.T) {
 func TestNewHistogramWithError(t *testing.T) {
 	t.Run("invalid histogram", func(t *testing.T) {
 
-		_, err := push_metrics.NewHistogramWithError(prometheus.HistogramOpts{Name: invalidName})
+		_, err := push.NewHistogramWithError(prometheus.HistogramOpts{Name: invalidName})
 		assert.Error(t, err)
 	})
 
 	t.Run("valid histogram", func(t *testing.T) {
-		_, err := push_metrics.NewHistogramWithError(prometheus.HistogramOpts{Name: validPrefix + "histogram"})
+		_, err := push.NewHistogramWithError(prometheus.HistogramOpts{Name: validPrefix + "histogram"})
 		assert.NoError(t, err)
 	})
 }

@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package push_metrics_test
+package push_test
 
 import (
 	"net/http"
 	"testing"
 
-	"github.com/RedHatInsights/insights-operator-utils/push_metrics"
+	"github.com/RedHatInsights/insights-operator-utils/metrics/push"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPushGatewayClientDo(t *testing.T) {
-	pgc := push_metrics.PushGatewayClient{
+	pgc := push.PushGatewayClient{
 		AuthToken:  "",
 		HTTPClient: http.Client{},
 	}
