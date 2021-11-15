@@ -62,5 +62,6 @@ func TestPushCollectors(t *testing.T) {
 	assert.Equal(t, 1, pusher.callsClient)
 	assert.Equal(t, len(collectors), pusher.callsCollector)
 
-	UnregisterMetrics()
+	err = UnregisterMetrics()
+	assert.NoError(t, err)
 }
