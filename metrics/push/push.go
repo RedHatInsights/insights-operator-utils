@@ -16,6 +16,7 @@ package push
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -36,6 +37,7 @@ func UnregisterMetrics() error {
 	for i, c := range collectors {
 		if ok := prometheus.Unregister(c); !ok {
 			log.Warn().Msg(errMsg)
+			return errors.New(errMsg)
 		} else {
 			log.Debug().Msg("metric unregistered")
 		}
@@ -45,6 +47,7 @@ func UnregisterMetrics() error {
 			Int("progress", i+1).
 			Msg("Unregistering metrics")
 	}
+	collectors = []prometheus.Collector{}
 	return nil
 }
 

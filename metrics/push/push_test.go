@@ -19,12 +19,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/RedHatInsights/insights-operator-utils/metrics/push"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -36,9 +34,6 @@ var (
 )
 
 func TestInitMetrics(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.DebugLevel) // TODO
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-
 	t.Run("optimal setup", func(t *testing.T) {
 		err := push.InitMetrics(testInitFunctions)
 		assert.NoError(t, err)
