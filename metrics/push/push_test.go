@@ -67,7 +67,7 @@ func TestPushMetrics(t *testing.T) {
 		)
 		defer pgwOK.Close()
 
-		err := push.PushMetrics(testJob, pgwOK.URL, testGatewayAuthToken)
+		err := push.SendMetrics(testJob, pgwOK.URL, testGatewayAuthToken)
 		assert.NoError(t, err)
 	})
 
@@ -81,7 +81,7 @@ func TestPushMetrics(t *testing.T) {
 		)
 		defer pgwErr.Close()
 
-		err := push.PushMetrics(testJob, pgwErr.URL, testGatewayAuthToken)
+		err := push.SendMetrics(testJob, pgwErr.URL, testGatewayAuthToken)
 		assert.Error(t, err)
 	})
 }
@@ -112,7 +112,7 @@ func TestPushMetricsInLoop(t *testing.T) {
 	t.Run("if TimeBetweenPush != 0", func(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), totalTime)
 
-		go push.PushMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
+		go push.SendMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
 		time.Sleep(totalTime)
 		cancel()
 		time.Sleep(1 * time.Second) // give time for the push to complete
@@ -127,7 +127,7 @@ func TestPushMetricsInLoop(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), totalTime)
 
 		timeBetweenPush = 0 * time.Second
-		go push.PushMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
+		go push.SendMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
 		time.Sleep(totalTime)
 		cancel()
 

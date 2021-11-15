@@ -23,7 +23,7 @@ import (
 )
 
 func TestPushGatewayClientDo(t *testing.T) {
-	pgc := push.PushGatewayClient{
+	pgc := push.GatewayClient{
 		AuthToken:  "",
 		HTTPClient: http.Client{},
 	}

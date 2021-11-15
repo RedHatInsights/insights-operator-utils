@@ -30,7 +30,7 @@ type metricsPusher interface {
 
 // pushCollectors pushes the metrics using a metricsPusher interface
 func pushCollectors(p metricsPusher, gatewayAuthToken string, collectors []prometheus.Collector) error {
-	client := PushGatewayClient{
+	client := GatewayClient{
 		AuthToken:  gatewayAuthToken,
 		HTTPClient: http.Client{},
 	}

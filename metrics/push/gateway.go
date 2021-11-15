@@ -20,9 +20,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// PushGatewayClient is a simple wrapper over http.Client so that prometheus
+// GatewayClient is a simple wrapper over http.Client so that prometheus
 // can do HTTP requests with the given authentication header
-type PushGatewayClient struct {
+type GatewayClient struct {
 	AuthToken string
 
 	HTTPClient http.Client
@@ -30,7 +30,7 @@ type PushGatewayClient struct {
 
 // Do is a simple wrapper over http.Client.Do method that includes
 // the authentication header configured in the PushGatewayClient instance
-func (pgc *PushGatewayClient) Do(request *http.Request) (*http.Response, error) {
+func (pgc *GatewayClient) Do(request *http.Request) (*http.Response, error) {
 	if pgc.AuthToken != "" {
 		log.Debug().Msg("Adding authorization header to HTTP request")
 		request.Header.Set("Authorization", "Basic "+pgc.AuthToken)

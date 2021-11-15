@@ -68,8 +68,8 @@ func InitMetrics(initFunctions []func() (prometheus.Collector, error)) (err erro
 	return nil
 }
 
-// PushMetrics pushes the metrics to the configured prometheus push gateway
-func PushMetrics(job, gatewayURL, gatewayAuthToken string) error {
+// SendMetrics pushes the metrics to the configured prometheus push gateway
+func SendMetrics(job, gatewayURL, gatewayAuthToken string) error {
 	// Creates a pusher to the gateway "$PUSHGW_URL/metrics/job/$(job_name)
 	log.Debug().
 		Str("Job", job).
@@ -86,8 +86,8 @@ func PushMetrics(job, gatewayURL, gatewayAuthToken string) error {
 	return nil
 }
 
-// PushMetricsInLoop pushes the metrics in a loop until context is done
-func PushMetricsInLoop(ctx context.Context, job, gatewayURL, gatewayAuthToken string, timeBetweenPush time.Duration) {
+// SendMetricsInLoop pushes the metrics in a loop until context is done
+func SendMetricsInLoop(ctx context.Context, job, gatewayURL, gatewayAuthToken string, timeBetweenPush time.Duration) {
 	if timeBetweenPush < time.Second*1 {
 		log.Warn().Msgf("You are trying to push the metrics every %f seconds. This may overload the push gateway, so this operation is blocked.", timeBetweenPush.Seconds())
 		return
@@ -97,7 +97,7 @@ func PushMetricsInLoop(ctx context.Context, job, gatewayURL, gatewayAuthToken st
 		select {
 		case <-ticker.C:
 			log.Debug().Msg("Pushing metrics")
-			_ = PushMetrics(job, gatewayURL, gatewayAuthToken)
+			_ = SendMetrics(job, gatewayURL, gatewayAuthToken)
 		case <-ctx.Done():
 			return
 		}
