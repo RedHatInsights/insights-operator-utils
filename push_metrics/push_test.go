@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package metrics_test
+package push_metrics_test
 
 import (
 	"context"
@@ -23,7 +23,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/RedHatInsights/insights-operator-utils/metrics"
+	"github.com/RedHatInsights/insights-operator-utils/push_metrics"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
@@ -40,17 +40,17 @@ func TestInitMetrics(t *testing.T) {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	t.Run("optimal setup", func(t *testing.T) {
-		err := metrics.InitMetrics(testInitFunctions)
+		err := push_metrics.InitMetrics(testInitFunctions)
 		assert.NoError(t, err)
 	})
 	t.Run("already registered metrics", func(t *testing.T) {
-		err := metrics.InitMetrics(testInitFunctions)
+		err := push_metrics.InitMetrics(testInitFunctions)
 		assert.NoError(t, err)
 	})
 }
 
 func TestPushMetrics(t *testing.T) {
-	err := metrics.InitMetrics(testInitFunctions)
+	err := push_metrics.InitMetrics(testInitFunctions)
 	require.NoError(t, err)
 	t.Run("ok response", func(t *testing.T) {
 		// Fake a Pushgateway that responds with 202 to DELETE and with 200 in
@@ -67,7 +67,7 @@ func TestPushMetrics(t *testing.T) {
 		)
 		defer pgwOK.Close()
 
-		err := metrics.PushMetrics(testJob, pgwOK.URL, testGatewayAuthToken)
+		err := push_metrics.PushMetrics(testJob, pgwOK.URL, testGatewayAuthToken)
 		assert.NoError(t, err)
 	})
 
@@ -81,7 +81,7 @@ func TestPushMetrics(t *testing.T) {
 		)
 		defer pgwErr.Close()
 
-		err := metrics.PushMetrics(testJob, pgwErr.URL, testGatewayAuthToken)
+		err := push_metrics.PushMetrics(testJob, pgwErr.URL, testGatewayAuthToken)
 		assert.Error(t, err)
 	})
 }
@@ -112,7 +112,7 @@ func TestPushMetricsInLoop(t *testing.T) {
 	t.Run("if TimeBetweenPush != 0", func(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), totalTime)
 
-		go metrics.PushMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
+		go push_metrics.PushMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
 		time.Sleep(totalTime)
 		cancel()
 		time.Sleep(1 * time.Second) // give time for the push to complete
@@ -127,7 +127,7 @@ func TestPushMetricsInLoop(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), totalTime)
 
 		timeBetweenPush = 0 * time.Second
-		go metrics.PushMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
+		go push_metrics.PushMetricsInLoop(ctx, testJob, pgwOK.URL, testGatewayAuthToken, time.Duration(timeBetweenPush))
 		time.Sleep(totalTime)
 		cancel()
 

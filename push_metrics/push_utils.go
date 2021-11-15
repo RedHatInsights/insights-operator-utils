@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package metrics_test
+package push_metrics
 
 import (
-	"github.com/RedHatInsights/insights-operator-utils/metrics"
+	"net/http"
+
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/push"
 )
 
-func getMetric1() (prometheus.Collector, error) {
-	metric1, err := metrics.NewGaugeWithError(prometheus.GaugeOpts{
-		Name: "metric_1",
-		Help: "the first metric",
-	})
-	return metric1, err
+// metricsPusher let us mock the pushCollectors function
+type metricsPusher interface {
+	Push() error
+	Client(c push.HTTPDoer) *push.Pusher
+	Collector(c prometheus.Collector) *push.Pusher
 }
 
-func getMetric2() (prometheus.Collector, error) {
-	metric2, err := metrics.NewCounterWithError(prometheus.CounterOpts{
-		Name: "metric_2",
-		Help: "the second metric",
-	})
-	return metric2, err
-}
-
-// testInitFunctions let us generate some metrics for tests
-var testInitFunctions = []func() (prometheus.Collector, error){
-	getMetric1,
-	getMetric2,
+// pushCollectors pushes the metrics using a metricsPusher interface
+func pushCollectors(p metricsPusher, gatewayAuthToken string, collectors []prometheus.Collector) error {
+	client := PushGatewayClient{
+		AuthToken:  gatewayAuthToken,
+		HTTPClient: http.Client{},
+	}
+	for _, collector := range collectors {
+		p.Collector(collector)
+	}
+	p.Client(&client)
+	return p.Push()
 }
