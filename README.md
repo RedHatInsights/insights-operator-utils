@@ -10,23 +10,25 @@
 
 <!-- vim-markdown-toc GFM -->
 
-* [Description](#description)
-* [Sub-modules in this library](#sub-modules-in-this-library)
-    * [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
-    * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
-    * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
-    * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
-    * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
-    * [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
-    * [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
-    * [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
-    * [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
-* [How to use this library](#how-to-use-this-library)
-* [Configuration](#configuration)
-* [Contribution](#contribution)
-* [Testing](#testing)
-* [CI](#ci)
-* [Package manifest](#package-manifest)
+- [insights-operator Utils](#insights-operator-utils)
+	- [Description](#description)
+	- [Sub-modules in this library](#sub-modules-in-this-library)
+		- [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
+		- [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
+		- [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
+		- [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
+		- [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
+		- [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
+		- [`github.com/RedHatInsights/insights-operator-utils/push_metrics`](#githubcomredhatinsightsinsights-operator-utilspush_metrics)
+		- [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
+		- [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
+		- [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
+	- [How to use this library](#how-to-use-this-library)
+	- [Configuration](#configuration)
+	- [Contribution](#contribution)
+	- [Testing](#testing)
+	- [CI](#ci)
+	- [Package manifest](#package-manifest)
 
 <!-- vim-markdown-toc -->
 
@@ -59,6 +61,10 @@ Package metrics contains all metrics that needs to be exposed to Prometheus and 
 ### `github.com/RedHatInsights/insights-operator-utils/parsers`
 
 Various text parser utility functions.
+
+### `github.com/RedHatInsights/insights-operator-utils/push_metrics`
+
+Package push_metrics contains some helping functions to push metrics to a Prometheus Pushgateway.
 
 ### `github.com/RedHatInsights/insights-operator-utils/responses`
 
