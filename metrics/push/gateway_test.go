@@ -12,35 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tlsutil_test
+package push_test
 
 import (
+	"net/http"
 	"testing"
 
+	"github.com/RedHatInsights/insights-operator-utils/metrics/push"
 	"github.com/stretchr/testify/assert"
-
-	tlsutil "github.com/RedHatInsights/insights-operator-utils/tls"
 )
 
-// TestNewTLSConfig tests the NewTLSConfig method
-func TestNewTLSConfig(t *testing.T) {
-	testCases := []struct {
-		input       string
-		expectedErr bool
-	}{
-		{"", true},
-		{"aaaaa", true},
-		{"../testdata/cert.pem", false},
+func TestPushGatewayClientDo(t *testing.T) {
+	pgc := push.GatewayClient{
+		AuthToken:  "",
+		HTTPClient: http.Client{},
 	}
-
-	for _, tc := range testCases {
-		cfg, err := tlsutil.NewTLSConfig(tc.input)
-		if tc.expectedErr {
-			assert.Error(t, err)
-			assert.Nil(t, cfg)
-		} else {
-			assert.NoError(t, err)
-			assert.NotNil(t, cfg)
-		}
-	}
+	t.Run("without auth token", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "https://redhat.com", nil)
+		_, err := pgc.Do(req)
+		assert.NoError(t, err)
+	})
+	pgc.AuthToken = "random token"
+	t.Run("with auth token", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "https://redhat.com", nil)
+		_, err := pgc.Do(req)
+		assert.NoError(t, err)
+	})
 }
