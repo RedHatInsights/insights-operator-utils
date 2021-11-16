@@ -40,6 +40,19 @@ func TestNewCounterWithError(t *testing.T) {
 	})
 }
 
+func TestNewCounterVecWithError(t *testing.T) {
+	t.Run("invalid counter", func(t *testing.T) {
+
+		_, err := push.NewCounterVecWithError(prometheus.CounterOpts{Name: invalidName}, []string{})
+		assert.Error(t, err)
+	})
+
+	t.Run("valid counter", func(t *testing.T) {
+		_, err := push.NewCounterVecWithError(prometheus.CounterOpts{Name: validPrefix + "counter_vec"}, []string{})
+		assert.NoError(t, err)
+	})
+}
+
 func TestNewGaugeWithError(t *testing.T) {
 	t.Run("invalid gauge", func(t *testing.T) {
 
