@@ -41,6 +41,20 @@ func NewCounterWithError(opts prometheus.CounterOpts) (counter prometheus.Counte
 	return
 }
 
+// NewCounterVecWithError run promauto.NewCounterVec() catching the panic and returning an error
+func NewCounterVecWithError(opts prometheus.CounterOpts, labelNames []string) (counter *prometheus.CounterVec, err error) {
+	logStartRegistering(opts.Name, opts.Help)
+	defer func() { // catch the possible panic
+		if panicErr := recover(); panicErr != nil {
+			err = fmt.Errorf("got error while registering the counter vector, %v", panicErr)
+			logErrorRegistering(opts.Name, opts.Help, err)
+		}
+	}()
+	counter = promauto.NewCounterVec(opts, labelNames)
+	logFinishRegistering(opts.Name, opts.Help)
+	return
+}
+
 // NewGaugeWithError run promauto.NewGauge() catching the panic and returning an error
 func NewGaugeWithError(opts prometheus.GaugeOpts) (gauge prometheus.Gauge, err error) {
 	logStartRegistering(opts.Name, opts.Help)
