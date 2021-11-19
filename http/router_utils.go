@@ -26,6 +26,7 @@ import (
 	"strconv"
 	"strings"
 
+	ctypes "github.com/RedHatInsights/insights-results-types"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
@@ -86,7 +87,7 @@ func GetRouterPositiveIntParam(request *http.Request, paramName string) (uint64,
 
 // ReadClusterName retrieves cluster name from request
 // if it's not possible, it writes http error to the writer and returns false
-func ReadClusterName(writer http.ResponseWriter, request *http.Request) (types.ClusterName, bool) {
+func ReadClusterName(writer http.ResponseWriter, request *http.Request) (ctypes.ClusterName, bool) {
 	clusterName, err := GetRouterParam(request, "cluster")
 	if err != nil {
 		handleClusterNameError(writer, err)
@@ -104,13 +105,13 @@ func ReadClusterName(writer http.ResponseWriter, request *http.Request) (types.C
 
 // ReadRuleID retrieves rule id from request's url or writes an error to writer.
 // The function returns a rule id and a bool indicating if it was successful.
-func ReadRuleID(writer http.ResponseWriter, request *http.Request) (types.RuleID, bool) {
+func ReadRuleID(writer http.ResponseWriter, request *http.Request) (ctypes.RuleID, bool) {
 	ruleID, err := GetRouterParam(request, "rule_id")
 	if err != nil {
 		const message = "unable to get rule id"
 		log.Error().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
-		return types.RuleID("0"), false
+		return ctypes.RuleID("0"), false
 	}
 
 	isRuleIDValid := RuleIDValidator.Match([]byte(ruleID))
@@ -123,30 +124,30 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (types.RuleID
 			ParamValue: ruleID,
 			ErrString:  err.Error(),
 		})
-		return types.RuleID("0"), false
+		return ctypes.RuleID("0"), false
 	}
 
-	return types.RuleID(ruleID), true
+	return ctypes.RuleID(ruleID), true
 }
 
 // ReadErrorKey retrieves error key from request's url or writes an error to writer.
 // The function returns an error key and a bool indicating if it was successful.
-func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (types.ErrorKey, bool) {
+func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (ctypes.ErrorKey, bool) {
 	errorKey, err := GetRouterParam(request, "error_key")
 	if err != nil {
 		const message = "unable to get error_key"
 		log.Error().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
-		return types.ErrorKey("0"), false
+		return ctypes.ErrorKey("0"), false
 	}
 
-	return types.ErrorKey(errorKey), true
+	return ctypes.ErrorKey(errorKey), true
 }
 
 // ReadRuleSelector retrieves the rule selector (rule_id|error_key) from request's
 // url or writes an error to writer.
 // The function returns the selector and a bool indicating if it was successful.
-func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (types.RuleSelector, bool) {
+func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes.RuleSelector, bool) {
 	ruleSelector, err := GetRouterParam(request, "rule_selector")
 	if err != nil {
 		const message = "Unable to get rule selector from request"
@@ -168,25 +169,25 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (types.
 		return "", false
 	}
 
-	return types.RuleSelector(ruleSelector), true
+	return ctypes.RuleSelector(ruleSelector), true
 }
 
 // ReadOrganizationID retrieves organization id from request
 // if it's not possible, it writes http error to the writer and returns false
-func ReadOrganizationID(writer http.ResponseWriter, request *http.Request, auth bool) (types.OrgID, bool) {
+func ReadOrganizationID(writer http.ResponseWriter, request *http.Request, auth bool) (ctypes.OrgID, bool) {
 	organizationID, err := GetRouterPositiveIntParam(request, "organization")
 	if err != nil {
 		HandleOrgIDError(writer, err)
 		return 0, false
 	}
 
-	successful := CheckPermissions(writer, request, types.OrgID(organizationID), auth)
+	successful := CheckPermissions(writer, request, ctypes.OrgID(organizationID), auth)
 
-	return types.OrgID(organizationID), successful
+	return ctypes.OrgID(organizationID), successful
 }
 
 // ReadClusterNames does the same as `readClusterName`, except for multiple clusters.
-func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]types.ClusterName, bool) {
+func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]ctypes.ClusterName, bool) {
 	clusterNamesParam, err := GetRouterParam(request, "clusters")
 	if err != nil {
 		message := fmt.Sprintf("Cluster names are not provided %v", err.Error())
@@ -194,15 +195,15 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]type
 
 		types.HandleServerError(writer, err)
 
-		return []types.ClusterName{}, false
+		return []ctypes.ClusterName{}, false
 	}
 
-	clusterNamesConverted := make([]types.ClusterName, 0)
+	clusterNamesConverted := make([]ctypes.ClusterName, 0)
 	for _, clusterName := range SplitRequestParamArray(clusterNamesParam) {
 		convertedName, err := ValidateClusterName(clusterName)
 		if err != nil {
 			types.HandleServerError(writer, err)
-			return []types.ClusterName{}, false
+			return []ctypes.ClusterName{}, false
 		}
 
 		clusterNamesConverted = append(clusterNamesConverted, convertedName)
@@ -212,14 +213,14 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]type
 }
 
 // ReadOrganizationIDs does the same as `readOrganizationID`, except for multiple organizations.
-func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]types.OrgID, bool) {
+func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]ctypes.OrgID, bool) {
 	organizationsParam, err := GetRouterParam(request, "organizations")
 	if err != nil {
 		HandleOrgIDError(writer, err)
-		return []types.OrgID{}, false
+		return []ctypes.OrgID{}, false
 	}
 
-	organizationsConverted := make([]types.OrgID, 0)
+	organizationsConverted := make([]ctypes.OrgID, 0)
 	for _, orgStr := range SplitRequestParamArray(organizationsParam) {
 		orgInt, err := strconv.ParseUint(orgStr, 10, 64)
 		if err != nil {
@@ -228,9 +229,9 @@ func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]t
 				ParamValue: orgStr,
 				ErrString:  "integer array expected",
 			})
-			return []types.OrgID{}, false
+			return []ctypes.OrgID{}, false
 		}
-		organizationsConverted = append(organizationsConverted, types.OrgID(orgInt))
+		organizationsConverted = append(organizationsConverted, ctypes.OrgID(orgInt))
 	}
 
 	return organizationsConverted, true
@@ -244,11 +245,11 @@ func HandleOrgIDError(writer http.ResponseWriter, err error) {
 
 // CheckPermissions checks whether user with a provided token(from request) can access current organization
 // and handled the error on negative result by logging the error and writing a corresponding http response
-func CheckPermissions(writer http.ResponseWriter, request *http.Request, orgID types.OrgID, auth bool) bool {
-	identityContext := request.Context().Value(types.ContextKeyUser)
+func CheckPermissions(writer http.ResponseWriter, request *http.Request, orgID ctypes.OrgID, auth bool) bool {
+	identityContext := request.Context().Value(ctypes.ContextKeyUser)
 
 	if identityContext != nil && auth {
-		identity := identityContext.(types.Identity)
+		identity := identityContext.(ctypes.Identity)
 		if identity.Internal.OrgID != orgID {
 			message := fmt.Sprintf("you have no permissions to get or change info about the organization "+
 				"with ID %d; you can access info about organization with ID %d", orgID, identity.Internal.OrgID)
@@ -263,7 +264,7 @@ func CheckPermissions(writer http.ResponseWriter, request *http.Request, orgID t
 
 // ValidateClusterName checks that the cluster name is a valid UUID.
 // Converted cluster name is returned if everything is okay, otherwise an error is returned.
-func ValidateClusterName(clusterName string) (types.ClusterName, error) {
+func ValidateClusterName(clusterName string) (ctypes.ClusterName, error) {
 	if _, err := uuid.Parse(clusterName); err != nil {
 		message := fmt.Sprintf("invalid cluster name: '%s'. Error: %s", clusterName, err.Error())
 
@@ -276,7 +277,7 @@ func ValidateClusterName(clusterName string) (types.ClusterName, error) {
 		}
 	}
 
-	return types.ClusterName(clusterName), nil
+	return ctypes.ClusterName(clusterName), nil
 }
 
 func handleClusterNameError(writer http.ResponseWriter, err error) {
@@ -318,7 +319,7 @@ func ReadClusterListFromPath(writer http.ResponseWriter, request *http.Request) 
 // ReadClusterListFromBody retrieves list of clusters from request's body
 // if it's not possible, it writes http error to the writer and returns false
 func ReadClusterListFromBody(writer http.ResponseWriter, request *http.Request) ([]string, bool) {
-	var clusterList types.ClusterListInRequest
+	var clusterList ctypes.ClusterListInRequest
 
 	// check if there's any body provided in the request sent by client
 	if request.ContentLength <= 0 {

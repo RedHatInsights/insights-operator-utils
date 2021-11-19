@@ -30,12 +30,12 @@ import (
 	"strings"
 	"testing"
 
+	types "github.com/RedHatInsights/insights-results-types"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	gock "gopkg.in/h2non/gock.v1"
 
 	httputils "github.com/RedHatInsights/insights-operator-utils/http"
-	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
 // ServerInitializer is interface which is implemented for any server having Initialize method

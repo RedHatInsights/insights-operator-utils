@@ -21,8 +21,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/RedHatInsights/insights-operator-utils/responses"
 )
@@ -77,6 +78,20 @@ type NoBodyError struct{}
 
 func (*NoBodyError) Error() string {
 	return "client didn't provide request body"
+}
+
+// ValidationError validation error, for example when string is longer then expected
+type ValidationError struct {
+	ParamName  string
+	ParamValue interface{}
+	ErrString  string
+}
+
+func (e *ValidationError) Error() string {
+	return fmt.Sprintf(
+		"Error during validating param '%v' with value '%v'. Error: '%v'",
+		e.ParamName, e.ParamValue, e.ErrString,
+	)
 }
 
 // HandleServerError handles separate server errors and sends appropriate responses

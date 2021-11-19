@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"github.com/RedHatInsights/insights-results-aggregator-data/testdata"
+	types "github.com/RedHatInsights/insights-results-types"
 	"github.com/golang/mock/gomock"
 	"github.com/mozillazg/request"
 	"github.com/stretchr/testify/assert"
@@ -38,7 +39,6 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/responses"
 	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
 	"github.com/RedHatInsights/insights-operator-utils/tests/mock_io"
-	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
 const (
