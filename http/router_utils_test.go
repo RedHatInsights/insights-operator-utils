@@ -29,12 +29,12 @@ import (
 	"testing"
 
 	"github.com/RedHatInsights/insights-results-aggregator-data/testdata"
+	types "github.com/RedHatInsights/insights-results-types"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	httputils "github.com/RedHatInsights/insights-operator-utils/http"
 	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
-	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
 const (

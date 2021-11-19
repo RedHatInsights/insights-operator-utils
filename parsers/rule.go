@@ -19,7 +19,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/RedHatInsights/insights-operator-utils/types"
+	types "github.com/RedHatInsights/insights-results-types"
 )
 
 // ParseRuleSelector function parses the rule selector which consists of

@@ -19,8 +19,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	types "github.com/RedHatInsights/insights-results-types"
+
 	"github.com/RedHatInsights/insights-operator-utils/generators"
-	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
 const (

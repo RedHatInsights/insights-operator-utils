@@ -18,11 +18,12 @@ package parsers_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/parsers/rule_test.html
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
+	types "github.com/RedHatInsights/insights-results-types"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/RedHatInsights/insights-operator-utils/parsers"
-	"github.com/RedHatInsights/insights-operator-utils/types"
 )
 
 // TestParseRuleSelector checks the function parsers.ParseRuleSelector for
