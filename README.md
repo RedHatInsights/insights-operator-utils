@@ -21,6 +21,7 @@
 		- [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
 		- [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
 		- [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
+		- [`github.com/RedHatInsights/insights-operator-utils/tls`](#githubcomredhatinsightsinsights-operator-utilstls)
 		- [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
 		- [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
 	- [How to use this library](#how-to-use-this-library)
@@ -69,6 +70,10 @@ Various text parser utility functions.
 ### `github.com/RedHatInsights/insights-operator-utils/responses`
 
 Handlers for HTTP response.
+
+### `github.com/RedHatInsights/insights-operator-utils/tls`
+
+Helper function to create [TLS configurations](https://pkg.go.dev/crypto/tls#Config).
 
 ### `github.com/RedHatInsights/insights-operator-utils/tests`
 
