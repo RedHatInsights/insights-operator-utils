@@ -21,6 +21,7 @@
 		- [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
 		- [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
 		- [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
+		- [`github.com/RedHatInsights/insights-operator-utils/s3`](#githubcomredhatinsightsinsights-operator-utilss3)
 		- [`github.com/RedHatInsights/insights-operator-utils/tls`](#githubcomredhatinsightsinsights-operator-utilstls)
 		- [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
 		- [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
@@ -70,6 +71,10 @@ Various text parser utility functions.
 ### `github.com/RedHatInsights/insights-operator-utils/responses`
 
 Handlers for HTTP response.
+
+### `github.com/RedHatInsights/insights-operator-utils/s3`
+
+Helper functions to work with S3.
 
 ### `github.com/RedHatInsights/insights-operator-utils/tls`
 
