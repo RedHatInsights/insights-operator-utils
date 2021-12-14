@@ -76,8 +76,7 @@ func CreateOpenAPIHandler(filePath string, debug bool, cacheFile bool) func(writ
 		if !cacheFile || len(fileContent) == 0 {
 			var err error
 			// it's not supposed that we'll accept the path from a user
-			// #nosec G304
-			fileContent, err = ioutil.ReadFile(filePath)
+			fileContent, err = ioutil.ReadFile(filePath) // #nosec G304  (CWE-22): Potential file inclusion via variable
 			if err != nil {
 				log.Error().Err(err).Msg("error reading openapi.json file")
 				types.HandleServerError(writer, err)
