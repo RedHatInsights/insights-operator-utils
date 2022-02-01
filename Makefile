@@ -47,10 +47,10 @@ style: fmt vet lint cyclo shellcheck errcheck goconst gosec ineffassign abcgo ##
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./...)
 
-cover: test
+cover: test ## Display test coverage on generated HTML pages
 	@go tool cover -html=coverage.out
 
-coverage:
+coverage: ## Display test coverage onto terminal
 	@go tool cover -func=coverage.out
 
 help: ## Show this help screen
