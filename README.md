@@ -28,6 +28,7 @@
 	- [How to use this library](#how-to-use-this-library)
 	- [Configuration](#configuration)
 	- [Contribution](#contribution)
+	- [Makefile targets](#makefile-targets)
 	- [Testing](#testing)
 	- [CI](#ci)
 	- [Package manifest](#package-manifest)
@@ -128,6 +129,28 @@ Please look into document [CONTRIBUTING.md](CONTRIBUTING.md) that contains all i
 
 Please look also at [Definition of Done](DoD.md) document with further informations.
 
+
+## Makefile targes
+
+```
+Available targets are:
+
+fmt                  Run go fmt -w for all sources
+lint                 Run golint
+vet                  Run go vet. Report likely mistakes in source code
+cyclo                Run gocyclo
+ineffassign          Run ineffassign checker
+shellcheck           Run shellcheck
+errcheck             Run errcheck
+goconst              Run goconst checker
+gosec                Run gosec checker
+abcgo                Run ABC metrics checker
+style                Run all the formatting related commands (fmt, vet, lint, cyclo) + check shell scripts
+test                 Run the unit tests
+cover                Display test coverage on generated HTML pages
+coverage             Display test coverage onto terminal
+help                 Show this help screen
+```
 
 ## Testing
 
