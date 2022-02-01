@@ -119,10 +119,28 @@ func TestSaramaZerologger(t *testing.T) {
 		assert.Contains(t, buf.String(), expectedStrInfoLevel)
 	})
 
+	t.Run("InfoLevel, Println", func(t *testing.T) {
+		buf.Reset()
+
+		sarama.Logger.Println(expectedStrInfoLevel)
+
+		assert.Contains(t, buf.String(), `\"level\":\"info\"`)
+		assert.Contains(t, buf.String(), expectedStrInfoLevel)
+	})
+
 	t.Run("ErrorLevel", func(t *testing.T) {
 		buf.Reset()
 
 		sarama.Logger.Print(expectedErrStrErrorLevel)
+
+		assert.Contains(t, buf.String(), `\"level\":\"error\"`)
+		assert.Contains(t, buf.String(), expectedErrStrErrorLevel)
+	})
+
+	t.Run("ErrorLevel, Println", func(t *testing.T) {
+		buf.Reset()
+
+		sarama.Logger.Println(expectedErrStrErrorLevel)
 
 		assert.Contains(t, buf.String(), `\"level\":\"error\"`)
 		assert.Contains(t, buf.String(), expectedErrStrErrorLevel)
