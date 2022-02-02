@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go v1.35.7
 	github.com/getkin/kin-openapi v0.22.1
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/mozillazg/request v0.8.0
 	github.com/prometheus/client_golang v1.10.0
