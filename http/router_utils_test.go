@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ func TestGetRouterPositiveIntParam_ZeroError(t *testing.T) {
 }
 
 func TestGetRouterPositiveIntParam_Missing(t *testing.T) {
-	request, err := http.NewRequest(http.MethodGet, "organizations//clusters", nil)
+	request, err := http.NewRequest(http.MethodGet, "organizations//clusters", http.NoBody)
 	helpers.FailOnError(t, err)
 
 	_, err = httputils.GetRouterPositiveIntParam(request, "test")
@@ -413,7 +413,7 @@ func paramsToString(separator string, params ...interface{}) string {
 // cluster list in path is detected and processed correctly by function
 // ReadClusterListFromPath.
 func TestReadClusterListFromPathMissingClusterList(t *testing.T) {
-	request, err := http.NewRequest(http.MethodGet, "", nil)
+	request, err := http.NewRequest(http.MethodGet, "", http.NoBody)
 	helpers.FailOnError(t, err)
 
 	// try to read list of clusters from path
