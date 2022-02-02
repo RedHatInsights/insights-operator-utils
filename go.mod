@@ -18,7 +18,7 @@ require (
 	github.com/prometheus/client_golang v1.10.0
 	github.com/prometheus/client_model v0.2.0
 	github.com/rs/zerolog v1.20.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/verdverm/frisby v0.0.0-20170604211311-b16556248a9a
 	gopkg.in/h2non/gock.v1 v1.0.15
 )
