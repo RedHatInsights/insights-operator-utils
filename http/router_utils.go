@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import (
 )
 
 var (
-	//RuleIDValidator points to a Regexp expression that matches any
+	// RuleIDValidator points to a Regexp expression that matches any
 	// string that has alphanumeric characters separated by at least one dot
 	// (".")
 	RuleIDValidator = regexp.MustCompile(`^[a-zA-Z_0-9.]+$`)

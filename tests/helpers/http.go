@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -175,11 +175,11 @@ func makeRequest(t testing.TB, request *APIRequest, url string) *http.Request {
 		req = req.WithContext(context.WithValue(req.Context(), types.ContextKeyUser, identity))
 	}
 
-	if len(request.XRHIdentity) != 0 {
+	if request.XRHIdentity != "" {
 		req.Header.Set("x-rh-identity", request.XRHIdentity)
 	}
 
-	if len(request.AuthorizationToken) != 0 {
+	if request.AuthorizationToken != "" {
 		req.Header.Set("Authorization", request.AuthorizationToken)
 	}
 
