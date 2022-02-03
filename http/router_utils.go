@@ -172,6 +172,17 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes
 	return ctypes.RuleSelector(ruleSelector), true
 }
 
+// ReadAndTrimRuleSelector retrieves the rule selector (rule_id|error_key) from request's
+// url or writes an error to writer.
+// The function returns the selector WITHOUT '.report' and a bool indicating if retrieval was successful.
+func ReadAndTrimRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes.RuleSelector, bool) {
+	selector, success := ReadRuleSelector(writer, request)
+	if !success {
+		return "", false
+	}
+	return ctypes.RuleSelector(strings.ReplaceAll(string(selector), ".report|", "|")), success
+}
+
 // ReadOrganizationID retrieves organization id from request
 // if it's not possible, it writes http error to the writer and returns false
 func ReadOrganizationID(writer http.ResponseWriter, request *http.Request, auth bool) (ctypes.OrgID, bool) {
