@@ -1,4 +1,4 @@
-// Copyright 2021 Red Hat, Inc
+// Copyright 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,13 +28,13 @@ func TestPushGatewayClientDo(t *testing.T) {
 		HTTPClient: http.Client{},
 	}
 	t.Run("without auth token", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "https://redhat.com", nil)
+		req, _ := http.NewRequest("GET", "https://redhat.com", http.NoBody)
 		_, err := pgc.Do(req)
 		assert.NoError(t, err)
 	})
 	pgc.AuthToken = "random token"
 	t.Run("with auth token", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "https://redhat.com", nil)
+		req, _ := http.NewRequest("GET", "https://redhat.com", http.NoBody)
 		_, err := pgc.Do(req)
 		assert.NoError(t, err)
 	})
