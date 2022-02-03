@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ func toBytes(t testing.TB, obj interface{}) []byte {
 	return nil
 }
 
-func assertBody(t testing.TB, expectedBody interface{}, body interface{}, bodyChecker BodyChecker) {
+func assertBody(t testing.TB, expectedBody, body interface{}, bodyChecker BodyChecker) {
 	expectedBodyBytes := toBytes(t, expectedBody)
 	bodyBytes := toBytes(t, body)
 
