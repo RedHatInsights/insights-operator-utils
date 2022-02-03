@@ -304,6 +304,7 @@ func TestReadRuleSelector_Error(t *testing.T) {
 	} {
 		t.Run(testCase.TestCaseName, func(t *testing.T) {
 			testReadParamError(t, "rule_selector", testCase.Args, testCase.ExpectedError)
+			testReadParamError(t, "rule_selector_trimmed", testCase.Args, testCase.ExpectedError)
 		})
 	}
 }
@@ -424,6 +425,8 @@ func testReadParamError(t *testing.T, paramName string, args map[string]string, 
 		_, successful = httputils.ReadClusterNames(recorder, request)
 	case "rule_selector":
 		_, successful = httputils.ReadRuleSelector(recorder, request)
+	case "rule_selector_trimmed":
+		_, successful = httputils.ReadAndTrimRuleSelector(recorder, request)
 	default:
 		panic("testReadParamError is not implemented for param '" + paramName + "'")
 	}
