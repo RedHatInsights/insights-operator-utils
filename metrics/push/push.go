@@ -1,4 +1,4 @@
-// Copyright 2021 Red Hat, Inc
+// Copyright 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ func UnregisterMetrics() error {
 func InitMetrics(initFunctions []func() (prometheus.Collector, error)) (err error) {
 	// Reset the collector slice
 	if len(collectors) > 0 {
-		if err = UnregisterMetrics(); err != nil {
+		if err := UnregisterMetrics(); err != nil {
 			return err
 		}
 	}
