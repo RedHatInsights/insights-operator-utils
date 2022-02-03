@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ type MicroHTTPServer struct {
 }
 
 // NewMicroHTTPServer creates a MicroHTTPServer for the given address and prefix
-func NewMicroHTTPServer(address string, apiPrefix string) *MicroHTTPServer {
+func NewMicroHTTPServer(address, apiPrefix string) *MicroHTTPServer {
 	router := mux.NewRouter().StrictSlash(true)
 	server := &http.Server{Addr: address, Handler: router}
 	return &MicroHTTPServer{
