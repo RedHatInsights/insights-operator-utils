@@ -394,6 +394,7 @@ func mustGetRequestWithMuxVars(
 	return request
 }
 
+//gocyclo:ignore
 func testReadParamError(t *testing.T, paramName string, args map[string]string, expectedError string) {
 	request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, args)
 
