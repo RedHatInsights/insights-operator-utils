@@ -109,7 +109,16 @@ func TestReadParam(t *testing.T) {
 			ParamName:  "organizations",
 			ParamValue: []interface{}{testdata.OrgID, testdata.OrgID},
 		},
-		{TestName: "rule_fqdn", ParamName: "rule_selector", ParamValue: []interface{}{testdata.Rule1ID + "|" + testdata.ErrorKey1}},
+		{
+			TestName:   "rule_fqdn_no_dotreport",
+			ParamName:  "rule_selector",
+			ParamValue: []interface{}{testdata.Rule1ID + "|" + testdata.ErrorKey1},
+		},
+		{
+			TestName:   "rule_fqdn_dotreport",
+			ParamName:  "rule_selector",
+			ParamValue: []interface{}{testdata.Rule1ID + ".report|" + testdata.ErrorKey1},
+		},
 	} {
 		expectedParamValue := paramsToString(",", testCase.ParamValue...)
 
@@ -144,7 +153,9 @@ func TestReadParam(t *testing.T) {
 				var results []types.OrgID
 				results, successful = httputils.ReadOrganizationIDs(recorder, request)
 				result = paramsToString(",", results)
-			case "rule_fqdn":
+			case "rule_fqdn_no_dotreport":
+				result, successful = httputils.ReadRuleSelector(recorder, request)
+			case "rule_fqdn_dotreport":
 				result, successful = httputils.ReadRuleSelector(recorder, request)
 			}
 
@@ -208,6 +219,52 @@ func TestReadErrorKey_Error(t *testing.T) {
 		nil,
 		`{"status":"Missing required param from request: error_key"}`,
 	)
+}
+
+func TestReadAndTrimRuleSelector(t *testing.T) {
+	for _, testCase := range []struct {
+		TestName   string
+		ParamName  string
+		ParamValue []interface{}
+	}{
+		{
+			TestName:   "rule_fqdn_with_dotreport",
+			ParamName:  "rule_selector",
+			ParamValue: []interface{}{testdata.Rule1ID + ".report|" + testdata.ErrorKey1},
+		},
+		{
+			TestName:   "rule_fqdn_without_dotreport",
+			ParamName:  "rule_selector",
+			ParamValue: []interface{}{testdata.Rule1ID + "|" + testdata.ErrorKey1},
+		},
+	} {
+		expectedParamValue := string(testdata.Rule1ID + "|" + testdata.ErrorKey1)
+
+		t.Run(testCase.TestName, func(t *testing.T) {
+			request := mustGetRequestWithMuxVars(t, http.MethodGet, "", nil, map[string]string{
+				testCase.ParamName: expectedParamValue,
+			})
+			recorder := httptest.NewRecorder()
+
+			var (
+				value      string
+				successful bool
+				result     interface{}
+			)
+
+			switch testCase.TestName {
+			case "rule_fqdn_with_dotreport":
+				result, successful = httputils.ReadAndTrimRuleSelector(recorder, request)
+			case "rule_fqdn_without_dotreport":
+				result, successful = httputils.ReadAndTrimRuleSelector(recorder, request)
+			}
+
+			assert.True(t, successful)
+
+			value = fmt.Sprint(result)
+			assert.Equal(t, expectedParamValue, value)
+		})
+	}
 }
 
 func TestReadRuleSelector_Error(t *testing.T) {
