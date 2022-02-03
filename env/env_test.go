@@ -1,5 +1,5 @@
 /*
-Copyright © 2019, 2020 Red Hat, Inc.
+Copyright © 2019, 2020, 2021, 2022 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ const envVariableName = "MY_ENV_VARIABLE"
 const envVariableDefaultValue = "fallback"
 
 // setEnvVariable sets the environment variable with check whether the set was correct or not
-func setEnvVariable(t *testing.T, envVariableName string, envVariableValue string) {
+func setEnvVariable(t *testing.T, envVariableName, envVariableValue string) {
 	err := os.Setenv(envVariableName, envVariableValue)
 	if err != nil {
 		t.Fatal(err)
