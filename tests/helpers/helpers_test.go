@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -330,7 +330,7 @@ func TestGockExpectAPIRequest(t *testing.T) {
 func TestNewGockAPIEndpointMatcher(t *testing.T) {
 	matcher := helpers.NewGockAPIEndpointMatcher(testEndpoint)
 
-	request, err := http.NewRequest(http.MethodGet, testEndpoint, nil)
+	request, err := http.NewRequest(http.MethodGet, testEndpoint, http.NoBody)
 	helpers.FailOnError(t, err)
 
 	result, err := matcher(request, nil)
