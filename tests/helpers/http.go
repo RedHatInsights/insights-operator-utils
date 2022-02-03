@@ -138,7 +138,7 @@ func toBytes(t testing.TB, obj interface{}) []byte {
 	return nil
 }
 
-func assertBody(t testing.TB, expectedBody interface{}, body interface{}, bodyChecker BodyChecker) {
+func assertBody(t testing.TB, expectedBody, body interface{}, bodyChecker BodyChecker) {
 	expectedBodyBytes := toBytes(t, expectedBody)
 	bodyBytes := toBytes(t, body)
 

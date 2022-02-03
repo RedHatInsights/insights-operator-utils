@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ func FilterOutDebugMethods(openAPIFileContent string) (string, error) {
 // Optionally, you can turn on or off debug to filter out debug endpoints.
 // Optionally, you can turn on caching by setting cacheFile to true,
 // then you will have to restart a server on each file change
-func CreateOpenAPIHandler(filePath string, debug bool, cacheFile bool) func(writer http.ResponseWriter, request *http.Request) {
+func CreateOpenAPIHandler(filePath string, debug, cacheFile bool) func(writer http.ResponseWriter, request *http.Request) {
 	var fileContent []byte
 
 	return func(writer http.ResponseWriter, request *http.Request) {
