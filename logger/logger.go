@@ -113,6 +113,7 @@ func InitZerolog(
 	if loggingConf.LoggingToCloudWatchEnabled {
 		cloudWatchWriter, err := setupCloudwatchLogging(cloudWatchConf)
 		if err != nil {
+			err = fmt.Errorf("Error initializing Cloudwatch logging: %s", err.Error())
 			return err
 		}
 
@@ -122,6 +123,7 @@ func InitZerolog(
 	if loggingConf.LoggingToSentryEnabled {
 		sentryWriter, err := setupSentryLogging(sentryConf)
 		if err != nil {
+			err = fmt.Errorf("Error initializing Sentry logging: %s", err.Error())
 			return err
 		}
 		writers = append(writers, sentryWriter)
@@ -131,6 +133,7 @@ func InitZerolog(
 	if loggingConf.LoggingToKafkaEnabled {
 		kafkaWriter, err := setupKafkaZerolog(kafkazerologConf)
 		if err != nil {
+			err = fmt.Errorf("Error initializing Kafka logging: %s", err.Error())
 			return err
 		}
 		writers = append(writers, kafkaWriter)
