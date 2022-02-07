@@ -41,7 +41,7 @@ func FilterOutDebugMethods(openAPIFileContent string) (string, error) {
 		for method, operation := range pathItem.Operations() {
 			debugTagFound := false
 			for _, tag := range operation.Tags {
-				if strings.ToLower(strings.TrimSpace(tag)) == "debug" {
+				if strings.EqualFold(strings.TrimSpace(tag), "debug") {
 					debugTagFound = true
 					break
 				}
