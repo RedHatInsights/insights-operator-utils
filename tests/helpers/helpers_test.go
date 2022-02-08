@@ -381,7 +381,7 @@ func TestUnmarshalResponseBodyToJSON(t *testing.T) {
 	var result map[string]int
 
 	err := helpers.UnmarshalResponseBodyToJSON(
-		ioutil.NopCloser(strings.NewReader(`{"test": 1}`)),
+		io.NopCloser(strings.NewReader(`{"test": 1}`)),
 		&result,
 	)
 	helpers.FailOnError(t, err)
@@ -392,7 +392,7 @@ func TestUnmarshalResponseBodyToJSON(t *testing.T) {
 
 func TestUnmarshalResponseBodyToJSON_UnmarshalError(t *testing.T) {
 	err := helpers.UnmarshalResponseBodyToJSON(
-		ioutil.NopCloser(strings.NewReader(notJSONString)),
+		io.NopCloser(strings.NewReader(notJSONString)),
 		&devNull,
 	)
 	assert.EqualError(t, err, "invalid character 'o' in literal null (expecting 'u')")
@@ -467,7 +467,7 @@ func testFrisbyExpectItemInArray(t *testing.T, responseBody string, expectedFoun
 		Response: &http.Response{
 			Status:        "ok",
 			StatusCode:    http.StatusOK,
-			Body:          ioutil.NopCloser(strings.NewReader(responseBody)),
+			Body:          io.NopCloser(strings.NewReader(responseBody)),
 			ContentLength: int64(len(responseBody)),
 		},
 	}
