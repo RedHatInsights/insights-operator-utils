@@ -20,6 +20,7 @@ package httputils
 import (
 	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
@@ -76,7 +77,7 @@ func CreateOpenAPIHandler(filePath string, debug, cacheFile bool) func(writer ht
 		if !cacheFile || len(fileContent) == 0 {
 			var err error
 			// it's not supposed that we'll accept the path from a user
-			fileContent, err = io.ReadFile(filePath) // #nosec G304  (CWE-22): Potential file inclusion via variable
+			fileContent, err = os.ReadFile(filePath) // #nosec G304  (CWE-22): Potential file inclusion via variable
 			if err != nil {
 				log.Error().Err(err).Msg("error reading openapi.json file")
 				types.HandleServerError(writer, err)

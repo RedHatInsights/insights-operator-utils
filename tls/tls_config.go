@@ -18,7 +18,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io"
+	"os"
 	"path/filepath"
 )
 
@@ -54,7 +54,7 @@ func newTLSConfig(t tlsConfigGetter, certPath string) (*tls.Config, error) {
 	}
 
 	// Load CA cert
-	caCert, err := io.ReadFile(filepath.Clean(certPath))
+	caCert, err := os.ReadFile(filepath.Clean(certPath))
 	if err != nil {
 		return nil, err
 	}
