@@ -23,7 +23,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -125,7 +124,7 @@ func toBytes(t testing.TB, obj interface{}) []byte {
 	case string:
 		return []byte(v)
 	case io.Reader:
-		res, err := ioutil.ReadAll(v)
+		res, err := io.ReadAll(v)
 		FailOnError(t, err)
 		return res
 	default:
@@ -196,7 +195,7 @@ func makeRequest(t testing.TB, request *APIRequest, url string) *http.Request {
 // (ignores whitespaces, newlines, etc)
 // also validates both expected and body to be a valid json
 func CheckResponseBodyJSON(t testing.TB, expectedJSON string, body io.ReadCloser) {
-	result, err := ioutil.ReadAll(body)
+	result, err := io.ReadAll(body)
 	FailOnError(t, err)
 
 	AssertStringsAreEqualJSON(t, expectedJSON, string(result))
@@ -353,7 +352,7 @@ func CleanAfterGock(t testing.TB) {
 		t.Errorf("\tHeader: `%+v`\n", ToJSONString(request.Header))
 
 		if request.Body != nil {
-			bodyBytes, err := ioutil.ReadAll(request.Body)
+			bodyBytes, err := io.ReadAll(request.Body)
 			FailOnError(t, err)
 
 			t.Errorf("\tBody: `%+v`\n", string(bodyBytes))

@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
@@ -320,7 +319,7 @@ func TestGockExpectAPIRequest(t *testing.T) {
 	resp, err := http.Post(serverAddress+"/"+testEndpoint, "application/json", strings.NewReader(okBody))
 	helpers.FailOnError(t, err)
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	helpers.FailOnError(t, err)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
