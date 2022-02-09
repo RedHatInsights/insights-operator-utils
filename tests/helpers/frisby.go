@@ -1,5 +1,5 @@
 /*
-Copyright © 2020 Red Hat, Inc.
+Copyright © 2020, 2021, 2022 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"reflect"
 
 	"github.com/verdverm/frisby"
@@ -74,7 +73,7 @@ func FrisbyExpectItemInArray(fieldName string, expectedItem interface{}) frisby.
 }
 
 func unmarshalResponseBodyToJSON(respBody io.ReadCloser, obj interface{}) error {
-	bodyBytes, err := ioutil.ReadAll(respBody)
+	bodyBytes, err := io.ReadAll(respBody)
 	if err != nil {
 		return err
 	}

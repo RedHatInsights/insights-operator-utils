@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package helpers
 import (
 	"bytes"
 	"encoding/gob"
-	"io/ioutil"
+	"io"
 	"testing"
 )
 
@@ -31,7 +31,7 @@ func MustGobSerialize(t testing.TB, obj interface{}) []byte {
 	err := gob.NewEncoder(buf).Encode(obj)
 	FailOnError(t, err)
 
-	res, err := ioutil.ReadAll(buf)
+	res, err := io.ReadAll(buf)
 	FailOnError(t, err)
 
 	return res

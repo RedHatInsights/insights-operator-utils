@@ -1,4 +1,4 @@
-// Copyright 2021 Red Hat, Inc
+// Copyright 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"path/filepath"
 )
 
@@ -54,7 +54,7 @@ func newTLSConfig(t tlsConfigGetter, certPath string) (*tls.Config, error) {
 	}
 
 	// Load CA cert
-	caCert, err := ioutil.ReadFile(filepath.Clean(certPath))
+	caCert, err := io.ReadFile(filepath.Clean(certPath))
 	if err != nil {
 		return nil, err
 	}

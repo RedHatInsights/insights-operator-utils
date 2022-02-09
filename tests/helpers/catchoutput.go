@@ -1,4 +1,4 @@
-// Copyright 2021 Red Hat, Inc
+// Copyright 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package helpers
 // https://redhatinsights.github.io/insights-operator-utils/packages/tests/helpers/catchoutput.html
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 )
@@ -48,10 +48,10 @@ func CatchingOutputs(t *testing.T, f func()) (string, string) {
 	err = fakeStderr.Close()
 	FailOnError(t, err)
 
-	stdoutOutput, err := ioutil.ReadAll(stdoutReader)
+	stdoutOutput, err := io.ReadAll(stdoutReader)
 	FailOnError(t, err)
 
-	stderrOutput, err := ioutil.ReadAll(stderrReader)
+	stderrOutput, err := io.ReadAll(stderrReader)
 	FailOnError(t, err)
 
 	return string(stdoutOutput), string(stderrOutput)
