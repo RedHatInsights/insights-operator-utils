@@ -18,7 +18,7 @@ package httputils
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi.html
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -76,7 +76,7 @@ func CreateOpenAPIHandler(filePath string, debug, cacheFile bool) func(writer ht
 		if !cacheFile || len(fileContent) == 0 {
 			var err error
 			// it's not supposed that we'll accept the path from a user
-			fileContent, err = ioutil.ReadFile(filePath) // #nosec G304  (CWE-22): Potential file inclusion via variable
+			fileContent, err = io.ReadFile(filePath) // #nosec G304  (CWE-22): Potential file inclusion via variable
 			if err != nil {
 				log.Error().Err(err).Msg("error reading openapi.json file")
 				types.HandleServerError(writer, err)

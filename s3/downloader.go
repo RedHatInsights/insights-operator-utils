@@ -1,4 +1,4 @@
-// Copyright 2021 Red Hat, Inc
+// Copyright 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package s3util
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -37,7 +37,7 @@ func DownloadObject(client s3iface.S3API, bucket, src string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	b, err := ioutil.ReadAll(result.Body)
+	b, err := io.ReadAll(result.Body)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", CannotReadError, err.Error())
 	}

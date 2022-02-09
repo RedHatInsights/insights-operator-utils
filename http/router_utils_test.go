@@ -21,7 +21,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -437,7 +436,7 @@ func testReadParamError(t *testing.T, paramName string, args map[string]string, 
 	resp := recorder.Result()
 	assert.NotNil(t, resp)
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	helpers.FailOnError(t, err)
 
 	assert.Equal(t, expectedError, strings.TrimSpace(string(body)))
