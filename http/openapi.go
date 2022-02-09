@@ -18,7 +18,6 @@ package httputils
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi.html
 
 import (
-	"io"
 	"net/http"
 	"os"
 	"strings"
