@@ -15,6 +15,7 @@
 package mocks
 
 import (
+	collections "github.com/RedHatInsights/insights-operator-utils/collections"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -59,8 +60,8 @@ func listObjects(contents MockContents, startAfterKey string, maxKeys int) (outp
 	if startAfterKey == "" {
 		output = files
 	} else {
-		indexOfKey, err = findKeyIndex(files, startAfterKey) // err if not found
-		if err != nil {
+		indexOfKey, found = collections.Index(startAfterKey, files)
+		if !found {
 			return
 		}
 		output = files[indexOfKey+1:]

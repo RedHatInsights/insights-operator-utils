@@ -30,3 +30,16 @@ func StringInSlice(a string, list []string) bool {
 	}
 	return false
 }
+
+// Index finds given key in sequence. Second return value indicates if key was
+// found or not.
+func Index(key string, list []string) (int, bool) {
+	for i, item := range list {
+		if item == key {
+			return i, true
+		}
+	}
+
+	// any index is ok to return
+	return 0, false
+}

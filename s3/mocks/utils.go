@@ -45,13 +45,3 @@ func sliceOfStringToS3Folders(folders []string) (contents []*s3.CommonPrefix) {
 	}
 	return contents
 }
-
-func findKeyIndex(files []string, key string) (int, error) {
-	for i, file := range files {
-		if file == key {
-			return i, nil
-		}
-	}
-
-	return 0, ErrKeyNotFound
-}
