@@ -61,6 +61,7 @@ func listObjects(contents MockContents, startAfterKey string, maxKeys int) (outp
 	} else {
 		indexOfKey, found := collections.Index(startAfterKey, files)
 		if !found {
+			err = ErrKeyNotFound
 			return
 		}
 		output = files[indexOfKey+1:]

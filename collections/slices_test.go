@@ -122,13 +122,13 @@ func TestIndex(t *testing.T) {
 
 	// try to find middle item
 	index, found = collections.Index("привет", slice)
-	if index != 0 || !found {
+	if index != 1 || !found {
 		t.Fatal("String should be found in the slice")
 	}
 
 	// try to find the last item
 	index, found = collections.Index("γεια", slice)
-	if index != 0 || !found {
+	if index != 2 || !found {
 		t.Fatal("String should be found in the slice")
 	}
 
