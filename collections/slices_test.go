@@ -133,7 +133,7 @@ func TestIndex(t *testing.T) {
 	}
 
 	// try to find nonexisting item
-	index, found = collections.Index("<not-in-slice>", slice)
+	_, found = collections.Index("<not-in-slice>", slice)
 	if found {
 		t.Fatal("String should NOT be found in the slice")
 	}
