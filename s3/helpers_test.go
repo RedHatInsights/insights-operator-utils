@@ -19,6 +19,7 @@ import s3mocks "github.com/RedHatInsights/insights-operator-utils/s3/mocks"
 var (
 	testBucket             = "my_bucket"
 	testFile               = "my_file"
+	testFileCopy           = testFile + "_copy"
 	fileContent            = "some content"
 	randomError            = "an error"
 	testFileInvalidContent = "invalid_content"
@@ -36,9 +37,11 @@ type testCase struct {
 	errorMsg        string
 	mockContents    s3mocks.MockContents
 	file            string
+	files           []string
 	body            []byte
 	downloadError   error
 	wantFiles       []string
+	wantContents    s3mocks.MockContents
 	lastKey         string
 	maxCalls        int
 }

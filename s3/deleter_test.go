@@ -81,6 +81,99 @@ func TestDeleteObject(t *testing.T) {
 				assert.Contains(t, err.Error(), tc.errorMsg)
 			} else {
 				assert.NoError(t, err)
+				assert.Equal(t, s3mocks.MockContents{}, mockClient.Contents)
+			}
+		})
+	}
+}
+
+func TestDeleteObjects(t *testing.T) {
+	testCases := []testCase{
+		{
+			description:    "bucket exists and is not empty",
+			errorExpected:  false,
+			mockErrorValue: nil,
+			mockContents: s3mocks.MockContents{
+				testFile:     []byte(fileContent),
+				testFileCopy: []byte(fileContent),
+			},
+			files:        []string{testFile, testFileCopy},
+			wantContents: s3mocks.MockContents{},
+		},
+		{
+			description:    "bucket exists and only one object is deleted",
+			errorExpected:  false,
+			mockErrorValue: nil,
+			mockContents: s3mocks.MockContents{
+				testFile:     []byte(fileContent),
+				testFileCopy: []byte(fileContent),
+			},
+			files: []string{testFile},
+			wantContents: s3mocks.MockContents{
+				testFileCopy: []byte(fileContent),
+			},
+		},
+		{
+			description:    "bucket exists and only no object is specified to be deleted",
+			errorExpected:  false,
+			mockErrorValue: nil,
+			mockContents: s3mocks.MockContents{
+				testFile:     []byte(fileContent),
+				testFileCopy: []byte(fileContent),
+			},
+			files: []string{},
+			wantContents: s3mocks.MockContents{
+				testFile:     []byte(fileContent),
+				testFileCopy: []byte(fileContent),
+			},
+		},
+		{
+			description:   "bucket exists and file does not exist",
+			errorExpected: true,
+			files:         []string{"this does not exist"},
+		},
+		{
+			description:    "bucket doesn't exist",
+			errorExpected:  true,
+			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
+			errorMsg:       s3.ErrCodeNoSuchBucket,
+			files:          []string{testFile},
+		},
+		{
+			description:   "empty key input",
+			errorExpected: true,
+			errorMsg:      s3.ErrCodeNoSuchKey,
+			files:         []string{""},
+		},
+		{
+			description:    "unknown aws error",
+			errorExpected:  true,
+			mockErrorValue: awserr.New(randomError, "", nil),
+			errorMsg:       randomError,
+		},
+		{
+			description:    "unknown error",
+			errorExpected:  true,
+			mockErrorValue: errors.New(randomError),
+			errorMsg:       randomError,
+		},
+	}
+
+	mockClient := &s3mocks.MockS3Client{
+		Contents: make(s3mocks.MockContents),
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			mockClient.Err = tc.mockErrorValue
+			mockClient.Contents = tc.mockContents
+			err := s3util.DeleteObjects(mockClient, testBucket, tc.files)
+			if tc.errorExpected {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tc.errorMsg)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tc.wantContents, mockClient.Contents)
 			}
 		})
 	}
