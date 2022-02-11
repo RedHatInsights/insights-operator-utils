@@ -29,3 +29,22 @@ func DeleteObject(client s3iface.S3API, bucket, file string) error {
 	_, err := client.DeleteObject(input)
 	return err
 }
+
+// DeleteObjects delete the keys in the specified bucket.
+func DeleteObjects(client s3iface.S3API, bucket string, files []string) error {
+	input := &s3.DeleteObjectsInput{
+		Bucket: aws.String(bucket),
+		Delete: &s3.Delete{
+			Objects: filenamesToSliceObjects(files),
+		},
+	}
+	_, err := client.DeleteObjects(input)
+	return err
+}
+
+func filenamesToSliceObjects(filenames []string) (objects []*s3.ObjectIdentifier) {
+	for _, filename := range filenames {
+		objects = append(objects, &s3.ObjectIdentifier{Key: aws.String(filename)})
+	}
+	return objects
+}

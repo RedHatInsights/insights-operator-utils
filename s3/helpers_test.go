@@ -41,6 +41,7 @@ type testCase struct {
 	body            []byte
 	downloadError   error
 	wantFiles       []string
+	wantContents    s3mocks.MockContents
 	lastKey         string
 	maxCalls        int
 }

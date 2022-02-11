@@ -37,3 +37,25 @@ func (m *MockS3Client) DeleteObject(input *s3.DeleteObjectInput) (*s3.DeleteObje
 
 	return &s3.DeleteObjectOutput{}, m.Err
 }
+
+// DeleteObjects returns an empty DeleteObjectOutput object. If the mock client Err field is not nil, returns an error.
+func (m *MockS3Client) DeleteObjects(input *s3.DeleteObjectsInput) (*s3.DeleteObjectsOutput, error) {
+	if m.Err != nil {
+		return nil, m.Err
+	}
+
+	for _, obj := range input.Delete.Objects {
+
+		if *obj.Key == "" {
+			return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+		}
+		_, exists := m.Contents[*obj.Key]
+		if !exists {
+			return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+		}
+
+		delete(m.Contents, *obj.Key)
+	}
+
+	return &s3.DeleteObjectsOutput{}, m.Err
+}
