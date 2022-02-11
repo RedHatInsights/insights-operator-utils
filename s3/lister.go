@@ -71,7 +71,7 @@ func listWithDelimiter(client s3iface.S3API, bucket, prefix, lastKey, delimiter 
 
 	if isTruncated {
 		lastKey = output[len(output)-1]
-		newOutput, err := ListBucket(client, bucket, prefix, lastKey, maxKeys)
+		newOutput, err := listWithDelimiter(client, bucket, prefix, lastKey, delimiter, maxKeys)
 		if err != nil {
 			return []string{}, err
 		}
