@@ -56,16 +56,7 @@ coverage: ## Display test coverage onto terminal
 before_commit: style test license ## Checks done before commit
 	./check_coverage.sh
 
-help: ## Show this help screen
-	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
-	@echo ''
-	@echo 'Available targets are:'
-	@echo ''
-	@grep -E '^[ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-	@echo ''
-
-license: install_addlicense
+license: install_addlicense  ## Add license in every file in repository
 	addlicense -c "Red Hat, Inc" -l "apache" -v ./
 
 docs/packages/%.html: %.go
@@ -83,3 +74,12 @@ install_docgo:
 install_addlicense: export GO111MODULE=off
 install_addlicense:
 	[[ `command -v addlicense` ]] || GO111MODULE=off go get -u github.com/google/addlicense
+
+help: ## Show this help screen
+	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
+	@echo ''
+	@echo 'Available targets are:'
+	@echo ''
+	@grep -E '^[ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ''

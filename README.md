@@ -150,6 +150,7 @@ test                 Run the unit tests
 cover                Display test coverage on generated HTML pages
 coverage             Display test coverage onto terminal
 before_commit        Checks done before commit
+license              Add license in every file in repository
 help                 Show this help screen
 ```
 
