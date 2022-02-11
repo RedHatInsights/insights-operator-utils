@@ -1,5 +1,5 @@
 /*
-Copyright © 2019, 2020 Red Hat, Inc.
+Copyright © 2019, 2020, 2021, 2022 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -107,5 +107,34 @@ func TestStringInSliceUnicodeStringFound(t *testing.T) {
 	// try to find the last item
 	if !collections.StringInSlice("γεια", slice) {
 		t.Fatal("String should be found in the slice")
+	}
+}
+
+// Test the function Index.
+func TestIndex(t *testing.T) {
+	slice := []string{"žluťoučká", "привет", "γεια"}
+
+	// try to find the first item
+	index, found := collections.Index("žluťoučká", slice)
+	if index != 0 || !found {
+		t.Fatal("String should be found in the slice")
+	}
+
+	// try to find middle item
+	index, found = collections.Index("привет", slice)
+	if index != 0 || !found {
+		t.Fatal("String should be found in the slice")
+	}
+
+	// try to find the last item
+	index, found = collections.Index("γεια", slice)
+	if index != 0 || !found {
+		t.Fatal("String should be found in the slice")
+	}
+
+	// try to find nonexisting item
+	index, found = collections.Index("<not-in-slice>", slice)
+	if found {
+		t.Fatal("String should NOT be found in the slice")
 	}
 }
