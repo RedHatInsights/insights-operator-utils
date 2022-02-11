@@ -114,6 +114,20 @@ func TestDeleteObjects(t *testing.T) {
 			},
 		},
 		{
+			description:    "bucket exists and only no object is specified to be deleted",
+			errorExpected:  false,
+			mockErrorValue: nil,
+			mockContents: s3mocks.MockContents{
+				testFile:     []byte(fileContent),
+				testFileCopy: []byte(fileContent),
+			},
+			files: []string{},
+			wantContents: s3mocks.MockContents{
+				testFile:     []byte(fileContent),
+				testFileCopy: []byte(fileContent),
+			},
+		},
+		{
 			description:   "bucket exists and file does not exist",
 			errorExpected: true,
 			files:         []string{"this does not exist"},
