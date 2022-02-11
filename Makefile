@@ -1,4 +1,4 @@
-.PHONY: help clean build fmt lint vet run test style cyclo license godoc install_docgo install_addlicense
+.PHONY: help clean build fmt lint vet run test style cyclo license godoc install_docgo install_addlicense before_commit
 
 SOURCES:=$(shell find . -name '*.go')
 DOCFILES:=$(addprefix docs/packages/, $(addsuffix .html, $(basename ${SOURCES})))
@@ -53,6 +53,9 @@ cover: test ## Display test coverage on generated HTML pages
 coverage: ## Display test coverage onto terminal
 	@go tool cover -func=coverage.out
 
+before_commit: style test license ## Checks done before commit
+	./check_coverage.sh
+
 help: ## Show this help screen
 	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
 	@echo ''
@@ -80,6 +83,3 @@ install_docgo:
 install_addlicense: export GO111MODULE=off
 install_addlicense:
 	[[ `command -v addlicense` ]] || GO111MODULE=off go get -u github.com/google/addlicense
-
-before_commit: style test license ## Checks done before commit
-	./check_coverage.sh

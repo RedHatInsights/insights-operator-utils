@@ -130,7 +130,7 @@ Please look into document [CONTRIBUTING.md](CONTRIBUTING.md) that contains all i
 Please look also at [Definition of Done](DoD.md) document with further informations.
 
 
-## Makefile targes
+## Makefile targets
 
 ```
 Available targets are:
@@ -149,6 +149,7 @@ style                Run all the formatting related commands (fmt, vet, lint, cy
 test                 Run the unit tests
 cover                Display test coverage on generated HTML pages
 coverage             Display test coverage onto terminal
+before_commit        Checks done before commit
 help                 Show this help screen
 ```
 
