@@ -55,12 +55,11 @@ func (m *MockS3Client) ListObjectsV2(input *s3.ListObjectsV2Input) (*s3.ListObje
 }
 
 func listObjects(contents MockContents, startAfterKey string, maxKeys int) (output []string, isTRuncated bool, err error) {
-	var indexOfKey int
 	files := contentsToSlice(contents)
 	if startAfterKey == "" {
 		output = files
 	} else {
-		indexOfKey, found = collections.Index(startAfterKey, files)
+		indexOfKey, found := collections.Index(startAfterKey, files)
 		if !found {
 			return
 		}
