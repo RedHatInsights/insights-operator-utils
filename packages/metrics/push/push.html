@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<!--
+ Copyright 2022 Red Hat, Inc
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html>
+<head>
+<title>push.go</title>
+<meta charset="utf-8"/>
+<style type="text/css">body {
+    background: rgb(225, 225, 225);
+    margin: 0px;
+    padding: 0px;
+}
+
+#docgo p {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo div {
+    display: inline;
+}
+
+#docgo #background {
+    position: fixed;
+    top: 0; left: 525px; right: 0; bottom: 0;
+    background: rgb(47, 47, 47);
+    border-left: 1px solid #e5e5ee;
+    z-index: -1;
+}
+
+#docgo .keyword {
+    color: rgb(250, 200, 100);
+}
+
+#docgo .literal {
+    color: rgb(140, 190, 100);
+}
+
+#docgo .ident {
+    color: white;
+}
+
+#docgo .operator {
+    color: white;
+}
+
+#docgo .comment {
+}
+
+#docgo h1, h2, h3, h4, h5 {
+    text-align: left;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo h1 {
+    margin-top: 40px;
+}
+
+#docgo .doc {
+    vertical-align: top;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: black;
+    min-width: 450px;
+    max-width: 450px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-bottom: 1px;
+    padding-left: 50px;
+    overflow-x: hidden;
+}
+
+#docgo .code {
+    min-width: 650px;
+    max-width: 650px;
+    padding-left: 25px;
+    padding-right: 15px;
+    border-left: 1px;
+    overflow-x: hidden;
+    vertical-align: top;
+}
+
+#docgo .code pre code  {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    color: rgb(120, 120, 120);
+}
+</style>
+</head>
+<body>
+<div id="docgo">
+  <div id="background"></div>
+  <table>
+    <thead><tr><th class="doc"><h1>push.go</h1></th><th class="code"></th></tr></thead>
+    <tbody>
+      
+      <tr class="section">
+	<td class="doc"><p>Copyright 2021, 2022 Red Hat, Inc</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">push</div><div class="operator"></div>
+
+<div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;context&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;errors&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;time&#34;</div><div class="operator"></div>
+
+	<div class="literal">&#34;github.com/prometheus/client_golang/prometheus&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/prometheus/client_golang/prometheus/push&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/rs/zerolog/log&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>collectors stores the prometheus collectors that will be pushed to the push gateway</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">var</div> <div class="ident">collectors</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">prometheus</div><div class="operator">.</div><div class="ident">Collector</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>UnregisterMetrics unregister all prometheus collectors safe in the collectors variable</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">UnregisterMetrics</div><div class="operator">(</div><div class="operator">)</div> <div class="ident">error</div> <div class="operator">{</div>
+	<div class="keyword">var</div> <div class="ident">errMsg</div> <div class="operator">=</div> <div class="literal">&#34;cannot unregister metric&#34;</div><div class="operator"></div>
+	<div class="ident">log</div><div class="operator">.</div><div class="ident">Debug</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Int</div><div class="operator">(</div><div class="literal">&#34;total&#34;</div><div class="operator">,</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">collectors</div><div class="operator">)</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Int</div><div class="operator">(</div><div class="literal">&#34;progress&#34;</div><div class="operator">,</div> <div class="literal">0</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Unregistering metrics&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">for</div> <div class="ident">i</div><div class="operator">,</div> <div class="ident">c</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">collectors</div> <div class="operator">{</div>
+		<div class="keyword">if</div> <div class="ident">ok</div> <div class="operator">:=</div> <div class="ident">prometheus</div><div class="operator">.</div><div class="ident">Unregister</div><div class="operator">(</div><div class="ident">c</div><div class="operator">)</div><div class="operator">;</div> <div class="operator">!</div><div class="ident">ok</div> <div class="operator">{</div>
+			<div class="ident">log</div><div class="operator">.</div><div class="ident">Warn</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="ident">errMsg</div><div class="operator">)</div><div class="operator"></div>
+			<div class="keyword">return</div> <div class="ident">errors</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">errMsg</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Debug</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;metric unregistered&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Debug</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div>
+			<div class="ident">Int</div><div class="operator">(</div><div class="literal">&#34;total&#34;</div><div class="operator">,</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">collectors</div><div class="operator">)</div><div class="operator">)</div><div class="operator">.</div>
+			<div class="ident">Int</div><div class="operator">(</div><div class="literal">&#34;progress&#34;</div><div class="operator">,</div> <div class="ident">i</div><div class="operator">&#43;</div><div class="literal">1</div><div class="operator">)</div><div class="operator">.</div>
+			<div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Unregistering metrics&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">collectors</div> <div class="operator">=</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">prometheus</div><div class="operator">.</div><div class="ident">Collector</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>InitMetrics fills the collector variables with some Prometheus metrics and automatically registers them.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">InitMetrics</div><div class="operator">(</div><div class="ident">initFunctions</div> <div class="operator">[</div><div class="operator">]</div><div class="keyword">func</div><div class="operator">(</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">prometheus</div><div class="operator">.</div><div class="ident">Collector</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">err</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Reset the collector slice</p>
+</td>
+	<td class="code"><pre><code>	<div class="keyword">if</div> <div class="ident">len</div><div class="operator">(</div><div class="ident">collectors</div><div class="operator">)</div> <div class="operator">&gt;</div> <div class="literal">0</div> <div class="operator">{</div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">UnregisterMetrics</div><div class="operator">(</div><div class="operator">)</div><div class="operator">;</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="ident">collectors</div> <div class="operator">=</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">prometheus</div><div class="operator">.</div><div class="ident">Collector</div><div class="operator">{</div><div class="operator">}</div><div class="operator"></div>
+	<div class="keyword">for</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">f</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">initFunctions</div> <div class="operator">{</div>
+		<div class="keyword">if</div> <div class="ident">coll</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">f</div><div class="operator">(</div><div class="operator">)</div><div class="operator">;</div> <div class="ident">err</div> <div class="operator">==</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="ident">collectors</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">collectors</div><div class="operator">,</div> <div class="ident">coll</div><div class="operator">)</div><div class="operator"></div>
+		<div class="operator">}</div> <div class="keyword">else</div> <div class="operator">{</div>
+			<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>SendMetrics pushes the metrics to the configured prometheus push gateway</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">SendMetrics</div><div class="operator">(</div><div class="ident">job</div><div class="operator">,</div> <div class="ident">gatewayURL</div><div class="operator">,</div> <div class="ident">gatewayAuthToken</div> <div class="ident">string</div><div class="operator">)</div> <div class="ident">error</div> <div class="operator">{</div>
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Creates a pusher to the gateway &quot;$PUSHGW<em>URL/metrics/job/$(job</em>name)</p>
+</td>
+	<td class="code"><pre><code>	<div class="ident">log</div><div class="operator">.</div><div class="ident">Debug</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Str</div><div class="operator">(</div><div class="literal">&#34;Job&#34;</div><div class="operator">,</div> <div class="ident">job</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Str</div><div class="operator">(</div><div class="literal">&#34;url&#34;</div><div class="operator">,</div> <div class="ident">gatewayURL</div><div class="operator">)</div><div class="operator">.</div>
+		<div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Pushing metrics&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">pusher</div> <div class="operator">:=</div> <div class="ident">push</div><div class="operator">.</div><div class="ident">New</div><div class="operator">(</div><div class="ident">gatewayURL</div><div class="operator">,</div> <div class="ident">job</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">err</div> <div class="operator">:=</div> <div class="ident">pushCollectors</div><div class="operator">(</div><div class="ident">pusher</div><div class="operator">,</div> <div class="ident">gatewayAuthToken</div><div class="operator">,</div> <div class="ident">collectors</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Err</div><div class="operator">(</div><div class="ident">err</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Couldn&#39;t push prometheus metrics&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">return</div> <div class="ident">err</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">log</div><div class="operator">.</div><div class="ident">Info</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Metrics pushed successfully.&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>SendMetricsInLoop pushes the metrics in a loop until context is done</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">SendMetricsInLoop</div><div class="operator">(</div><div class="ident">ctx</div> <div class="ident">context</div><div class="operator">.</div><div class="ident">Context</div><div class="operator">,</div> <div class="ident">job</div><div class="operator">,</div> <div class="ident">gatewayURL</div><div class="operator">,</div> <div class="ident">gatewayAuthToken</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">timeBetweenPush</div> <div class="ident">time</div><div class="operator">.</div><div class="ident">Duration</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">if</div> <div class="ident">timeBetweenPush</div> <div class="operator">&lt;</div> <div class="ident">time</div><div class="operator">.</div><div class="ident">Second</div><div class="operator">*</div><div class="literal">1</div> <div class="operator">{</div>
+		<div class="ident">log</div><div class="operator">.</div><div class="ident">Warn</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msgf</div><div class="operator">(</div><div class="literal">&#34;You are trying to push the metrics every %f seconds. This may overload the push gateway, so this operation is blocked.&#34;</div><div class="operator">,</div> <div class="ident">timeBetweenPush</div><div class="operator">.</div><div class="ident">Seconds</div><div class="operator">(</div><div class="operator">)</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">return</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">ticker</div> <div class="operator">:=</div> <div class="ident">time</div><div class="operator">.</div><div class="ident">NewTicker</div><div class="operator">(</div><div class="ident">timeBetweenPush</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">for</div> <div class="operator">{</div>
+		<div class="keyword">select</div> <div class="operator">{</div>
+		<div class="keyword">case</div> <div class="operator">&lt;-</div><div class="ident">ticker</div><div class="operator">.</div><div class="ident">C</div><div class="operator">:</div>
+			<div class="ident">log</div><div class="operator">.</div><div class="ident">Debug</div><div class="operator">(</div><div class="operator">)</div><div class="operator">.</div><div class="ident">Msg</div><div class="operator">(</div><div class="literal">&#34;Pushing metrics&#34;</div><div class="operator">)</div><div class="operator"></div>
+			<div class="ident">_</div> <div class="operator">=</div> <div class="ident">SendMetrics</div><div class="operator">(</div><div class="ident">job</div><div class="operator">,</div> <div class="ident">gatewayURL</div><div class="operator">,</div> <div class="ident">gatewayAuthToken</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">case</div> <div class="operator">&lt;-</div><div class="ident">ctx</div><div class="operator">.</div><div class="ident">Done</div><div class="operator">(</div><div class="operator">)</div><div class="operator">:</div>
+			<div class="keyword">return</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

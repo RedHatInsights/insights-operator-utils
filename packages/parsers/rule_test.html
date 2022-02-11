@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--
+ Copyright 2022 Red Hat, Inc
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html>
+<head>
+<title>rule_test.go</title>
+<meta charset="utf-8"/>
+<style type="text/css">body {
+    background: rgb(225, 225, 225);
+    margin: 0px;
+    padding: 0px;
+}
+
+#docgo p {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo div {
+    display: inline;
+}
+
+#docgo #background {
+    position: fixed;
+    top: 0; left: 525px; right: 0; bottom: 0;
+    background: rgb(47, 47, 47);
+    border-left: 1px solid #e5e5ee;
+    z-index: -1;
+}
+
+#docgo .keyword {
+    color: rgb(250, 200, 100);
+}
+
+#docgo .literal {
+    color: rgb(140, 190, 100);
+}
+
+#docgo .ident {
+    color: white;
+}
+
+#docgo .operator {
+    color: white;
+}
+
+#docgo .comment {
+}
+
+#docgo h1, h2, h3, h4, h5 {
+    text-align: left;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo h1 {
+    margin-top: 40px;
+}
+
+#docgo .doc {
+    vertical-align: top;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: black;
+    min-width: 450px;
+    max-width: 450px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-bottom: 1px;
+    padding-left: 50px;
+    overflow-x: hidden;
+}
+
+#docgo .code {
+    min-width: 650px;
+    max-width: 650px;
+    padding-left: 25px;
+    padding-right: 15px;
+    border-left: 1px;
+    overflow-x: hidden;
+    vertical-align: top;
+}
+
+#docgo .code pre code  {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    color: rgb(120, 120, 120);
+}
+</style>
+</head>
+<body>
+<div id="docgo">
+  <div id="background"></div>
+  <table>
+    <thead><tr><th class="doc"><h1>rule_test.go</h1></th><th class="code"></th></tr></thead>
+    <tbody>
+      
+      <tr class="section">
+	<td class="doc"><p>Copyright 2021 Red Hat, Inc</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">parsers_test</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>Documentation in literate-programming-style is available at:
+https://redhatinsights.github.io/insights-operator-utils/packages/parsers/rule_test.html</p>
+</td>
+	<td class="code"><pre><code>
+<div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;testing&#34;</div><div class="operator"></div>
+
+	<div class="ident">types</div> <div class="literal">&#34;github.com/RedHatInsights/insights-results-types&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/stretchr/testify/assert&#34;</div><div class="operator"></div>
+
+	<div class="literal">&#34;github.com/RedHatInsights/insights-operator-utils/parsers&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestParseRuleSelector checks the function parsers.ParseRuleSelector for
+valid input.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestParseRuleSelector</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;rule selector without numbers&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">component</div><div class="operator">,</div> <div class="ident">errorKey</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">parsers</div><div class="operator">.</div><div class="ident">ParseRuleSelector</div><div class="operator">(</div><div class="literal">&#34;foo|bar&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Nil</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">,</div> <div class="literal">&#34;unexpected error&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">Component</div><div class="operator">(</div><div class="literal">&#34;foo&#34;</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">component</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">ErrorKey</div><div class="operator">(</div><div class="literal">&#34;bar&#34;</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">errorKey</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;rule selector with numbers&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">component</div><div class="operator">,</div> <div class="ident">errorKey</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">parsers</div><div class="operator">.</div><div class="ident">ParseRuleSelector</div><div class="operator">(</div><div class="literal">&#34;foo1|bar2&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Nil</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">,</div> <div class="literal">&#34;unexpected error&#34;</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">Component</div><div class="operator">(</div><div class="literal">&#34;foo1&#34;</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">component</div><div class="operator">)</div><div class="operator"></div>
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">types</div><div class="operator">.</div><div class="ident">ErrorKey</div><div class="operator">(</div><div class="literal">&#34;bar2&#34;</div><div class="operator">)</div><div class="operator">,</div> <div class="ident">errorKey</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestParseRuleSelectorEmptyInput checks the function
+parsers.ParseRuleSelector for empty input.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestParseRuleSelectorEmptyInput</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;empty input&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">parsers</div><div class="operator">.</div><div class="ident">ParseRuleSelector</div><div class="operator">(</div><div class="literal">&#34;&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">&#34;invalid rule ID, it must contain only rule ID and error key separated by |&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestParseRuleSelectorMoreSeparators checks the function
+parsers.ParseRuleSelector for input with more separators.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestParseRuleSelectorMoreSeparators</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;foo|bar|baz&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">parsers</div><div class="operator">.</div><div class="ident">ParseRuleSelector</div><div class="operator">(</div><div class="literal">&#34;foo|bar|baz&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">&#34;invalid rule ID, it must contain only rule ID and error key separated by |&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>TestParseRuleSelectorImproperInput checks the function
+parsers.ParseRuleSelector for improper input.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">TestParseRuleSelectorImproperInput</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;rule without error key&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">parsers</div><div class="operator">.</div><div class="ident">ParseRuleSelector</div><div class="operator">(</div><div class="literal">&#34;foo|&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">&#34;invalid error key: each part of ID must contain only latin characters, number, underscores or dots&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;rule without component&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">parsers</div><div class="operator">.</div><div class="ident">ParseRuleSelector</div><div class="operator">(</div><div class="literal">&#34;|bar&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">&#34;invalid component name: each part of ID must contain only latin characters, number, underscores or dots&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+	<div class="ident">t</div><div class="operator">.</div><div class="ident">Run</div><div class="operator">(</div><div class="literal">&#34;rule with improper characters&#34;</div><div class="operator">,</div> <div class="keyword">func</div><div class="operator">(</div><div class="ident">t</div> <div class="operator">*</div><div class="ident">testing</div><div class="operator">.</div><div class="ident">T</div><div class="operator">)</div> <div class="operator">{</div>
+		<div class="ident">_</div><div class="operator">,</div> <div class="ident">_</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">parsers</div><div class="operator">.</div><div class="ident">ParseRuleSelector</div><div class="operator">(</div><div class="literal">&#34;ěšč|řžý&#34;</div><div class="operator">)</div><div class="operator"></div>
+
+		<div class="ident">assert</div><div class="operator">.</div><div class="ident">Equal</div><div class="operator">(</div><div class="ident">t</div><div class="operator">,</div> <div class="ident">err</div><div class="operator">.</div><div class="ident">Error</div><div class="operator">(</div><div class="operator">)</div><div class="operator">,</div> <div class="literal">&#34;invalid component name: each part of ID must contain only latin characters, number, underscores or dots&#34;</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

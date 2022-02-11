@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!--
+ Copyright 2022 Red Hat, Inc
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html>
+<head>
+<title>lister.go</title>
+<meta charset="utf-8"/>
+<style type="text/css">body {
+    background: rgb(225, 225, 225);
+    margin: 0px;
+    padding: 0px;
+}
+
+#docgo p {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo div {
+    display: inline;
+}
+
+#docgo #background {
+    position: fixed;
+    top: 0; left: 525px; right: 0; bottom: 0;
+    background: rgb(47, 47, 47);
+    border-left: 1px solid #e5e5ee;
+    z-index: -1;
+}
+
+#docgo .keyword {
+    color: rgb(250, 200, 100);
+}
+
+#docgo .literal {
+    color: rgb(140, 190, 100);
+}
+
+#docgo .ident {
+    color: white;
+}
+
+#docgo .operator {
+    color: white;
+}
+
+#docgo .comment {
+}
+
+#docgo h1, h2, h3, h4, h5 {
+    text-align: left;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-left: 0px;
+}
+
+#docgo h1 {
+    margin-top: 40px;
+}
+
+#docgo .doc {
+    vertical-align: top;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: black;
+    min-width: 450px;
+    max-width: 450px;
+    padding-top: 10px;
+    padding-right: 25px;
+    padding-bottom: 1px;
+    padding-left: 50px;
+    overflow-x: hidden;
+}
+
+#docgo .code {
+    min-width: 650px;
+    max-width: 650px;
+    padding-left: 25px;
+    padding-right: 15px;
+    border-left: 1px;
+    overflow-x: hidden;
+    vertical-align: top;
+}
+
+#docgo .code pre code  {
+    font-size: 12px;
+    line-height: 18px;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    color: rgb(120, 120, 120);
+}
+</style>
+</head>
+<body>
+<div id="docgo">
+  <div id="background"></div>
+  <table>
+    <thead><tr><th class="doc"><h1>lister.go</h1></th><th class="code"></th></tr></thead>
+    <tbody>
+      
+      <tr class="section">
+	<td class="doc"><p>Copyright 2021 Red Hat, Inc</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">package</div> <div class="ident">s3util</div><div class="operator"></div>
+
+<div class="keyword">import</div> <div class="operator">(</div>
+	<div class="literal">&#34;github.com/aws/aws-sdk-go/aws&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/aws/aws-sdk-go/service/s3&#34;</div><div class="operator"></div>
+	<div class="literal">&#34;github.com/aws/aws-sdk-go/service/s3/s3iface&#34;</div><div class="operator"></div>
+<div class="operator">)</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>ListNObjectsInBucket returns a slice of the files at an S3 bucket at a given prefix. It starts
+listing the files from <code>lastKey</code> and returns up to <code>maxKeys</code>.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">ListNObjectsInBucket</div><div class="operator">(</div><div class="ident">client</div> <div class="ident">s3iface</div><div class="operator">.</div><div class="ident">S3API</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div><div class="operator">,</div> <div class="ident">delimiter</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">maxKeys</div> <div class="ident">int64</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">objects</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">,</div> <div class="ident">isTruncated</div> <div class="ident">bool</div><div class="operator">,</div> <div class="ident">err</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">input</div> <div class="operator">:=</div> <div class="ident">s3</div><div class="operator">.</div><div class="ident">ListObjectsV2Input</div><div class="operator">{</div>
+		<div class="ident">Bucket</div><div class="operator">:</div>     <div class="ident">aws</div><div class="operator">.</div><div class="ident">String</div><div class="operator">(</div><div class="ident">bucket</div><div class="operator">)</div><div class="operator">,</div>
+		<div class="ident">Prefix</div><div class="operator">:</div>     <div class="ident">aws</div><div class="operator">.</div><div class="ident">String</div><div class="operator">(</div><div class="ident">prefix</div><div class="operator">)</div><div class="operator">,</div>
+		<div class="ident">MaxKeys</div><div class="operator">:</div>    <div class="operator">&amp;</div><div class="ident">maxKeys</div><div class="operator">,</div>
+		<div class="ident">StartAfter</div><div class="operator">:</div> <div class="ident">aws</div><div class="operator">.</div><div class="ident">String</div><div class="operator">(</div><div class="ident">lastKey</div><div class="operator">)</div><div class="operator">,</div>
+		<div class="ident">Delimiter</div><div class="operator">:</div>  <div class="ident">aws</div><div class="operator">.</div><div class="ident">String</div><div class="operator">(</div><div class="ident">delimiter</div><div class="operator">)</div><div class="operator">,</div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="ident">result</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">client</div><div class="operator">.</div><div class="ident">ListObjectsV2</div><div class="operator">(</div><div class="operator">&amp;</div><div class="ident">input</div><div class="operator">)</div><div class="operator"></div>
+
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="keyword">return</div> <div class="ident">nil</div><div class="operator">,</div> <div class="ident">false</div><div class="operator">,</div> <div class="ident">err</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">if</div> <div class="ident">delimiter</div> <div class="operator">==</div> <div class="literal">&#34;&#34;</div> <div class="operator">{</div>
+		<div class="ident">objects</div> <div class="operator">=</div> <div class="ident">sliceObjectsToSliceString</div><div class="operator">(</div><div class="ident">result</div><div class="operator">.</div><div class="ident">Contents</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div> <div class="keyword">else</div> <div class="operator">{</div>
+		<div class="ident">objects</div> <div class="operator">=</div> <div class="ident">sliceCommonPrefixToSliceString</div><div class="operator">(</div><div class="ident">result</div><div class="operator">.</div><div class="ident">CommonPrefixes</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">objects</div><div class="operator">,</div> <div class="operator">*</div><div class="ident">result</div><div class="operator">.</div><div class="ident">IsTruncated</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>ListBucket returns a slice of the files at an S3 bucket at a given prefix. It lists the
+objects using maxKeys in each iteration, but returns all of the objects, which may be
+higher than maxKeys.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">ListBucket</div><div class="operator">(</div><div class="ident">client</div> <div class="ident">s3iface</div><div class="operator">.</div><div class="ident">S3API</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">maxKeys</div> <div class="ident">int64</div><div class="operator">)</div> <div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">return</div> <div class="ident">listWithDelimiter</div><div class="operator">(</div><div class="ident">client</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div><div class="operator">,</div> <div class="literal">&#34;&#34;</div><div class="operator">,</div> <div class="ident">maxKeys</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">sliceObjectsToSliceString</div><div class="operator">(</div><div class="ident">input</div> <div class="operator">[</div><div class="operator">]</div><div class="operator">*</div><div class="ident">s3</div><div class="operator">.</div><div class="ident">Object</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">output</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">for</div> <div class="ident">i</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">input</div> <div class="operator">{</div>
+		<div class="ident">output</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">output</div><div class="operator">,</div> <div class="operator">*</div><div class="ident">input</div><div class="operator">[</div><div class="ident">i</div><div class="operator">]</div><div class="operator">.</div><div class="ident">Key</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="keyword">return</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+      <tr class="section">
+	<td class="doc"><p>ListFolders returns the folders stored at <code>prefix</code> in the bucket <code>bucket</code>.</p>
+</td>
+	<td class="code"><pre><code><div class="keyword">func</div> <div class="ident">ListFolders</div><div class="operator">(</div><div class="ident">client</div> <div class="ident">s3iface</div><div class="operator">.</div><div class="ident">S3API</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">maxKeys</div> <div class="ident">int64</div><div class="operator">)</div> <div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">return</div> <div class="ident">listWithDelimiter</div><div class="operator">(</div><div class="ident">client</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div><div class="operator">,</div> <div class="literal">&#34;/&#34;</div><div class="operator">,</div> <div class="ident">maxKeys</div><div class="operator">)</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">listWithDelimiter</div><div class="operator">(</div><div class="ident">client</div> <div class="ident">s3iface</div><div class="operator">.</div><div class="ident">S3API</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div><div class="operator">,</div> <div class="ident">delimiter</div> <div class="ident">string</div><div class="operator">,</div> <div class="ident">maxKeys</div> <div class="ident">int64</div><div class="operator">)</div> <div class="operator">(</div><div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">,</div> <div class="ident">error</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="ident">output</div><div class="operator">,</div> <div class="ident">isTruncated</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">ListNObjectsInBucket</div><div class="operator">(</div><div class="ident">client</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div><div class="operator">,</div> <div class="ident">delimiter</div><div class="operator">,</div> <div class="ident">maxKeys</div><div class="operator">)</div><div class="operator"></div>
+	<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+		<div class="keyword">return</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">err</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+
+	<div class="keyword">if</div> <div class="ident">isTruncated</div> <div class="operator">{</div>
+		<div class="ident">lastKey</div> <div class="operator">=</div> <div class="ident">output</div><div class="operator">[</div><div class="ident">len</div><div class="operator">(</div><div class="ident">output</div><div class="operator">)</div><div class="operator">-</div><div class="literal">1</div><div class="operator">]</div><div class="operator"></div>
+		<div class="ident">newOutput</div><div class="operator">,</div> <div class="ident">err</div> <div class="operator">:=</div> <div class="ident">listWithDelimiter</div><div class="operator">(</div><div class="ident">client</div><div class="operator">,</div> <div class="ident">bucket</div><div class="operator">,</div> <div class="ident">prefix</div><div class="operator">,</div> <div class="ident">lastKey</div><div class="operator">,</div> <div class="ident">delimiter</div><div class="operator">,</div> <div class="ident">maxKeys</div><div class="operator">)</div><div class="operator"></div>
+		<div class="keyword">if</div> <div class="ident">err</div> <div class="operator">!=</div> <div class="ident">nil</div> <div class="operator">{</div>
+			<div class="keyword">return</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">{</div><div class="operator">}</div><div class="operator">,</div> <div class="ident">err</div><div class="operator"></div>
+		<div class="operator">}</div><div class="operator"></div>
+		<div class="ident">output</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">output</div><div class="operator">,</div> <div class="ident">newOutput</div><div class="operator">...</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="keyword">return</div> <div class="ident">output</div><div class="operator">,</div> <div class="ident">nil</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+<div class="keyword">func</div> <div class="ident">sliceCommonPrefixToSliceString</div><div class="operator">(</div><div class="ident">input</div> <div class="operator">[</div><div class="operator">]</div><div class="operator">*</div><div class="ident">s3</div><div class="operator">.</div><div class="ident">CommonPrefix</div><div class="operator">)</div> <div class="operator">(</div><div class="ident">output</div> <div class="operator">[</div><div class="operator">]</div><div class="ident">string</div><div class="operator">)</div> <div class="operator">{</div>
+	<div class="keyword">for</div> <div class="ident">i</div> <div class="operator">:=</div> <div class="keyword">range</div> <div class="ident">input</div> <div class="operator">{</div>
+		<div class="ident">output</div> <div class="operator">=</div> <div class="ident">append</div><div class="operator">(</div><div class="ident">output</div><div class="operator">,</div> <div class="operator">*</div><div class="ident">input</div><div class="operator">[</div><div class="ident">i</div><div class="operator">]</div><div class="operator">.</div><div class="ident">Prefix</div><div class="operator">)</div><div class="operator"></div>
+	<div class="operator">}</div><div class="operator"></div>
+	<div class="keyword">return</div><div class="operator"></div>
+<div class="operator">}</div><div class="operator"></div>
+
+</code></pre></td>
+      </tr>
+      
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

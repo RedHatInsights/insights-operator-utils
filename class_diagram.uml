@@ -1,0 +1,499 @@
+@startuml
+namespace helpers {
+    class APIRequest << (S,Aquamarine) >> {
+        + Method string
+        + Endpoint string
+        + EndpointArgs []<font color=blue>interface</font>{}
+        + Body <font color=blue>interface</font>{}
+        + UserID types.UserID
+        + OrgID types.OrgID
+        + XRHIdentity string
+        + AuthorizationToken string
+        + ExtraHeaders http.Header
+
+    }
+    class APIResponse << (S,Aquamarine) >> {
+        + StatusCode int
+        + Body <font color=blue>interface</font>{}
+        + BodyChecker BodyChecker
+        + Headers <font color=blue>map</font>[string]string
+
+    }
+    class MicroHTTPServer << (S,Aquamarine) >> {
+        + Serv *http.Server
+        + Router *mux.Router
+        + APIPrefix string
+
+        + Initialize() http.Handler
+        + AddEndpoint(endpoint string, f <font color=blue>func</font>(http.ResponseWriter, *http.Request) ) 
+
+    }
+    class MockT << (S,Aquamarine) >> {
+        - mockController *gomock.Controller
+
+        + Expects *mock_testing.MockTB
+
+        + Finish() 
+        + ExpectFailOnError(err error) 
+        + ExpectFailOnErrorAnyArgument() 
+        + Cleanup(f <font color=blue>func</font>() ) 
+        + Error(args ...<font color=blue>interface</font>{}) 
+        + Errorf(format string, args ...<font color=blue>interface</font>{}) 
+        + Fail() 
+        + FailNow() 
+        + Failed() bool
+        + Fatal(args ...<font color=blue>interface</font>{}) 
+        + Fatalf(format string, args ...<font color=blue>interface</font>{}) 
+        + Log(args ...<font color=blue>interface</font>{}) 
+        + Logf(format string, args ...<font color=blue>interface</font>{}) 
+        + Skip(args ...<font color=blue>interface</font>{}) 
+        + SkipNow() 
+        + Skipf(format string, args ...<font color=blue>interface</font>{}) 
+        + Skipped() bool
+
+    }
+    interface ServerInitializer  {
+        + Initialize() http.Handler
+
+    }
+    class helpers.BodyChecker << (T, #FF7700) >>  {
+    }
+    class helpers.TestFunctionPtr << (T, #FF7700) >>  {
+    }
+    class "<font color=blue>func</font>(testing.TB) " as fontcolorbluefuncfonttestingTB {
+        'This class was created so that we can correctly have an alias pointing to this name. Since it contains dots that can break namespaces
+    }
+    class "<font color=blue>func</font>(testing.TB, []byte, []byte) " as fontcolorbluefuncfonttestingTBbytebyte {
+        'This class was created so that we can correctly have an alias pointing to this name. Since it contains dots that can break namespaces
+    }
+}
+"testing.T" *-- "helpers.MockT"
+
+"helpers.ServerInitializer" <|-- "helpers.MicroHTTPServer"
+
+namespace httputils {
+    class loggingResponseWriter << (S,Aquamarine) >> {
+        + WriteHeader(statusCode int) 
+
+    }
+}
+"http.ResponseWriter" *-- "httputils.loggingResponseWriter"
+
+
+namespace logger {
+    class CloudWatchConfiguration << (S,Aquamarine) >> {
+        + AWSAccessID string
+        + AWSSecretKey string
+        + AWSSessionToken string
+        + AWSRegion string
+        + LogGroup string
+        + StreamName string
+        + CreateStreamIfNotExists bool
+        + Debug bool
+
+    }
+    class KafkaZerologConfiguration << (S,Aquamarine) >> {
+        + Broker string
+        + Topic string
+        + CertPath string
+        + Level string
+
+    }
+    class LoggingConfiguration << (S,Aquamarine) >> {
+        + Debug bool
+        + UseStderr bool
+        + LogLevel string
+        + LoggingToCloudWatchEnabled bool
+        + LoggingToSentryEnabled bool
+        + LoggingToKafkaEnabled bool
+
+    }
+    class SaramaZerologger << (S,Aquamarine) >> {
+        - zerologger zerolog.Logger
+
+        - logMessage(format string, params ...<font color=blue>interface</font>{}) 
+
+        + Print(params ...<font color=blue>interface</font>{}) 
+        + Printf(format string, params ...<font color=blue>interface</font>{}) 
+        + Println(v ...<font color=blue>interface</font>{}) 
+
+    }
+    class SentryLoggingConfiguration << (S,Aquamarine) >> {
+        + SentryDSN string
+
+    }
+    class WorkaroundForRHIOPS729 << (S,Aquamarine) >> {
+        + Write(bytes []byte) (int, error)
+
+    }
+}
+"io.Writer" *-- "logger.WorkaroundForRHIOPS729"
+
+
+namespace mock_io {
+    class MockReadCloser << (S,Aquamarine) >> {
+        - ctrl *gomock.Controller
+        - recorder *MockReadCloserMockRecorder
+
+        + EXPECT() *MockReadCloserMockRecorder
+        + Close() error
+        + Read(arg0 []byte) (int, error)
+
+    }
+    class MockReadCloserMockRecorder << (S,Aquamarine) >> {
+        - mock *MockReadCloser
+
+        + Close() *gomock.Call
+        + Read(arg0 <font color=blue>interface</font>{}) *gomock.Call
+
+    }
+}
+
+
+namespace mock_testing {
+    class MockTB << (S,Aquamarine) >> {
+        - ctrl *gomock.Controller
+        - recorder *MockTBMockRecorder
+
+        - private() 
+
+        + EXPECT() *MockTBMockRecorder
+        + Cleanup(arg0 <font color=blue>func</font>() ) 
+        + Error(arg0 ...<font color=blue>interface</font>{}) 
+        + Errorf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Fail() 
+        + FailNow() 
+        + Failed() bool
+        + Fatal(arg0 ...<font color=blue>interface</font>{}) 
+        + Fatalf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Helper() 
+        + Log(arg0 ...<font color=blue>interface</font>{}) 
+        + Logf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Name() string
+        + Skip(arg0 ...<font color=blue>interface</font>{}) 
+        + SkipNow() 
+        + Skipf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Skipped() bool
+
+    }
+    class MockTBMockRecorder << (S,Aquamarine) >> {
+        - mock *MockTB
+
+        - private() *gomock.Call
+
+        + Cleanup(arg0 <font color=blue>interface</font>{}) *gomock.Call
+        + Error(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Errorf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Fail() *gomock.Call
+        + FailNow() *gomock.Call
+        + Failed() *gomock.Call
+        + Fatal(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Fatalf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Helper() *gomock.Call
+        + Log(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Logf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Name() *gomock.Call
+        + Skip(arg0 ...<font color=blue>interface</font>{}) *gomock.Call
+        + SkipNow() *gomock.Call
+        + Skipf(arg0 <font color=blue>interface</font>{}, arg1 ...<font color=blue>interface</font>{}) *gomock.Call
+        + Skipped() *gomock.Call
+
+    }
+}
+
+
+namespace saramahelpers {
+    class MockConsumerGroupClaim << (S,Aquamarine) >> {
+        - channel <font color=blue>chan</font> *sarama.ConsumerMessage
+
+        + Topic() string
+        + Partition() int32
+        + InitialOffset() int64
+        + HighWaterMarkOffset() int64
+        + Messages() <font color=blue>chan</font> *sarama.ConsumerMessage
+
+    }
+    class MockConsumerGroupSession << (S,Aquamarine) >> {
+        + Claims() <font color=blue>map</font>[string][]int32
+        + MemberID() string
+        + GenerationID() int32
+        + MarkOffset(topic string, partition int32, offset int64, metadata string) 
+        + ResetOffset(topic string, partition int32, offset int64, metadata string) 
+        + MarkMessage(msg *sarama.ConsumerMessage, metadata string) 
+        + Context() context.Context
+        + Commit() 
+
+    }
+}
+
+
+namespace types {
+    class ClusterListInRequest << (S,Aquamarine) >> {
+        + Clusters []string
+
+    }
+    class ClusterReports << (S,Aquamarine) >> {
+        + ClusterList []ClusterName
+        + Errors []ClusterName
+        + Reports <font color=blue>map</font>[ClusterName]json.RawMessage
+        + GeneratedAt string
+        + Status string
+
+    }
+    class DisabledRuleResponse << (S,Aquamarine) >> {
+        + RuleModule string
+        + Description string
+        + Generic string
+        + DisabledAt string
+
+    }
+    class ErrorKeyMetadata << (S,Aquamarine) >> {
+        + Description string
+        + Impact string
+        + Likelihood int
+        + PublishDate string
+        + Status string
+        + Tags []string
+
+    }
+    class ForbiddenError << (S,Aquamarine) >> {
+        + ErrString string
+
+        + Error() string
+
+    }
+    class GlobalRuleConfig << (S,Aquamarine) >> {
+        + Impact <font color=blue>map</font>[string]int
+
+    }
+    class Identity << (S,Aquamarine) >> {
+        + AccountNumber UserID
+        + Internal Internal
+
+    }
+    class Internal << (S,Aquamarine) >> {
+        + OrgID OrgID
+
+    }
+    class ItemNotFoundError << (S,Aquamarine) >> {
+        + ItemID <font color=blue>interface</font>{}
+
+        + Error() string
+
+    }
+    class JWTPayload << (S,Aquamarine) >> {
+        + AccountNumber UserID
+        + OrgID OrgID
+
+    }
+    class NoBodyError << (S,Aquamarine) >> {
+        + Error() string
+
+    }
+    class ReportItem << (S,Aquamarine) >> {
+        + Module RuleID
+        + ErrorKey ErrorKey
+        + TemplateData json.RawMessage
+
+    }
+    class ReportResponse << (S,Aquamarine) >> {
+        + Meta ReportResponseMeta
+        + Report []RuleOnReport
+
+    }
+    class ReportResponseMeta << (S,Aquamarine) >> {
+        + Count int
+        + LastCheckedAt Timestamp
+
+    }
+    class ReportRules << (S,Aquamarine) >> {
+        + HitRules []RuleOnReport
+        + SkippedRules []RuleOnReport
+        + PassedRules []RuleOnReport
+        + TotalCount int
+
+    }
+    class RouterMissingParamError << (S,Aquamarine) >> {
+        + ParamName string
+
+        + Error() string
+
+    }
+    class RouterParsingError << (S,Aquamarine) >> {
+        + ParamName string
+        + ParamValue <font color=blue>interface</font>{}
+        + ErrString string
+
+        + Error() string
+
+    }
+    class Rule << (S,Aquamarine) >> {
+        + Module RuleID
+        + Name string
+        + Generic string
+        + Summary string
+        + Reason string
+        + Resolution string
+        + MoreInfo string
+
+    }
+    class RuleContent << (S,Aquamarine) >> {
+        + Plugin RulePluginInfo
+        + ErrorKeys <font color=blue>map</font>[string]RuleErrorKeyContent
+        + Generic string
+        + Summary string
+        + Resolution string
+        + MoreInfo string
+        + Reason string
+        + HasReason bool
+
+    }
+    class RuleContentDirectory << (S,Aquamarine) >> {
+        + Config GlobalRuleConfig
+        + Rules <font color=blue>map</font>[string]RuleContent
+
+    }
+    class RuleContentResponse << (S,Aquamarine) >> {
+        + CreatedAt string
+        + Description string
+        + ErrorKey string
+        + Generic string
+        + Reason string
+        + Resolution string
+        + TotalRisk int
+        + RiskOfChange int
+        + RuleModule RuleID
+        + TemplateData <font color=blue>interface</font>{}
+        + Tags []string
+        + UserVote UserVote
+        + Disabled bool
+        + Internal bool
+
+    }
+    class RuleErrorKey << (S,Aquamarine) >> {
+        + ErrorKey ErrorKey
+        + RuleModule RuleID
+        + Condition string
+        + Description string
+        + Impact int
+        + Likelihood int
+        + PublishDate time.Time
+        + Active bool
+        + Generic string
+        + Summary string
+        + Reason string
+        + Resolution string
+        + MoreInfo string
+        + Tags []string
+
+    }
+    class RuleErrorKeyContent << (S,Aquamarine) >> {
+        + Metadata ErrorKeyMetadata
+        + TotalRisk int
+        + Generic string
+        + Summary string
+        + Resolution string
+        + MoreInfo string
+        + Reason string
+        + HasReason bool
+
+    }
+    class RuleOnReport << (S,Aquamarine) >> {
+        + Module RuleID
+        + ErrorKey ErrorKey
+        + UserVote UserVote
+        + Disabled bool
+        + DisableFeedback string
+        + DisabledAt Timestamp
+        + TemplateData <font color=blue>interface</font>{}
+
+    }
+    class RulePluginInfo << (S,Aquamarine) >> {
+        + Name string
+        + NodeID string
+        + ProductCode string
+        + PythonModule string
+
+    }
+    class RuleWithContent << (S,Aquamarine) >> {
+        + Module RuleID
+        + Name string
+        + Summary string
+        + Reason string
+        + Resolution string
+        + MoreInfo string
+        + ErrorKey ErrorKey
+        + Condition string
+        + Description string
+        + TotalRisk int
+        + RiskOfChange int
+        + PublishDate time.Time
+        + Active bool
+        + Internal bool
+        + Generic string
+        + Tags []string
+
+    }
+    class Token << (S,Aquamarine) >> {
+        + Identity Identity
+
+    }
+    class UnauthorizedError << (S,Aquamarine) >> {
+        + ErrString string
+
+        + Error() string
+
+    }
+    class ValidationError << (S,Aquamarine) >> {
+        + ParamName string
+        + ParamValue <font color=blue>interface</font>{}
+        + ErrString string
+
+        + Error() string
+
+    }
+    class types.ClusterName << (T, #FF7700) >>  {
+    }
+    class types.ClusterReport << (T, #FF7700) >>  {
+    }
+    class types.ContextKey << (T, #FF7700) >>  {
+    }
+    class types.DBDriver << (T, #FF7700) >>  {
+    }
+    class types.ErrorKey << (T, #FF7700) >>  {
+    }
+    class types.KafkaOffset << (T, #FF7700) >>  {
+    }
+    class types.OrgID << (T, #FF7700) >>  {
+    }
+    class types.RequestID << (T, #FF7700) >>  {
+    }
+    class types.RuleID << (T, #FF7700) >>  {
+    }
+    class types.SchemaVersion << (T, #FF7700) >>  {
+    }
+    class types.Timestamp << (T, #FF7700) >>  {
+    }
+    class types.UserID << (T, #FF7700) >>  {
+    }
+    class types.UserVote << (T, #FF7700) >>  {
+    }
+}
+
+
+"__builtin__.int" #.. "types.DBDriver"
+"__builtin__.int" #.. "types.UserVote"
+"__builtin__.int64" #.. "types.KafkaOffset"
+"__builtin__.string" #.. "types.ClusterName"
+"__builtin__.string" #.. "types.ClusterReport"
+"__builtin__.string" #.. "types.ContextKey"
+"__builtin__.string" #.. "types.ErrorKey"
+"__builtin__.string" #.. "types.RequestID"
+"__builtin__.string" #.. "types.RuleID"
+"__builtin__.string" #.. "types.Timestamp"
+"__builtin__.string" #.. "types.UserID"
+"__builtin__.uint32" #.. "types.OrgID"
+"__builtin__.uint8" #.. "types.SchemaVersion"
+"helpers.fontcolorbluefuncfonttestingTB" #.. "helpers.TestFunctionPtr"
+"helpers.fontcolorbluefuncfonttestingTBbytebyte" #.. "helpers.BodyChecker"
+@enduml

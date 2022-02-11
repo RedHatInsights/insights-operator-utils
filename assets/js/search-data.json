@@ -1,0 +1,20 @@
+{"0": {
+    "doc": "Description",
+    "title": "Description",
+    "content": "Utility packages (written in Go) that are shared between different insights-operator and insights-aggregator repositories. ",
+    "url": "https://redhatinsights.github.io/insights-operator-utils/",
+    "relUrl": "/"
+  },"1": {
+    "doc": "Description",
+    "title": "Documentation for source files from this repository",
+    "content": ". | collections/slices_test.go | collections/slices.go | http/router_utils_test.go | http/metrics_middleware.go | http/http.go | http/router_utils.go | http/metrics_middleware_test.go | types/types.go | types/pg_consts.go | types/auth.go | types/errors.go | env/env.go | env/env_test.go | metrics/metrics_test.go | metrics/metrics.go | responses/responses_test.go | responses/responses.go | parsers/date_test.go | parsers/date.go | tests/helpers/serialization.go | tests/helpers/strings.go | tests/helpers/timeout.go | tests/helpers/frisby.go | tests/helpers/http.go | tests/helpers/json.go | tests/helpers/errors.go | tests/helpers/micro_server.go | tests/helpers/export_test.go | tests/helpers/helpers_test.go | tests/helpers/mock_t.go | tests/helpers/mock_t_test.go | . ",
+    "url": "https://redhatinsights.github.io/insights-operator-utils/#documentation-for-source-files-from-this-repository",
+    "relUrl": "/#documentation-for-source-files-from-this-repository"
+  },"2": {
+    "doc": "References",
+    "title": "References",
+    "content": ". | Insights Data Schemas | . ",
+    "url": "https://redhatinsights.github.io/insights-operator-utils/references.html",
+    "relUrl": "/references.html"
+  }
+}
