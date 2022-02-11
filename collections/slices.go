@@ -1,5 +1,5 @@
 /*
-Copyright © 2019, 2020 Red Hat, Inc.
+Copyright © 2019, 2020, 2021, 2022 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,4 +29,17 @@ func StringInSlice(a string, list []string) bool {
 		}
 	}
 	return false
+}
+
+// Index finds given key in sequence. Second return value indicates if key was
+// found or not.
+func Index(key string, list []string) (int, bool) {
+	for i, item := range list {
+		if item == key {
+			return i, true
+		}
+	}
+
+	// any index is ok to return
+	return 0, false
 }
