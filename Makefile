@@ -1,4 +1,4 @@
-.PHONY: help clean build fmt lint vet run test style cyclo license godoc install_docgo install_addlicense
+.PHONY: help clean build fmt lint vet run test style cyclo license godoc install_docgo install_addlicense before_commit
 
 SOURCES:=$(shell find . -name '*.go')
 DOCFILES:=$(addprefix docs/packages/, $(addsuffix .html, $(basename ${SOURCES})))
@@ -53,16 +53,10 @@ cover: test ## Display test coverage on generated HTML pages
 coverage: ## Display test coverage onto terminal
 	@go tool cover -func=coverage.out
 
-help: ## Show this help screen
-	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
-	@echo ''
-	@echo 'Available targets are:'
-	@echo ''
-	@grep -E '^[ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-	@echo ''
+before_commit: style test license ## Checks done before commit
+	./check_coverage.sh
 
-license: install_addlicense
+license: install_addlicense  ## Add license in every file in repository
 	addlicense -c "Red Hat, Inc" -l "apache" -v ./
 
 docs/packages/%.html: %.go
@@ -81,5 +75,11 @@ install_addlicense: export GO111MODULE=off
 install_addlicense:
 	[[ `command -v addlicense` ]] || GO111MODULE=off go get -u github.com/google/addlicense
 
-before_commit: style test license ## Checks done before commit
-	./check_coverage.sh
+help: ## Show this help screen
+	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
+	@echo ''
+	@echo 'Available targets are:'
+	@echo ''
+	@grep -E '^[ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ''
