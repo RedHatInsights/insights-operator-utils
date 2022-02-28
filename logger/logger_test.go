@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,10 +46,6 @@ var (
 		StreamName:              "stream name",
 		CreateStreamIfNotExists: true,
 		Debug:                   false,
-	}
-	kafkaLoggingConf = logger.KafkaZerologConfiguration{
-		Broker: "kafka_broker",
-		Topic:  "topicname",
 	}
 	describeLogStreamsEvent = RemoteLoggingExpect{
 		http.MethodPost,
