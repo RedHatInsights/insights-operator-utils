@@ -6,7 +6,7 @@ require (
 	github.com/RedHatInsights/cloudwatch v0.0.0-20210111105023-1df2bdfe3291
 	github.com/RedHatInsights/insights-results-aggregator-data v1.3.3
 	github.com/RedHatInsights/insights-results-types v1.3.5
-	github.com/RedHatInsights/kafka-zerolog v0.0.0-20210304172207-928f026dc7ec
+	github.com/RedHatInsights/kafka-zerolog v1.0.0
 	github.com/Shopify/sarama v1.27.1
 	github.com/archdx/zerolog-sentry v0.0.1
 	github.com/aws/aws-sdk-go v1.35.7
