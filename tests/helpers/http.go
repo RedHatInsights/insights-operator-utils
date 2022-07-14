@@ -28,7 +28,6 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-	"time"
 
 	types "github.com/RedHatInsights/insights-results-types"
 	"github.com/rs/zerolog/log"
@@ -371,19 +370,4 @@ func MakeXRHTokenString(t testing.TB, token *types.Token) string {
 	FailOnError(t, err)
 
 	return base64.StdEncoding.EncodeToString(tokenBytes)
-}
-
-// CompareReportResponses compares two RuleOnReport struct field by
-// field, except for the CreatedAt field that is compared with
-// time.Now() (the default when creating a new rule)
-func CompareReportResponses(expected, actual types.RuleOnReport) bool {
-
-	return actual.Disabled == expected.Disabled &&
-		actual.DisableFeedback == expected.DisableFeedback &&
-		actual.DisabledAt == expected.DisabledAt &&
-		actual.ErrorKey == expected.ErrorKey &&
-		actual.Module == expected.Module &&
-		ToJSONString(actual.TemplateData) == ToJSONString(expected.TemplateData) &&
-		actual.UserVote == expected.UserVote &&
-		actual.CreatedAt == types.Timestamp(time.Now().UTC().Format(time.RFC3339))
 }
