@@ -29,8 +29,8 @@ import (
 
 // CompareReportResponses compares two RuleOnReport struct field by
 // field, except for the CreatedAt field that is compared with
-// time.Now() (the default when creating a new rule)
-func CompareReportResponses(t testing.TB, expected, actual types.RuleOnReport) {
+// CreatedAt. If CreatedAt.isZero() the filed will be ignored
+func CompareReportResponses(t testing.TB, expected, actual types.RuleOnReport, CreatedAt time.Time) {
 	actualTemplateData := ToJSONString(actual.TemplateData)
 	expectedTemplateData := ToJSONString(expected.TemplateData)
 	require.JSONEq(t, expectedTemplateData, actualTemplateData)
@@ -40,7 +40,9 @@ func CompareReportResponses(t testing.TB, expected, actual types.RuleOnReport) {
 	assert.Equal(t, actual.ErrorKey, expected.ErrorKey)
 	assert.Equal(t, actual.Module, expected.Module)
 	assert.Equal(t, actual.UserVote, expected.UserVote)
-	assert.Equal(t, actual.CreatedAt, types.Timestamp(time.Now().UTC().Format(time.RFC3339)))
+	if !CreatedAt.IsZero() {
+		assert.Equal(t, actual.CreatedAt, types.Timestamp(CreatedAt.UTC().Format(time.RFC3339)))
+	}
 }
 
 // SortReports sorts a list of RuleOnReport by ErrorKey field
