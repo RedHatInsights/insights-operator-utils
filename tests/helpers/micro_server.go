@@ -19,6 +19,7 @@ package helpers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -35,7 +36,11 @@ type MicroHTTPServer struct {
 // NewMicroHTTPServer creates a MicroHTTPServer for the given address and prefix
 func NewMicroHTTPServer(address, apiPrefix string) *MicroHTTPServer {
 	router := mux.NewRouter().StrictSlash(true)
-	server := &http.Server{Addr: address, Handler: router}
+	server := &http.Server{
+		Addr:              address,
+		Handler:           router,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
 	return &MicroHTTPServer{
 		APIPrefix: apiPrefix,
 		Router:    router,
