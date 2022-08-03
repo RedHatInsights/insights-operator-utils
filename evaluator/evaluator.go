@@ -30,9 +30,9 @@ type Operator func(int, int) int
 func toint(x bool) int {
 	if x {
 		return 1
-	} else {
-		return 0
 	}
+
+	return 0
 }
 
 // tobool function convert integer value to Boolean
@@ -126,6 +126,7 @@ func performArithmeticOperation(stack *Stack, operator Operator) error {
 	return nil
 }
 
+// Evaluate function evaluates given algebraic expression and return its result
 func Evaluate(expression string, values map[string]int) (int, error) {
 	// scanner object (lexer)
 	var s scanner.Scanner
@@ -149,9 +150,10 @@ func Evaluate(expression string, values map[string]int) (int, error) {
 	}
 
 	if stack.Empty() {
-		return -1, fmt.Errorf("Empty stack!")
-	} else {
-		value, _ := stack.Pop()
-		return value, nil
+		return -1, fmt.Errorf("empty stack")
 	}
+
+	// stack is not empty, so its TOP is the result
+	value, _ := stack.Pop()
+	return value, nil
 }

@@ -20,7 +20,7 @@ import (
 	"fmt"
 )
 
-// naive but fully functional implementation of operand stack
+// Stack struct is naive but fully functional implementation of operand stack
 type Stack struct {
 	stack []int
 }
