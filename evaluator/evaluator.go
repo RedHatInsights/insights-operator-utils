@@ -126,20 +126,6 @@ func performArithmeticOperation(stack *Stack, operator Operator) error {
 	return nil
 }
 
-// PrintStack function print content of stack
-func PrintStack(stack Stack) {
-	if stack.Empty() {
-		fmt.Println("Empty stack!")
-		return
-	}
-
-	// stack is not empty -> print all items stored there
-	for !stack.Empty() {
-		value, _ := stack.Pop()
-		fmt.Printf("%d\n", value)
-	}
-}
-
 func Evaluate(expression string, values map[string]int) (int, error) {
 	// scanner object (lexer)
 	var s scanner.Scanner
