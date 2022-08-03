@@ -20,4 +20,4 @@ then
     GO111MODULE=off go get github.com/fzipp/gocyclo/cmd/gocyclo
 fi
 
-gocyclo -over 9 -avg .
+gocyclo -over 13 -avg .
