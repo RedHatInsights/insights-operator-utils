@@ -70,7 +70,7 @@ func evaluateRPN(expr []TokenWithValue, values map[string]int) (Stack, error) {
 			// we found and operator
 			// -> evaluate the dyadic operation (with two operands)
 			// -> store result onto the stack
-			err := performArithmeticOperation(&stack, operator)
+			err := performArithmeticOperation(&stack, operator, tok.Token)
 			if err != nil {
 				return stack, err
 			}
@@ -103,7 +103,7 @@ func evaluateRPN(expr []TokenWithValue, values map[string]int) (Stack, error) {
 
 // performArithmeticOperation function perform selected arithmetic operator
 // against two values taken from stack
-func performArithmeticOperation(stack *Stack, operator Operator) error {
+func performArithmeticOperation(stack *Stack, operator Operator, tok token.Token) error {
 	// read the second operand from the stack + check for empty stack
 	y, err := stack.Pop()
 	if err != nil {
@@ -114,6 +114,13 @@ func performArithmeticOperation(stack *Stack, operator Operator) error {
 	x, err := stack.Pop()
 	if err != nil {
 		return err
+	}
+
+	// divide by zero is not supported
+	if tok == token.QUO || tok == token.REM {
+		if y == 0 {
+			return fmt.Errorf("divide by zero")
+		}
 	}
 
 	// perform the selected arithmeric operation
