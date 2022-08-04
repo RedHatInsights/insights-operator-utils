@@ -149,8 +149,14 @@ func Evaluate(expression string, values map[string]int) (int, error) {
 		return -1, err
 	}
 
+	// stack should not be empty
 	if stack.Empty() {
 		return -1, fmt.Errorf("empty stack")
+	}
+
+	// stack size should be exactly 1
+	if stack.Size() != 1 {
+		return -1, fmt.Errorf("expected stack size: 1, actual: %d", stack.Size())
 	}
 
 	// stack is not empty, so its TOP is the result
