@@ -51,3 +51,8 @@ func (stack *Stack) Pop() (int, error) {
 func (stack *Stack) Empty() bool {
 	return len(stack.stack) == 0
 }
+
+// Size method returns number of items on stack
+func (stack *Stack) Size() int {
+	return len(stack.stack)
+}
