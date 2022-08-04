@@ -22,6 +22,13 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/evaluator"
 )
 
+type TestCase struct {
+	name          string
+	expression    string
+	expectedValue int
+	expectedError bool
+}
+
 // TestEvaluatorEmptyInput function checks the evaluator.Evaluate function for
 // empty input
 func TestEvaluatorEmptyInput(t *testing.T) {
@@ -45,28 +52,29 @@ func TestEvaluatorSingleToken(t *testing.T) {
 	assert.Equal(t, 42, result)
 }
 
-// TestEvaluatorArithmetic1 checks the evaluator.Evaluate function for simple
+// TestEvaluatorArithmetic checks the evaluator.Evaluate function for simple
 // arithmetic expression
-func TestEvaluatorArithmetic1(t *testing.T) {
+func TestEvaluatorArithmetic(t *testing.T) {
 	var values = make(map[string]int)
-	expression := "1+2*3"
-
-	result, err := evaluator.Evaluate(expression, values)
-
-	assert.Nil(t, err, "unexpected error")
-	assert.Equal(t, 7, result)
-}
-
-// TestEvaluatorArithmetic2 checks the evaluator.Evaluate function for simple
-// arithmetic expression
-func TestEvaluatorArithmetic2(t *testing.T) {
-	var values = make(map[string]int)
-	expression := "4/2-1+5%2"
-
-	result, err := evaluator.Evaluate(expression, values)
-
-	assert.Nil(t, err, "unexpected error")
-	assert.Equal(t, 2, result)
+	testCases := []TestCase{
+		{
+			name:          "short expression",
+			expression:    "1+2*3",
+			expectedValue: 7,
+		},
+		{
+			name:          "long expression",
+			expression:    "4/2-1+5%2",
+			expectedValue: 2,
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := evaluator.Evaluate(tc.expression, values)
+			assert.NoError(t, err, "unexpected error")
+			assert.Equal(t, tc.expectedValue, result)
+		})
+	}
 }
 
 // TestEvaluatorParenthesis checks the evaluator.Evaluate function for simple
@@ -81,64 +89,60 @@ func TestEvaluatorParenthesis(t *testing.T) {
 	assert.Equal(t, 9, result)
 }
 
-// TestEvaluatorRelational1 checks the evaluator.Evaluate function for simple
+// TestEvaluatorRelational checks the evaluator.Evaluate function for simple
 // relational expression
-func TestEvaluatorRelational1(t *testing.T) {
+func TestEvaluatorRelational(t *testing.T) {
 	var values = make(map[string]int)
-	expression := "1 < 2"
-
-	result, err := evaluator.Evaluate(expression, values)
-
-	assert.Nil(t, err, "unexpected error")
-	assert.Equal(t, 1, result)
+	testCases := []TestCase{
+		{
+			name:          "less than",
+			expression:    "1 < 2",
+			expectedValue: 1,
+		},
+		{
+			name:          "greater or equal",
+			expression:    "1 >= 2",
+			expectedValue: 0,
+		},
+		{
+			name:          "long expression",
+			expression:    "1 < 2 && 1 > 2 && 1 <= 2 && 1 >= 2 && 1==2 && 1 != 2",
+			expectedValue: 0,
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := evaluator.Evaluate(tc.expression, values)
+			assert.NoError(t, err, "unexpected error")
+			assert.Equal(t, tc.expectedValue, result)
+		})
+	}
 }
 
-// TestEvaluatorRelational2 checks the evaluator.Evaluate function for simple
-// relational expression
-func TestEvaluatorRelational2(t *testing.T) {
+// TestEvaluatorBoolean checks the evaluator.Evaluate function for simple
+// boolean expressions
+func TestEvaluatorBoolean(t *testing.T) {
 	var values = make(map[string]int)
-	expression := "1 >= 2"
+	testCases := []TestCase{
+		{
+			name:          "and",
+			expression:    "1 && 0",
+			expectedValue: 0,
+		},
+		{
+			name:          "or",
+			expression:    "1 || 0",
+			expectedValue: 1,
+		},
+	}
 
-	result, err := evaluator.Evaluate(expression, values)
-
-	assert.Nil(t, err, "unexpected error")
-	assert.Equal(t, 0, result)
-}
-
-// TestEvaluatorRelational3 checks the evaluator.Evaluate function for simple
-// relational expression
-func TestEvaluatorRelational3(t *testing.T) {
-	var values = make(map[string]int)
-	expression := "1 < 2 && 1 > 2 && 1 <= 2 && 1 >= 2 && 1==2 && 1 != 2"
-
-	result, err := evaluator.Evaluate(expression, values)
-
-	assert.Nil(t, err, "unexpected error")
-	assert.Equal(t, 0, result)
-}
-
-// TestEvaluatorBoolean1 checks the evaluator.Evaluate function for simple
-// boolean expression
-func TestEvaluatorBoolean1(t *testing.T) {
-	var values = make(map[string]int)
-	expression := "1 && 0"
-
-	result, err := evaluator.Evaluate(expression, values)
-
-	assert.Nil(t, err, "unexpected error")
-	assert.Equal(t, 0, result)
-}
-
-// TestEvaluatorBoolean2 checks the evaluator.Evaluate function for simple
-// boolean expression
-func TestEvaluatorBoolean2(t *testing.T) {
-	var values = make(map[string]int)
-	expression := "1 || 0"
-
-	result, err := evaluator.Evaluate(expression, values)
-
-	assert.Nil(t, err, "unexpected error")
-	assert.Equal(t, 1, result)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := evaluator.Evaluate(tc.expression, values)
+			assert.NoError(t, err, "unexpected error")
+			assert.Equal(t, tc.expectedValue, result)
+		})
+	}
 }
 
 // TestEvaluatorValues checks the evaluator.Evaluate function for expression
@@ -155,37 +159,62 @@ func TestEvaluatorValues(t *testing.T) {
 	assert.Equal(t, 5, result)
 }
 
-// TestEvaluatorWrongInput1 checks the evaluator.Evaluate function for
+// TestEvaluatorWrongInput checks the evaluator.Evaluate function for
 // expression that is not correct
-func TestEvaluatorWrongInput1(t *testing.T) {
+func TestEvaluatorWrongInput(t *testing.T) {
 	var values = make(map[string]int)
-	expression := "1**"
+	testCases := []TestCase{
+		{
+			name:          "mul instead of right operand",
+			expression:    "1**",
+			expectedError: true,
+		},
+		{
+			name:          "forgot closing parenthesis",
+			expression:    "(1+2*",
+			expectedError: true,
+		},
+		{
+			name:          "no operands",
+			expression:    "+",
+			expectedError: true,
+		},
+		{
+			name:          "no right operand",
+			expression:    "2+",
+			expectedError: true,
+		},
+		{
+			name:          "no left operand",
+			expression:    "+2",
+			expectedError: true,
+		},
+		{
+			name:          "no left operand (minus)",
+			expression:    "-2",
+			expectedError: true,
+		},
+		{
+			name:          "== typo",
+			expression:    "0=0",
+			expectedError: true,
+		},
+		{
+			name:          "zero division",
+			expression:    "1/0",
+			expectedError: true,
+		},
+	}
 
-	_, err := evaluator.Evaluate(expression, values)
-
-	assert.Error(t, err, "error is expected")
-}
-
-// TestEvaluatorWrongInput2 checks the evaluator.Evaluate function for
-// expression that is not correct
-func TestEvaluatorWrongInput2(t *testing.T) {
-	var values = make(map[string]int)
-	expression := "(1+2*"
-
-	_, err := evaluator.Evaluate(expression, values)
-
-	assert.Error(t, err, "error is expected")
-}
-
-// TestEvaluatorWrongInput3 checks the evaluator.Evaluate function for
-// expression that is not correct
-func TestEvaluatorWrongInput3(t *testing.T) {
-	var values = make(map[string]int)
-	expression := "+"
-
-	_, err := evaluator.Evaluate(expression, values)
-
-	assert.Error(t, err, "error is expected")
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.expectedError {
+				result, err := evaluator.Evaluate(tc.expression, values)
+				assert.Error(t, err, "error is expected")
+				assert.Equal(t, -1, result)
+			}
+		})
+	}
 }
 
 // TestEvaluatorMissingValue checks the evaluator.Evaluate function for
@@ -197,4 +226,60 @@ func TestEvaluatorMissingValue(t *testing.T) {
 	_, err := evaluator.Evaluate(expression, values)
 
 	assert.Error(t, err, "error is expected")
+}
+
+// TestEdgeCases tests expressions that rarely happen
+// in the real world
+func TestEdgeCases(t *testing.T) {
+	var values = make(map[string]int)
+	testCases := []TestCase{
+		{
+			name:          "useless parenthesis",
+			expression:    "(2)*(2)",
+			expectedValue: 4,
+		},
+		{
+			name:          "multiple useless parenthesis",
+			expression:    "(((0))) >= 0",
+			expectedValue: 1,
+		},
+		{
+			name:          "scrambled useless parenthesis",
+			expression:    "((((0==0)))+1)",
+			expectedValue: 2,
+		},
+		{
+			name:          "0 addition idempotence",
+			expression:    "1+0+0+0+0",
+			expectedValue: 1,
+		},
+		{
+			name:          "1 division idempotence",
+			expression:    "5/1/1/1/1/1",
+			expectedValue: 5,
+		},
+		{
+			name:          "transitivity",
+			expression:    "(3 > 2) && (2 > 1) == (3 > 1)",
+			expectedValue: 1,
+		},
+		{
+			name:          "big integer",
+			expression:    "9223372036854775807+100-100",
+			expectedValue: 9223372036854775807,
+		},
+		{
+			name:          "overflow",
+			expression:    "9223372036854775807+1",
+			expectedValue: -9223372036854775808,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := evaluator.Evaluate(tc.expression, values)
+			assert.NoError(t, err, "unexpected error")
+			assert.Equal(t, tc.expectedValue, result)
+		})
+	}
 }

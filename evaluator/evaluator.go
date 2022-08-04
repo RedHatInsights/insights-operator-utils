@@ -87,12 +87,12 @@ func evaluateRPN(expr []TokenWithValue, values map[string]int) (Stack, error) {
 				// so try to find the value + store the value onto the operand stack
 				value, found := values[tok.Identifier]
 				if !found {
-					return stack, fmt.Errorf("Unknown identifier: %s", tok.Identifier)
+					return stack, fmt.Errorf("unknown identifier: %s", tok.Identifier)
 				}
 				stack.Push(value)
 			default:
 				// token of different type (shall it happen?)
-				return stack, fmt.Errorf("Incorrect input token: %v", tok)
+				return stack, fmt.Errorf("incorrect input token: %v", tok)
 			}
 		}
 	}
