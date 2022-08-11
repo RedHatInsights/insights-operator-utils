@@ -147,6 +147,7 @@ gosec                Run gosec checker
 abcgo                Run ABC metrics checker
 style                Run all the formatting related commands (fmt, vet, lint, cyclo) + check shell scripts
 test                 Run the unit tests
+benchmark            Run benchmarks
 cover                Display test coverage on generated HTML pages
 coverage             Display test coverage onto terminal
 before_commit        Checks done before commit
