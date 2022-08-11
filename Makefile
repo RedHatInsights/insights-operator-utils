@@ -47,6 +47,10 @@ style: fmt vet lint cyclo shellcheck errcheck goconst gosec ineffassign abcgo ##
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./...)
 
+benchmark: ## Run benchmarks
+	@echo "Running benchmarks"
+	./benchmark.sh
+
 cover: test ## Display test coverage on generated HTML pages
 	@go tool cover -html=coverage.out
 
