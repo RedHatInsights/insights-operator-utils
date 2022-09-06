@@ -18,7 +18,11 @@ package httputils_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/http_test.html
 
 import (
+	"github.com/rs/zerolog/log"
+	"net/http"
+	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -77,4 +81,40 @@ func TestMakeURLToEndpointMapString(t *testing.T) {
 			"user_id": "1",
 		}),
 	)
+}
+
+func TestSetHTTPPrefix(t *testing.T) {
+	assert.Equal(
+		t,
+		"http://someaddress:8000",
+		httputils.SetHTTPPrefix("someaddress:8000"),
+	)
+}
+
+func TestSetHTTPPrefixWithCompleteURL(t *testing.T) {
+	assert.Equal(
+		t,
+		"http://someaddress:8000",
+		httputils.SetHTTPPrefix("http://someaddress:8000"),
+	)
+
+}
+
+func TestSendRequest(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte(`{"clusters":["first_cluster"]}`))
+		if err != nil {
+			log.Fatal().Msg(err.Error())
+		}
+	}))
+
+	req, err := http.NewRequest(http.MethodGet, server.URL, http.NoBody)
+	if err != nil {
+		log.Fatal().Msg(err.Error())
+	}
+
+	body, err := httputils.SendRequest(req, 15*time.Second)
+	assert.NoError(t, err)
+	assert.Equal(t, "{\"clusters\":[\"first_cluster\"]}", string(body))
 }
