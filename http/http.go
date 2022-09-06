@@ -21,9 +21,12 @@ package httputils
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // MakeURLToEndpoint creates URL to endpoint, use constants from file endpoints.go
@@ -80,4 +83,39 @@ func MakeURLToEndpointMap(apiPrefix, endpoint string, args map[string]interface{
 	apiPrefix = strings.TrimRight(apiPrefix, "/")
 
 	return apiPrefix + "/" + endpoint
+}
+
+// SetHTTPPrefix adds HTTP prefix if it is not already present in the given string
+func SetHTTPPrefix(url string) string {
+	if !strings.HasPrefix(url, "http") {
+		// if no protocol is specified in given URL, assume it is not
+		// needed to use https
+		url = "http://" + url
+	}
+	return url
+}
+
+// SendRequest sends the given request, reads the body and handles related errors
+func SendRequest(req *http.Request, timeout time.Duration) ([]byte, error) {
+	client := &http.Client{
+		Timeout: timeout,
+	}
+
+	response, err := client.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Read body from response
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	err = response.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }
