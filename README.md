@@ -14,10 +14,13 @@
 * [Sub-modules in this library](#sub-modules-in-this-library)
     * [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
     * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
+    * [`github.com/RedHatInsights/insights-operator-utils/evaluator`](#githubcomredhatinsightsinsights-operator-utilsevaluator)
+    * [`github.com/RedHatInsights/insights-operator-utils/generators`](#githubcomredhatinsightsinsights-operator-utilsgenerators)
     * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
     * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
     * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
     * [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
+    * [`github.com/RedHatInsights/insights-operator-utils/migrations`](#githubcomredhatinsightsinsights-operator-utilsmigrations)
     * [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
     * [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
     * [`github.com/RedHatInsights/insights-operator-utils/s3`](#githubcomredhatinsightsinsights-operator-utilss3)
@@ -50,6 +53,14 @@ Helper functions to work with collections.
 
 Functions to work with environment variables.
 
+### `github.com/RedHatInsights/insights-operator-utils/evaluator`
+
+Expression evaluator with ability to provide named values into expressions.
+
+### `github.com/RedHatInsights/insights-operator-utils/generators`
+
+Value generators - rule FQDNs etc.
+
 ### `github.com/RedHatInsights/insights-operator-utils/http`
 
 HTTP-related utility functions.
@@ -65,6 +76,12 @@ Package metrics contains all metrics that needs to be exposed to Prometheus and 
 ### `github.com/RedHatInsights/insights-operator-utils/metrics/push`
 
 Package metrics/push contains some helping functions to push metrics to a Prometheus Pushgateway.
+
+### `github.com/RedHatInsights/insights-operator-utils/migrations`
+
+An implementation of a simple database migration mechanism that allows
+semi-automatic transitions between various database versions as well as
+building the latest version of the database from scratch.
 
 ### `github.com/RedHatInsights/insights-operator-utils/parsers`
 

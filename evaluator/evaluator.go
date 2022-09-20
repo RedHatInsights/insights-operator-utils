@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Expression evaluator with ability to provide named values into expressions
+
 package evaluator
 
 import (
