@@ -10,28 +10,29 @@
 
 <!-- vim-markdown-toc GFM -->
 
-- [insights-operator Utils](#insights-operator-utils)
-	- [Description](#description)
-	- [Sub-modules in this library](#sub-modules-in-this-library)
-		- [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
-		- [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
-		- [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
-		- [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
-		- [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
-		- [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
-		- [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
-		- [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
-		- [`github.com/RedHatInsights/insights-operator-utils/s3`](#githubcomredhatinsightsinsights-operator-utilss3)
-		- [`github.com/RedHatInsights/insights-operator-utils/tls`](#githubcomredhatinsightsinsights-operator-utilstls)
-		- [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
-		- [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
-	- [How to use this library](#how-to-use-this-library)
-	- [Configuration](#configuration)
-	- [Contribution](#contribution)
-	- [Makefile targets](#makefile-targets)
-	- [Testing](#testing)
-	- [CI](#ci)
-	- [Package manifest](#package-manifest)
+* [Description](#description)
+* [Sub-modules in this library](#sub-modules-in-this-library)
+    * [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
+    * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
+    * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
+    * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
+    * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
+    * [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
+    * [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
+    * [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
+    * [`github.com/RedHatInsights/insights-operator-utils/s3`](#githubcomredhatinsightsinsights-operator-utilss3)
+    * [`github.com/RedHatInsights/insights-operator-utils/tls`](#githubcomredhatinsightsinsights-operator-utilstls)
+    * [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
+    * [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
+* [How to use this library](#how-to-use-this-library)
+* [Configuration](#configuration)
+* [Contribution](#contribution)
+* [Makefile targets](#makefile-targets)
+* [Testing](#testing)
+* [CI](#ci)
+    * [Travis CI](#travis-ci)
+    * [GolangCI](#golangci)
+* [Package manifest](#package-manifest)
 
 <!-- vim-markdown-toc -->
 
@@ -171,6 +172,8 @@ It is also possible to specify CLI options for Go test. For example, if you need
 
 ## CI
 
+### Travis CI
+
 [Travis CI](https://travis-ci.com/) is configured for this repository. Several tests and checks are started for all pull requests:
 
 * Unit tests that use the standard tool `go test`
@@ -188,6 +191,10 @@ It is also possible to specify CLI options for Go test. For example, if you need
 Please note that all checks mentioned above have to pass for the change to be merged into the main branch (look into Settings to check which branch has been set as main one).
 
 History of checks performed by CI is available at [RedHatInsights / insights-operator-utils](https://travis-ci.org/RedHatInsights/insights-operator-utils).
+
+### GolangCI
+
+Also GolangCI is configured for this repository and is run for all pull requests.
 
 ## Package manifest
 
