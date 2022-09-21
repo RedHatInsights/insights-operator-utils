@@ -500,3 +500,114 @@ func TestEvaluateRPNInsuficientOperand(t *testing.T) {
 	// check the output -> error needs to be detected
 	assert.Error(t, err)
 }
+
+// TestPerformArithmeticOperation check the behaviour of function
+// performArithmeticOperation for correct operators and tokens
+func TestPerformArithmeticOperation(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push two values onto the stack
+	stack.Push(1)
+	stack.Push(2)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.ADD
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.NoError(t, err)
+
+	// check stack
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 1)
+
+	// stack should contain one value
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 3)
+}
+
+// TestPerformArithmeticOperationMissingOperand check the behaviour of function
+// performArithmeticOperation for incorrect number of operands
+func TestPerformArithmeticOperationMissingOperand(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push just one value onto the stack
+	stack.Push(1)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.ADD
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.Error(t, err)
+}
+
+// TestPerformArithmeticOperationMissingBothOperands check the behaviour of
+// function performArithmeticOperation for incorrect number of operands
+func TestPerformArithmeticOperationMissingBothOperands(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// stack is empty!
+
+	// any token that is not token.QUO or token.REM
+	tok := token.ADD
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.Error(t, err)
+}
+
+// TestPerformArithmeticOperationDivideByNotZero check the behaviour of function
+// performArithmeticOperation for divide by any value different from zero
+func TestPerformArithmeticOperationDivideByNotZero(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push two values onto the stack
+	stack.Push(4)
+	stack.Push(2)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.QUO
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.NoError(t, err)
+}
+
+// TestPerformArithmeticOperationDivideByZero check the behaviour of function
+// performArithmeticOperation for divide by zero
+func TestPerformArithmeticOperationDivideByZero(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push two values onto the stack
+	stack.Push(1)
+	stack.Push(0)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.QUO
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.Error(t, err)
+}
