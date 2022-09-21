@@ -26,7 +26,8 @@ package evaluator
 // https://medium.com/@robiplus/golang-trick-export-for-test-aa16cbd7b8cd
 // to see why this trick is needed.
 var (
-	ToInt       = toint
-	ToBool      = tobool
-	EvaluateRPN = evaluateRPN
+	ToInt                      = toint
+	ToBool                     = tobool
+	EvaluateRPN                = evaluateRPN
+	PerformArithmeticOperation = performArithmeticOperation
 )
