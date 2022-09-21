@@ -1,4 +1,4 @@
-// Copyright 2021 Red Hat, Inc
+// Copyright 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ func TestParseDates(t *testing.T) {
 	startDate := "01/01/2021"
 	endDate := "31/12/2021"
 
-	expectedStartDate := time.Date(2021, time.January, 01, 00, 00, 00, 0, time.UTC)
+	expectedStartDate := time.Date(2021, time.January, 1, 0, 0, 0, 0, time.UTC)
 	expectedEndDate := time.Date(2021, time.December, 31, 0, 0, 0, 0, time.UTC)
 
 	t.Run("valid dates", func(t *testing.T) {
