@@ -15,6 +15,8 @@
 package evaluator_test
 
 import (
+	"fmt"
+	"go/token"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -304,4 +306,78 @@ func TestToBool(t *testing.T) {
 	// conversion 1 to true
 	result = evaluator.ToBool(1)
 	assert.True(t, result)
+}
+
+// TestEvaluateRPNNoTokens tests the function evaluateRPN when no tokens are
+// provided at input
+func TestEvaluateRPNNoTokens(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.True(t, stack.Empty())
+}
+
+// TestEvaluateRPNInvalidToken tests the function evaluateRPN when invalid
+// token is provided at input
+func TestEvaluateRPNInvalidToken(t *testing.T) {
+	// these tokens are not supported
+	invalidTokens := []token.Token{
+		token.ILLEGAL,
+		token.EOF,
+		token.COMMENT,
+		token.BREAK,
+		token.CASE,
+		token.CHAN,
+		token.CONST,
+		token.CONTINUE,
+		token.DEFAULT,
+		token.DEFER,
+		token.ELSE,
+		token.FALLTHROUGH,
+		token.FOR,
+		token.FUNC,
+		token.GO,
+		token.GOTO,
+		token.IF,
+		token.IMPORT,
+		token.INTERFACE,
+		token.MAP,
+		token.PACKAGE,
+		token.RANGE,
+		token.RETURN,
+		token.SELECT,
+		token.STRUCT,
+		token.SWITCH,
+		token.TYPE,
+		token.VAR,
+		token.TILDE,
+	}
+
+	// check all invalid tokens
+	for _, invalidToken := range invalidTokens {
+		name := fmt.Sprintf("EvaluatingInvalidToken %v", invalidToken)
+		t.Run(name, func(t *testing.T) {
+			// tokens to be tokenized
+			tokens := []evaluator.TokenWithValue{
+				evaluator.TokenWithValue{invalidToken, -1, ""},
+			}
+
+			// value map used during evaluation
+			var values = make(map[string]int)
+
+			// evaluate expression represented as sequence of tokens in RPN order
+			_, err := evaluator.EvaluateRPN(tokens, values)
+
+			// check the output
+			assert.Error(t, err)
+		})
+	}
 }
