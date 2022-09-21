@@ -358,7 +358,6 @@ func TestEvaluateRPNInvalidToken(t *testing.T) {
 		token.SWITCH,
 		token.TYPE,
 		token.VAR,
-		token.TILDE,
 	}
 
 	// check all invalid tokens
