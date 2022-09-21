@@ -294,3 +294,14 @@ func TestToInt(t *testing.T) {
 	result = evaluator.ToInt(true)
 	assert.Equal(t, 1, result)
 }
+
+// TestToBool tests the function tobool
+func TestToBool(t *testing.T) {
+	// conversion 0 to false
+	result := evaluator.ToBool(0)
+	assert.False(t, result)
+
+	// conversion 1 to true
+	result = evaluator.ToBool(1)
+	assert.True(t, result)
+}
