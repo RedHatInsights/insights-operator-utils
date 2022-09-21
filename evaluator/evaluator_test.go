@@ -381,3 +381,58 @@ func TestEvaluateRPNInvalidToken(t *testing.T) {
 		})
 	}
 }
+
+// TestEvaluateRPNIntValue tests the function evaluateRPN when just one token
+// with integer values is provided at input
+func TestEvaluateRPNIntValue(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.ValueToken(token.INT, 42),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 1)
+
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 42)
+}
+
+// TestEvaluateRPNTwoIntValues tests the function evaluateRPN when two tokens
+// with integer values are provided at input
+func TestEvaluateRPNTwoIntValues(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.ValueToken(token.INT, 1),
+		evaluator.ValueToken(token.INT, 2),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 2)
+
+	// values to be poped from stack in reverse order
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 2)
+
+	// values to be poped from stack in reverse order
+	value, err = stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 1)
+}
