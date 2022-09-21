@@ -436,3 +436,67 @@ func TestEvaluateRPNTwoIntValues(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, value, 1)
 }
+
+// TestEvaluateRPNArithmeticOperation tests the function evaluateRPN when three tokens
+// representing arithmetic expression is evaluated
+func TestEvaluateRPNArithmeticOperation(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		// RPN order (postfix)
+		evaluator.ValueToken(token.INT, 1),
+		evaluator.ValueToken(token.INT, 2),
+		evaluator.OperatorToken(token.ADD),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 1)
+
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 3)
+}
+
+// TestEvaluateRPNJustArithmeticOperator tests the function evaluateRPN when just
+// arithmetic operator is provided
+func TestEvaluateRPNJustArithmeticOperator(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.OperatorToken(token.ADD),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	_, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output -> error needs to be detected
+	assert.Error(t, err)
+}
+
+// TestEvaluateRPNInsuficientOperand the function evaluateRPN when just
+// arithmetic operator and one operand are provided
+func TestEvaluateRPNInsuficientOperand(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.ValueToken(token.INT, 1),
+		evaluator.OperatorToken(token.ADD),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	_, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output -> error needs to be detected
+	assert.Error(t, err)
+}
