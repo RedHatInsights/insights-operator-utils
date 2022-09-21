@@ -283,3 +283,14 @@ func TestEdgeCases(t *testing.T) {
 		})
 	}
 }
+
+// TestToInt tests the function toint
+func TestToInt(t *testing.T) {
+	// conversion from false to 0
+	result := evaluator.ToInt(false)
+	assert.Equal(t, 0, result)
+
+	// conversion from true to 1
+	result = evaluator.ToInt(true)
+	assert.Equal(t, 1, result)
+}
