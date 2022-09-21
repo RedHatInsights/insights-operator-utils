@@ -15,6 +15,8 @@
 package evaluator_test
 
 import (
+	"fmt"
+	"go/token"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -282,4 +284,329 @@ func TestEdgeCases(t *testing.T) {
 			assert.Equal(t, tc.expectedValue, result)
 		})
 	}
+}
+
+// TestToInt tests the function toint
+func TestToInt(t *testing.T) {
+	// conversion from false to 0
+	result := evaluator.ToInt(false)
+	assert.Equal(t, 0, result)
+
+	// conversion from true to 1
+	result = evaluator.ToInt(true)
+	assert.Equal(t, 1, result)
+}
+
+// TestToBool tests the function tobool
+func TestToBool(t *testing.T) {
+	// conversion 0 to false
+	result := evaluator.ToBool(0)
+	assert.False(t, result)
+
+	// conversion 1 to true
+	result = evaluator.ToBool(1)
+	assert.True(t, result)
+}
+
+// TestEvaluateRPNNoTokens tests the function evaluateRPN when no tokens are
+// provided at input
+func TestEvaluateRPNNoTokens(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.True(t, stack.Empty())
+}
+
+// TestEvaluateRPNInvalidToken tests the function evaluateRPN when invalid
+// token is provided at input
+func TestEvaluateRPNInvalidToken(t *testing.T) {
+	// these tokens are not supported
+	invalidTokens := []token.Token{
+		token.ILLEGAL,
+		token.EOF,
+		token.COMMENT,
+		token.BREAK,
+		token.CASE,
+		token.CHAN,
+		token.CONST,
+		token.CONTINUE,
+		token.DEFAULT,
+		token.DEFER,
+		token.ELSE,
+		token.FALLTHROUGH,
+		token.FOR,
+		token.FUNC,
+		token.GO,
+		token.GOTO,
+		token.IF,
+		token.IMPORT,
+		token.INTERFACE,
+		token.MAP,
+		token.PACKAGE,
+		token.RANGE,
+		token.RETURN,
+		token.SELECT,
+		token.STRUCT,
+		token.SWITCH,
+		token.TYPE,
+		token.VAR,
+	}
+
+	// check all invalid tokens
+	for _, invalidToken := range invalidTokens {
+		name := fmt.Sprintf("EvaluatingInvalidToken %v", invalidToken)
+		t.Run(name, func(t *testing.T) {
+			// tokens to be tokenized
+			tokens := []evaluator.TokenWithValue{
+				evaluator.TokenWithValue{invalidToken, -1, ""},
+			}
+
+			// value map used during evaluation
+			var values = make(map[string]int)
+
+			// evaluate expression represented as sequence of tokens in RPN order
+			_, err := evaluator.EvaluateRPN(tokens, values)
+
+			// check the output
+			assert.Error(t, err)
+		})
+	}
+}
+
+// TestEvaluateRPNIntValue tests the function evaluateRPN when just one token
+// with integer values is provided at input
+func TestEvaluateRPNIntValue(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.ValueToken(token.INT, 42),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 1)
+
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 42)
+}
+
+// TestEvaluateRPNTwoIntValues tests the function evaluateRPN when two tokens
+// with integer values are provided at input
+func TestEvaluateRPNTwoIntValues(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.ValueToken(token.INT, 1),
+		evaluator.ValueToken(token.INT, 2),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 2)
+
+	// values to be poped from stack in reverse order
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 2)
+
+	// values to be poped from stack in reverse order
+	value, err = stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 1)
+}
+
+// TestEvaluateRPNArithmeticOperation tests the function evaluateRPN when three tokens
+// representing arithmetic expression is evaluated
+func TestEvaluateRPNArithmeticOperation(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		// RPN order (postfix)
+		evaluator.ValueToken(token.INT, 1),
+		evaluator.ValueToken(token.INT, 2),
+		evaluator.OperatorToken(token.ADD),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	stack, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output
+	assert.NoError(t, err)
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 1)
+
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 3)
+}
+
+// TestEvaluateRPNJustArithmeticOperator tests the function evaluateRPN when just
+// arithmetic operator is provided
+func TestEvaluateRPNJustArithmeticOperator(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.OperatorToken(token.ADD),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	_, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output -> error needs to be detected
+	assert.Error(t, err)
+}
+
+// TestEvaluateRPNInsuficientOperand the function evaluateRPN when just
+// arithmetic operator and one operand are provided
+func TestEvaluateRPNInsuficientOperand(t *testing.T) {
+	// tokens to be tokenized
+	tokens := []evaluator.TokenWithValue{
+		evaluator.ValueToken(token.INT, 1),
+		evaluator.OperatorToken(token.ADD),
+	}
+
+	// value map used during evaluation
+	var values = make(map[string]int)
+
+	// evaluate expression represented as sequence of tokens in RPN order
+	_, err := evaluator.EvaluateRPN(tokens, values)
+
+	// check the output -> error needs to be detected
+	assert.Error(t, err)
+}
+
+// TestPerformArithmeticOperation check the behaviour of function
+// performArithmeticOperation for correct operators and tokens
+func TestPerformArithmeticOperation(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push two values onto the stack
+	stack.Push(1)
+	stack.Push(2)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.ADD
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.NoError(t, err)
+
+	// check stack
+	assert.False(t, stack.Empty())
+	assert.Equal(t, stack.Size(), 1)
+
+	// stack should contain one value
+	value, err := stack.Pop()
+	assert.NoError(t, err)
+	assert.Equal(t, value, 3)
+}
+
+// TestPerformArithmeticOperationMissingOperand check the behaviour of function
+// performArithmeticOperation for incorrect number of operands
+func TestPerformArithmeticOperationMissingOperand(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push just one value onto the stack
+	stack.Push(1)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.ADD
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.Error(t, err)
+}
+
+// TestPerformArithmeticOperationMissingBothOperands check the behaviour of
+// function performArithmeticOperation for incorrect number of operands
+func TestPerformArithmeticOperationMissingBothOperands(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// stack is empty!
+
+	// any token that is not token.QUO or token.REM
+	tok := token.ADD
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.Error(t, err)
+}
+
+// TestPerformArithmeticOperationDivideByNotZero check the behaviour of function
+// performArithmeticOperation for divide by any value different from zero
+func TestPerformArithmeticOperationDivideByNotZero(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push two values onto the stack
+	stack.Push(4)
+	stack.Push(2)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.QUO
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.NoError(t, err)
+}
+
+// TestPerformArithmeticOperationDivideByZero check the behaviour of function
+// performArithmeticOperation for divide by zero
+func TestPerformArithmeticOperationDivideByZero(t *testing.T) {
+	// operand stack (also known as data stack)
+	stack := evaluator.Stack{}
+
+	// push two values onto the stack
+	stack.Push(1)
+	stack.Push(0)
+
+	// any token that is not token.QUO or token.REM
+	tok := token.QUO
+
+	// perform the selected arithmetic operation
+	addOperation := func(x int, y int) int { return x + y }
+
+	// perform the selected arithmetic operation
+	err := evaluator.PerformArithmeticOperation(&stack, addOperation, tok)
+	assert.Error(t, err)
 }
