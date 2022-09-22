@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -244,30 +244,45 @@ func NewResponseWriterMock() ResponseWriterMock {
 	}
 }
 
-func (w ResponseWriterMock) Header() http.Header {
+func (w *ResponseWriterMock) Header() http.Header {
 	w.headerCalls++
 	return http.Header{}
 }
 
-func (w ResponseWriterMock) Write([]byte) (int, error) {
+func (w *ResponseWriterMock) Write([]byte) (int, error) {
 	w.writeCalls++
 	return 1, nil
 }
 
-func (w ResponseWriterMock) WriteHeader(statusCode int) {
+func (w *ResponseWriterMock) WriteHeader(statusCode int) {
 	w.writeHeaderCalls++
 }
 
 // TestCreateAPIHandlerEmptyFilepath test the function CreateOpenAPIHandler
 // when empty file name is provided
 func TestCreateAPIHandlerEmptyFilepath(t *testing.T) {
-	handler := httputils.CreateOpenAPIHandler("", true, true)
+	handler := httputils.CreateOpenAPIHandler("", true, false)
 
 	writer := NewResponseWriterMock()
-	handler(writer, nil)
+	handler(&writer, nil)
 
-	// writer should not be used at all
-	assert.Equal(t, writer.headerCalls, 0)
-	assert.Equal(t, writer.writeCalls, 0)
-	assert.Equal(t, writer.writeHeaderCalls, 0)
+	// writer should be used to response with error
+	assert.LessOrEqual(t, 1, writer.headerCalls)
+	assert.LessOrEqual(t, 1, writer.writeCalls)
+	assert.LessOrEqual(t, 1, writer.writeHeaderCalls)
+}
+
+// TestCreateAPIHandlerPathToExistingFile test the function CreateOpenAPIHandler
+// when regular file name is provided
+func TestCreateAPIHandlerPathToExistingFile(t *testing.T) {
+	// that file should exists everywhere
+	handler := httputils.CreateOpenAPIHandler("/etc/passwd", true, false)
+
+	writer := NewResponseWriterMock()
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.Equal(t, 1, writer.headerCalls)
+	assert.Equal(t, 1, writer.writeCalls)
+	assert.Equal(t, 0, writer.writeHeaderCalls)
 }
