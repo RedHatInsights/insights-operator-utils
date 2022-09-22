@@ -40,11 +40,20 @@ func TestGenerateCompositeRuleID(t *testing.T) {
 
 	t.Run("ruleFQDN empty", func(t *testing.T) {
 		_, err := generators.GenerateCompositeRuleID(types.RuleFQDN(""), types.ErrorKey(errorKeyOK))
+		assert.Error(t, err)
 		assert.Equal(t, err.Error(), "empty rule FQDN")
 	})
 
 	t.Run("error key empty", func(t *testing.T) {
 		_, err := generators.GenerateCompositeRuleID(types.RuleFQDN(ruleFQDNOK), types.ErrorKey(""))
+		assert.Error(t, err)
 		assert.Equal(t, err.Error(), "empty error key")
 	})
+
+	t.Run("ruleFQDN and error key empty", func(t *testing.T) {
+		_, err := generators.GenerateCompositeRuleID(types.RuleFQDN(""), types.ErrorKey(""))
+		assert.Error(t, err)
+		assert.Equal(t, err.Error(), "empty rule FQDN")
+	})
+
 }
