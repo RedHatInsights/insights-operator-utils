@@ -257,3 +257,17 @@ func (w ResponseWriterMock) Write([]byte) (int, error) {
 func (w ResponseWriterMock) WriteHeader(statusCode int) {
 	w.writeHeaderCalls++
 }
+
+// TestCreateAPIHandlerEmptyFilepath test the function CreateOpenAPIHandler
+// when empty file name is provided
+func TestCreateAPIHandlerEmptyFilepath(t *testing.T) {
+	handler := httputils.CreateOpenAPIHandler("", true, true)
+
+	writer := NewResponseWriterMock()
+	handler(writer, nil)
+
+	// writer should not be used at all
+	assert.Equal(t, writer.headerCalls, 0)
+	assert.Equal(t, writer.writeCalls, 0)
+	assert.Equal(t, writer.writeHeaderCalls, 0)
+}
