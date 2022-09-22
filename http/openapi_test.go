@@ -353,8 +353,19 @@ func TestCreateAPIHandlerPathToExistingJSONFile(t *testing.T) {
 	}
 
 	// close and remove the temporary file at the end of the test
-	defer tempFile.Close()
-	defer os.Remove(tempFile.Name())
+	defer func() {
+		err := tempFile.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	defer func() {
+		err := os.Remove(tempFile.Name())
+		if err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	// write data to the temporary file
 	data := []byte(openAPIFile)
