@@ -1,0 +1,76 @@
+// Copyright 2020, 2021, 2022 Red Hat, Inc
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package helpers_test
+
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tests/helpers/mock_t_test.html
+
+import (
+	"testing"
+	"time"
+
+	// "github.com/stretchr/testify/assert"
+
+	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
+	types "github.com/RedHatInsights/insights-results-types"
+)
+
+// TestCompareReportResponsesZeroTimestamp function checks the function
+// CompareReportResponses when timestamp is set to zero
+func TestCompareReportResponsesZeroTimestamp(t *testing.T) {
+	// let's use zero time value there
+	var timestamp time.Time
+
+	expectedReport := types.RuleOnReport{
+		Module:          "",
+		ErrorKey:        "",
+		UserVote:        types.UserVoteNone,
+		Disabled:        false,
+		DisableFeedback: "",
+		DisabledAt:      "",
+		TemplateData:    nil,
+		CreatedAt:       "",
+	}
+
+	// exactly the same report
+	actualReport := expectedReport
+
+	// reports should be equal
+	helpers.CompareReportResponses(t, expectedReport, actualReport, timestamp)
+}
+
+// TestCompareReportResponsesRealTimestamp function checks the function
+// CompareReportResponses when timestamp is set to real timestamp
+func TestCompareReportResponsesRealTimestamp(t *testing.T) {
+	timestamp := time.Now()
+	formatted := timestamp.UTC().Format(time.RFC3339)
+
+	expectedReport := types.RuleOnReport{
+		Module:          "",
+		ErrorKey:        "",
+		UserVote:        types.UserVoteNone,
+		Disabled:        false,
+		DisableFeedback: "",
+		DisabledAt:      "",
+		TemplateData:    nil,
+		CreatedAt:       types.Timestamp(formatted),
+	}
+
+	// exactly the same report
+	actualReport := expectedReport
+
+	// reports should be equal
+	helpers.CompareReportResponses(t, expectedReport, actualReport, timestamp)
+}
