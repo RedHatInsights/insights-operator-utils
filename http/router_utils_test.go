@@ -413,9 +413,8 @@ func testReadParamError(t *testing.T, paramName string, args map[string]string, 
 	case "organization/with_auth":
 		ctx := context.WithValue(request.Context(), types.ContextKeyUser, types.Identity{
 			AccountNumber: testdata.UserID,
-			Internal: types.Internal{
-				OrgID: testdata.Org2ID,
-			},
+			OrgID:         testdata.Org2ID,
+			User:          types.User{UserID: testdata.UserID},
 		})
 		request = request.WithContext(ctx)
 		_, successful = httputils.ReadOrganizationID(recorder, request, true)

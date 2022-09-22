@@ -167,9 +167,8 @@ func makeRequest(t testing.TB, request *APIRequest, url string) *http.Request {
 	if request.UserID != types.UserID("") || request.OrgID != types.OrgID(0) {
 		identity := types.Identity{
 			AccountNumber: request.UserID,
-			Internal: types.Internal{
-				OrgID: request.OrgID,
-			},
+			OrgID:         request.OrgID,
+			User:          types.User{UserID: request.UserID},
 		}
 		req = req.WithContext(context.WithValue(req.Context(), types.ContextKeyUser, identity))
 	}
