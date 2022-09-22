@@ -114,7 +114,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (ctypes.RuleI
 		return ctypes.RuleID("0"), false
 	}
 
-	isRuleIDValid := RuleIDValidator.Match([]byte(ruleID))
+	isRuleIDValid := RuleIDValidator.MatchString(ruleID)
 
 	if !isRuleIDValid {
 		err = fmt.Errorf("invalid rule ID, it must contain only from latin characters, number, underscores or dots")
@@ -156,7 +156,7 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes
 		return "", false
 	}
 
-	isRuleSelectorValid := RuleSelectorValidator.Match([]byte(ruleSelector))
+	isRuleSelectorValid := RuleSelectorValidator.MatchString(ruleSelector)
 
 	if !isRuleSelectorValid {
 		errMsg := "Param rule_selector is not a valid rule selector (plugin_name|error_key)"
