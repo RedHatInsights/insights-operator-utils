@@ -275,7 +275,10 @@ func (w *ResponseWriterMock) WriteHeader(statusCode int) {
 func TestCreateAPIHandlerEmptyFilepath(t *testing.T) {
 	handler := httputils.CreateOpenAPIHandler("", true, false)
 
-	writer := NewResponseWriterMock()
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
 	handler(&writer, nil)
 
 	// writer should be used to response with error
@@ -290,11 +293,32 @@ func TestCreateAPIHandlerPathToExistingFile(t *testing.T) {
 	// that file should exists everywhere
 	handler := httputils.CreateOpenAPIHandler("/etc/passwd", true, false)
 
-	writer := NewResponseWriterMock()
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
 	handler(&writer, nil)
 
 	// writer should be used
 	assert.Equal(t, 1, writer.headerCalls)
 	assert.Equal(t, 1, writer.writeCalls)
 	assert.Equal(t, 0, writer.writeHeaderCalls)
+}
+
+// TestCreateAPIHandlerWriteError test the function CreateOpenAPIHandler
+// when regular file name is provided and writer throws error on Write()
+func TestCreateAPIHandlerWriteError(t *testing.T) {
+	// that file should exists everywhere
+	handler := httputils.CreateOpenAPIHandler("/etc/passwd", true, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(true)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.LessOrEqual(t, 1, writer.headerCalls)
+	assert.LessOrEqual(t, 1, writer.writeCalls)
+	assert.LessOrEqual(t, 1, writer.writeHeaderCalls)
 }
