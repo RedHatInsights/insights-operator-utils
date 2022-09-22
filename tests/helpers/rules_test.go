@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	// "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
 	types "github.com/RedHatInsights/insights-results-types"
@@ -73,4 +73,14 @@ func TestCompareReportResponsesRealTimestamp(t *testing.T) {
 
 	// reports should be equal
 	helpers.CompareReportResponses(t, expectedReport, actualReport, timestamp)
+}
+
+// TestSortReportsEmptySlice function checks the function
+// SortReports when the input slice is empty
+func TestSortReportsEmptySlice(t *testing.T) {
+	var reports []types.RuleOnReport
+	sorted := helpers.SortReports(reports)
+
+	assert.Nil(t, sorted)
+	assert.Len(t, sorted, 0)
 }
