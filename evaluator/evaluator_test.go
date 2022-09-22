@@ -375,7 +375,7 @@ func TestEvaluateRPNInvalidToken(t *testing.T) {
 			// evaluate expression represented as sequence of tokens in RPN order
 			_, err := evaluator.EvaluateRPN(tokens, values)
 
-			// check the output
+			// check the output -> error needs to be detected
 			assert.Error(t, err)
 		})
 	}

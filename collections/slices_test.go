@@ -90,6 +90,20 @@ func TestStringInSliceEmptyStringFound(t *testing.T) {
 	}
 }
 
+// TestStringInSliceSameStrings tests the behaviour of StringInSlice for slice
+// with multiple strings with the same values
+func TestStringInSliceSameStrings(t *testing.T) {
+	slice := []string{"foo", "foo", "foo"}
+
+	if !collections.StringInSlice("foo", slice) {
+		t.Fatal("String should be found in the slice")
+	}
+
+	if collections.StringInSlice("bar", slice) {
+		t.Fatal("That string should not be found in the slice")
+	}
+}
+
 // TestStringInSliceUnicodeStringFound tests the behaviour of StringInSlice for Unicode strings
 func TestStringInSliceUnicodeStringFound(t *testing.T) {
 	slice := []string{"žluťoučká", "привет", "γεια"}
@@ -107,6 +121,24 @@ func TestStringInSliceUnicodeStringFound(t *testing.T) {
 	// try to find the last item
 	if !collections.StringInSlice("γεια", slice) {
 		t.Fatal("String should be found in the slice")
+	}
+}
+
+// Test the function Index for empty slice
+func TestIndexForEmptySlice(t *testing.T) {
+	slice := []string{}
+
+	// try to find string in empty slice
+	index, found := collections.Index("", slice)
+
+	// index should be equal to zero
+	if index != 0 {
+		t.Fatal("String should not be found in empty slice")
+	}
+
+	// and item should not be found
+	if found {
+		t.Fatal("String should NOT be found in empty slice")
 	}
 }
 
