@@ -322,3 +322,21 @@ func TestCreateAPIHandlerWriteError(t *testing.T) {
 	assert.LessOrEqual(t, 1, writer.writeCalls)
 	assert.LessOrEqual(t, 1, writer.writeHeaderCalls)
 }
+
+// TestCreateAPIHandlerPathToExistingFileNoDebugMode test the function CreateOpenAPIHandler
+// when regular file name is provided and debug mode is disabled
+func TestCreateAPIHandlerPathToExistingFileNoDebugMode(t *testing.T) {
+	// that file should exists everywhere
+	handler := httputils.CreateOpenAPIHandler("/etc/passwd", false, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.Equal(t, 1, writer.headerCalls)
+	assert.Equal(t, 1, writer.writeCalls)
+	assert.Equal(t, 0, writer.writeHeaderCalls)
+}
