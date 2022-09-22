@@ -18,6 +18,7 @@ package httputils_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi_test.html
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 
@@ -232,28 +233,39 @@ type ResponseWriterMock struct {
 	headerCalls      int
 	writeCalls       int
 	writeHeaderCalls int
+	writeShouldFail  bool
 }
 
 // NewResponseWriterMock is constructor of ResponseWriterMock struct.
 // Constructor takes care of all mock sub-structs, call counters etc.
-func NewResponseWriterMock() ResponseWriterMock {
+func NewResponseWriterMock(writeShouldFail bool) ResponseWriterMock {
 	return ResponseWriterMock{
 		headerCalls:      0,
 		writeCalls:       0,
 		writeHeaderCalls: 0,
+		writeShouldFail:  writeShouldFail,
 	}
 }
 
+// Header is a method that needs to be implemented in order to satisfy
+// ResponseWriter interface
 func (w *ResponseWriterMock) Header() http.Header {
 	w.headerCalls++
 	return http.Header{}
 }
 
+// Write is a method that needs to be implemented in order to satisfy
+// ResponseWriter interface
 func (w *ResponseWriterMock) Write([]byte) (int, error) {
 	w.writeCalls++
+	if w.writeShouldFail {
+		return -1, errors.New("Mocked error")
+	}
 	return 1, nil
 }
 
+// WriteHeader is a method that needs to be implemented in order to satisfy
+// ResponseWriter interface
 func (w *ResponseWriterMock) WriteHeader(statusCode int) {
 	w.writeHeaderCalls++
 }
