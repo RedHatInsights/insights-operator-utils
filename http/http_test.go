@@ -100,6 +100,7 @@ func TestSetHTTPPrefixWithCompleteURL(t *testing.T) {
 
 }
 
+// TestSendRequest test the behaviour of function SendRequest
 func TestSendRequest(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -117,4 +118,31 @@ func TestSendRequest(t *testing.T) {
 	body, err := httputils.SendRequest(req, 15*time.Second)
 	assert.NoError(t, err)
 	assert.Equal(t, "{\"clusters\":[\"first_cluster\"]}", string(body))
+}
+
+// TestSendRequestErrorResponseHandling test the behaviour of function
+// SendRequest when wrong URL or scheme is used
+func TestSendRequestErrorResponseHandling(t *testing.T) {
+	req, err := http.NewRequest(http.MethodGet, "", http.NoBody)
+	if err != nil {
+		log.Fatal().Msg(err.Error())
+	}
+
+	_, err = httputils.SendRequest(req, 15*time.Second)
+	assert.Error(t, err)
+}
+
+// TestSendRequestEmptyBody test the behaviour of function SendRequest
+func TestSendRequestEmptyBody(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+
+	req, err := http.NewRequest(http.MethodGet, server.URL, http.NoBody)
+	if err != nil {
+		log.Fatal().Msg(err.Error())
+	}
+
+	body, err := httputils.SendRequest(req, 15*time.Second)
+	assert.NoError(t, err)
+	assert.Empty(t, string(body))
 }
