@@ -18,6 +18,7 @@ package httputils_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi_test.html
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -225,3 +226,34 @@ const (
 	}
 }`
 )
+
+// ResponseWriterMock is mock for http.ResponseWriter
+type ResponseWriterMock struct {
+	headerCalls      int
+	writeCalls       int
+	writeHeaderCalls int
+}
+
+// NewResponseWriterMock is constructor of ResponseWriterMock struct.
+// Constructor takes care of all mock sub-structs, call counters etc.
+func NewResponseWriterMock() ResponseWriterMock {
+	return ResponseWriterMock{
+		headerCalls:      0,
+		writeCalls:       0,
+		writeHeaderCalls: 0,
+	}
+}
+
+func (w ResponseWriterMock) Header() http.Header {
+	w.headerCalls++
+	return http.Header{}
+}
+
+func (w ResponseWriterMock) Write([]byte) (int, error) {
+	w.writeCalls++
+	return 1, nil
+}
+
+func (w ResponseWriterMock) WriteHeader(statusCode int) {
+	w.writeHeaderCalls++
+}
