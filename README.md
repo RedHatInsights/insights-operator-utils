@@ -216,3 +216,4 @@ Also GolangCI is configured for this repository and is run for all pull requests
 ## Package manifest
 
 Package manifest is available at [docs/manifest.txt](docs/manifest.txt).
+

@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2020, 2021, 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,10 @@ package httputils_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/openapi_test.html
 
 import (
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -225,3 +229,161 @@ const (
 	}
 }`
 )
+
+// ResponseWriterMock is mock for http.ResponseWriter
+type ResponseWriterMock struct {
+	headerCalls      int
+	writeCalls       int
+	writeHeaderCalls int
+	writeShouldFail  bool
+}
+
+// NewResponseWriterMock is constructor of ResponseWriterMock struct.
+// Constructor takes care of all mock sub-structs, call counters etc.
+func NewResponseWriterMock(writeShouldFail bool) ResponseWriterMock {
+	return ResponseWriterMock{
+		headerCalls:      0,
+		writeCalls:       0,
+		writeHeaderCalls: 0,
+		writeShouldFail:  writeShouldFail,
+	}
+}
+
+// Header is a method that needs to be implemented in order to satisfy
+// ResponseWriter interface
+func (w *ResponseWriterMock) Header() http.Header {
+	w.headerCalls++
+	return http.Header{}
+}
+
+// Write is a method that needs to be implemented in order to satisfy
+// ResponseWriter interface
+func (w *ResponseWriterMock) Write([]byte) (int, error) {
+	w.writeCalls++
+	if w.writeShouldFail {
+		return -1, errors.New("Mocked error")
+	}
+	return 1, nil
+}
+
+// WriteHeader is a method that needs to be implemented in order to satisfy
+// ResponseWriter interface
+func (w *ResponseWriterMock) WriteHeader(statusCode int) {
+	w.writeHeaderCalls++
+}
+
+// TestCreateAPIHandlerEmptyFilepath test the function CreateOpenAPIHandler
+// when empty file name is provided
+func TestCreateAPIHandlerEmptyFilepath(t *testing.T) {
+	handler := httputils.CreateOpenAPIHandler("", true, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used to response with error
+	assert.LessOrEqual(t, 1, writer.headerCalls)
+	assert.LessOrEqual(t, 1, writer.writeCalls)
+	assert.LessOrEqual(t, 1, writer.writeHeaderCalls)
+}
+
+// TestCreateAPIHandlerPathToExistingFile test the function CreateOpenAPIHandler
+// when regular file name is provided
+func TestCreateAPIHandlerPathToExistingFile(t *testing.T) {
+	// that file should exists everywhere
+	handler := httputils.CreateOpenAPIHandler("/etc/passwd", true, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.Equal(t, 1, writer.headerCalls)
+	assert.Equal(t, 1, writer.writeCalls)
+	assert.Equal(t, 0, writer.writeHeaderCalls)
+}
+
+// TestCreateAPIHandlerWriteError test the function CreateOpenAPIHandler
+// when regular file name is provided and writer throws error on Write()
+func TestCreateAPIHandlerWriteError(t *testing.T) {
+	// that file should exists everywhere
+	handler := httputils.CreateOpenAPIHandler("/etc/passwd", true, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(true)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.LessOrEqual(t, 1, writer.headerCalls)
+	assert.LessOrEqual(t, 1, writer.writeCalls)
+	assert.LessOrEqual(t, 1, writer.writeHeaderCalls)
+}
+
+// TestCreateAPIHandlerPathToExistingFileNoDebugMode test the function CreateOpenAPIHandler
+// when regular file name is provided and debug mode is disabled
+func TestCreateAPIHandlerPathToExistingFileNoDebugMode(t *testing.T) {
+	// that file should exists everywhere
+	handler := httputils.CreateOpenAPIHandler("/etc/passwd", false, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.Equal(t, 1, writer.headerCalls)
+	assert.Equal(t, 1, writer.writeCalls)
+	assert.Equal(t, 0, writer.writeHeaderCalls)
+}
+
+// TestCreateAPIHandlerPathToExistingJSONFile test the function CreateOpenAPIHandler
+// when regular JSON file name is provided and debug mode is disabled
+func TestCreateAPIHandlerPathToExistingJSONFile(t *testing.T) {
+	// temporary file with OpenAPI.json content
+	tempFile, err := ioutil.TempFile("", "test_openapi.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// close and remove the temporary file at the end of the test
+	defer func() {
+		err := tempFile.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	defer func() {
+		err := os.Remove(tempFile.Name())
+		if err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	// write data to the temporary file
+	data := []byte(openAPIFile)
+	if _, err := tempFile.Write(data); err != nil {
+		t.Fatal(err)
+	}
+
+	// that file should now exists
+	handler := httputils.CreateOpenAPIHandler(tempFile.Name(), false, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.Equal(t, 1, writer.headerCalls)
+	assert.Equal(t, 1, writer.writeCalls)
+	assert.Equal(t, 0, writer.writeHeaderCalls)
+}
