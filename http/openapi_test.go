@@ -19,7 +19,9 @@ package httputils_test
 
 import (
 	"errors"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -328,6 +330,40 @@ func TestCreateAPIHandlerWriteError(t *testing.T) {
 func TestCreateAPIHandlerPathToExistingFileNoDebugMode(t *testing.T) {
 	// that file should exists everywhere
 	handler := httputils.CreateOpenAPIHandler("/etc/passwd", false, false)
+
+	// use mock instead of real http.ResponseWriter struct
+	writer := NewResponseWriterMock(false)
+
+	// try to call the created handler
+	handler(&writer, nil)
+
+	// writer should be used
+	assert.Equal(t, 1, writer.headerCalls)
+	assert.Equal(t, 1, writer.writeCalls)
+	assert.Equal(t, 0, writer.writeHeaderCalls)
+}
+
+// TestCreateAPIHandlerPathToExistingJSONFile test the function CreateOpenAPIHandler
+// when regular JSON file name is provided and debug mode is disabled
+func TestCreateAPIHandlerPathToExistingJSONFile(t *testing.T) {
+	// temporary file with OpenAPI.json content
+	tempFile, err := ioutil.TempFile("", "test_openapi.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// close and remove the temporary file at the end of the test
+	defer tempFile.Close()
+	defer os.Remove(tempFile.Name())
+
+	// write data to the temporary file
+	data := []byte(openAPIFile)
+	if _, err := tempFile.Write(data); err != nil {
+		t.Fatal(err)
+	}
+
+	// that file should now exists
+	handler := httputils.CreateOpenAPIHandler(tempFile.Name(), false, false)
 
 	// use mock instead of real http.ResponseWriter struct
 	writer := NewResponseWriterMock(false)
