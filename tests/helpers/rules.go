@@ -48,8 +48,8 @@ func CompareReportResponses(t testing.TB, expected, actual types.RuleOnReport, C
 // SortReports sorts a list of RuleOnReport by ErrorKey field
 func SortReports(reports []types.RuleOnReport) []types.RuleOnReport {
 	errorKeyReport := make(map[string]types.RuleOnReport)
-	errorKeys := make([]string, 3)
-	sorted := make([]types.RuleOnReport, 3)
+	var errorKeys []string
+	var sorted []types.RuleOnReport
 	for _, rep := range reports {
 		errorKeyStr := string(rep.ErrorKey)
 		errorKeyReport[errorKeyStr] = rep
