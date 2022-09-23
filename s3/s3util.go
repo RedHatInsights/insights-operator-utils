@@ -15,3 +15,6 @@
 // Package s3util contains helper functions to provide high level interface to
 // S3 storage.
 package s3util
+
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/s3/s3util.html

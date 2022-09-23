@@ -14,6 +14,9 @@
 
 package mocks
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/s3/mocks/utils.html
+
 import (
 	"sort"
 
