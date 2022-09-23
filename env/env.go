@@ -14,9 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package env
-
 // Functions to work with environment variables.
+package env
 
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/env/env.html
@@ -25,7 +24,8 @@ import (
 	"os"
 )
 
-// GetEnv return value of environment variable if it exists, or fallback otherwise
+// GetEnv return value of environment variable if it exists, or provided
+// fallback value otherwise.
 func GetEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
