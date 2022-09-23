@@ -14,6 +14,9 @@
 
 package types
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/types/metrics.html
+
 // MetricsConfiguration holds metrics related configuration
 type MetricsConfiguration struct {
 	Job              string `mapstructure:"job_name" toml:"job_name"`
