@@ -20,6 +20,9 @@ limitations under the License.
 // parenthesis to change priority of operations.
 package evaluator
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/evaluator/evaluator.html
+
 import (
 	"fmt"
 
