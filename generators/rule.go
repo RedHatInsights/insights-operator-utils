@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Functions that provide value generators for given input.
 package generators
 
 import (

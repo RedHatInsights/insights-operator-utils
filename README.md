@@ -36,12 +36,15 @@
     * [Travis CI](#travis-ci)
     * [GolangCI](#golangci)
 * [Package manifest](#package-manifest)
+* [Open Source Insights status](#open-source-insights-status)
 
 <!-- vim-markdown-toc -->
 
 ## Description
 
-Utils that are shared between different insights-operator repositories.
+Utility packages (written in Go) that are shared between different Insights
+Operator, Insights Results Aggregator, and CCX Notification Service
+repositories.
 
 ## Sub-modules in this library
 
@@ -217,3 +220,6 @@ Also GolangCI is configured for this repository and is run for all pull requests
 
 Package manifest is available at [docs/manifest.txt](docs/manifest.txt).
 
+## Open Source Insights status
+
+Open Source Insights status is available at [https://deps.dev/go/github.com%2Fredhatinsights%2Finsights-operator-utils/](https://deps.dev/go/github.com%2Fredhatinsights%2Finsights-operator-utils/)
