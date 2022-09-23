@@ -22,6 +22,9 @@ limitations under the License.
 // Please look into README.md with further instructions how to use it.
 package migrations
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/migrations/migrations.html
+
 import (
 	"database/sql"
 	"fmt"

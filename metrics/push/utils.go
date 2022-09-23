@@ -14,6 +14,9 @@
 
 package push
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/metrics/push/utils.html
+
 import (
 	"fmt"
 

@@ -14,6 +14,9 @@
 
 package s3util_test
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/s3/helpers_test.html
+
 import s3mocks "github.com/RedHatInsights/insights-operator-utils/s3/mocks"
 
 var (

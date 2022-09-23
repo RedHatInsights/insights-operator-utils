@@ -14,6 +14,9 @@
 
 package s3util
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/s3/uploader.html
+
 import (
 	"bytes"
 	"net/http"

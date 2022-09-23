@@ -15,3 +15,6 @@
 // Package types contains declaration of data types used by other packages from
 // RedHatInsights/insights-operator-utils
 package types
+
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/types/types.html
