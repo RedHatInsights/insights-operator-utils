@@ -24,7 +24,7 @@ ineffassign: ## Run ineffassign checker
 	./ineffassign.sh
 
 shellcheck: ## Run shellcheck
-	shellcheck *.sh
+	./shellcheck.sh
 
 errcheck: ## Run errcheck
 	@echo "Running errcheck"
