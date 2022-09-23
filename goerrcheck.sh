@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright 2020 Red Hat, Inc
+
+# Copyright 2020, 2021 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +15,25 @@
 # limitations under the License.
 
 
+BLUE=$(tput setaf 4)
+RED_BG=$(tput setab 1)
+GREEN_BG=$(tput setab 2)
+NC=$(tput sgr0) # No Color
+
+echo -e "${BLUE}Finding all unchecked errors${NC}"
+
 if ! [ -x "$(command -v errcheck)" ]
 then
     echo -e "${BLUE}Installing errcheck ${NC}"
     GO111MODULE=off go get github.com/kisielk/errcheck
 fi
 
-errcheck ./...
+
+if ! errcheck ./...
+then
+    echo -e "${RED_BG}[FAIL]${NC} Code with unchecked errors detected"
+    exit 1
+else
+    echo -e "${GREEN_BG}[OK]${NC} All errors are properly checked"
+    exit 0
+fi
