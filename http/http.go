@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// HTTP-related utility functions.
+// Package httputils contains HTTP-related utility functions.
 package httputils
 
 // Documentation in literate-programming-style is available at:

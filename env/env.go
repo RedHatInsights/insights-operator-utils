@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Functions to work with environment variables.
+// Package env contains functions to work with environment variables.
 package env
 
 // Documentation in literate-programming-style is available at:

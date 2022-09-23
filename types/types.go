@@ -12,5 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Data types used by other packages from RedHatInsights/insights-operator-utils
+// Package types contains declaration of data types used by other packages from
+// RedHatInsights/insights-operator-utils
 package types

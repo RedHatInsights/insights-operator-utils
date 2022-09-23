@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Helper functions to work with collections.
+// Package collections contains helper functions to work with collections.
 package collections
 
 // Documentation in literate-programming-style is available at:

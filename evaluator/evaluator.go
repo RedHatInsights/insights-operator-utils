@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Expression evaluator with ability to provide named values into expressions.
-// Evaluator supports all arithmetic operators, logical operators, arithmetic
-// operators, and it is possible to use parenthesis to change priority of
-// operations.
+// Package evaluator contains expression evaluator with the ability to provide
+// named values into expressions.  Evaluator supports all arithmetic operators,
+// logical operators, arithmetic operators, and it is possible to use
+// parenthesis to change priority of operations.
 package evaluator
 
 import (

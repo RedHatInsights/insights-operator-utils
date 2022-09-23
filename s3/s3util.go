@@ -12,5 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Helper functions to provide high level interface to S3 storage.
+// Package s3util contains helper functions to provide high level interface to
+// S3 storage.
 package s3util

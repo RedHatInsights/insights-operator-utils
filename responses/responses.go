@@ -1,5 +1,3 @@
-// Utils for REST API
-
 /*
 Copyright © 2019, 2020 Red Hat, Inc.
 
@@ -16,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Handlers for HTTP response.
+// Package responses contains handlers for HTTP response.
 package responses
 
 // Documentation in literate-programming-style is available at:
