@@ -15,6 +15,9 @@
 // Package tlsutil contains helper function to create TLS configurations
 package tlsutil
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tls/tls_config.html
+
 import (
 	"crypto/tls"
 	"crypto/x509"
