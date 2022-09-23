@@ -14,6 +14,9 @@
 
 package push_test
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/metrics/push/helpers_test.html
+
 import (
 	"github.com/RedHatInsights/insights-operator-utils/metrics/push"
 	"github.com/prometheus/client_golang/prometheus"
