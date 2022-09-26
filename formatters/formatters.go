@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-// Function FormatNullTime formats sql.NullTime value accordingly
+// FormatNullTime formats sql.NullTime value accordingly
 func FormatNullTime(t sql.NullTime) string {
 	if !t.Valid {
 		return ""
