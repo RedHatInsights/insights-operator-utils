@@ -16,6 +16,7 @@
     * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
     * [`github.com/RedHatInsights/insights-operator-utils/evaluator`](#githubcomredhatinsightsinsights-operator-utilsevaluator)
     * [`github.com/RedHatInsights/insights-operator-utils/generators`](#githubcomredhatinsightsinsights-operator-utilsgenerators)
+    * [`github.com/RedHatInsights/insights-operator-utils/formatters`](#githubcomredhatinsightsinsights-operator-utilsformatters)
     * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
     * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
     * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
@@ -63,6 +64,10 @@ Expression evaluator with ability to provide named values into expressions.
 ### `github.com/RedHatInsights/insights-operator-utils/generators`
 
 Value generators - rule FQDNs etc.
+
+### `github.com/RedHatInsights/insights-operator-utils/formatters`
+
+Various text formatters utility functions.
 
 ### `github.com/RedHatInsights/insights-operator-utils/http`
 
