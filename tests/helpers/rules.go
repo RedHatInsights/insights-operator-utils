@@ -27,10 +27,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// CompareReportResponses compares two RuleOnReport struct field by
-// field, except for the CreatedAt field that is compared with
-// CreatedAt. If CreatedAt.isZero() the filed will be ignored
-func CompareReportResponses(t testing.TB, expected, actual types.RuleOnReport, CreatedAt time.Time) {
+// CompareReportResponses compares two RuleOnReport struct field by field,
+// except for the CreatedAt field that is compared with createdAt timestamp. If
+// createdAt.isZero() the filed will be ignored
+func CompareReportResponses(t testing.TB, expected, actual types.RuleOnReport, createdAt time.Time) {
 	actualTemplateData := ToJSONString(actual.TemplateData)
 	expectedTemplateData := ToJSONString(expected.TemplateData)
 	require.JSONEq(t, expectedTemplateData, actualTemplateData)
@@ -40,8 +40,8 @@ func CompareReportResponses(t testing.TB, expected, actual types.RuleOnReport, C
 	assert.Equal(t, actual.ErrorKey, expected.ErrorKey)
 	assert.Equal(t, actual.Module, expected.Module)
 	assert.Equal(t, actual.UserVote, expected.UserVote)
-	if !CreatedAt.IsZero() {
-		assert.Equal(t, actual.CreatedAt, types.Timestamp(CreatedAt.UTC().Format(time.RFC3339)))
+	if !createdAt.IsZero() {
+		assert.Equal(t, actual.CreatedAt, types.Timestamp(createdAt.UTC().Format(time.RFC3339)))
 	}
 }
 
