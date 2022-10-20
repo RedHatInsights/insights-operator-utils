@@ -1,6 +1,6 @@
 module github.com/RedHatInsights/insights-operator-utils
 
-go 1.16
+go 1.17
 
 require (
 	github.com/RedHatInsights/cloudwatch v0.0.0-20210111105023-1df2bdfe3291
