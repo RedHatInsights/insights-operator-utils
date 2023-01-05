@@ -14,6 +14,9 @@
 
 package tlsutil
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tls/tls_config_inter_test.html
+
 import (
 	"crypto/x509"
 	"testing"

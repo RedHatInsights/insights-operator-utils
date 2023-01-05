@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Package collections contains helper functions to work with collections.
 package collections
-
-// Helper functions to work with collections.
 
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/collections/slices.html
 
-// StringInSlice tests whether the given string is contained in slice of strings
+// StringInSlice tests whether the given string is contained in slice of
+// strings. If the slice is empty, false is returned.
 func StringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
@@ -32,7 +32,8 @@ func StringInSlice(a string, list []string) bool {
 }
 
 // Index finds given key in sequence. Second return value indicates if key was
-// found or not.
+// found or not. If the sequence is empty, zero index is returned with found
+// flag set to false.
 func Index(key string, list []string) (int, bool) {
 	for i, item := range list {
 		if item == key {

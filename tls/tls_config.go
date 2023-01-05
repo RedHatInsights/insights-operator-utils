@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package tlsutil contains helper function to create TLS configurations
 package tlsutil
+
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tls/tls_config.html
 
 import (
 	"crypto/tls"

@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright 2020 Red Hat, Inc
+
+# Copyright 2020, 2021 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+BLUE=$(tput setaf 4)
+RED_BG=$(tput setab 1)
+GREEN_BG=$(tput setab 2)
+NC=$(tput sgr0) # No Color
+
+echo -e "${BLUE}Finding repeated strings that could be replaced by a constant${NC}"
 
 if ! [ -x "$(command -v goconst)" ]
 then
@@ -20,12 +27,11 @@ then
     GO111MODULE=off go get github.com/jgautheron/goconst/cmd/goconst
 fi
 
-
 if [[ $(goconst -min-occurrences=3 ./... | tee /dev/tty | wc -l) -ne 0 ]]
 then
-    echo "Duplicated string(s) found"
+    echo -e "${RED_BG}[FAIL]${NC} Duplicated string(s) found"
     exit 1
 else
-    echo "No duplicated strings found"
+    echo -e "${GREEN_BG}[OK]${NC} No duplicated strings found"
     exit 0
 fi

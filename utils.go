@@ -1,5 +1,5 @@
 /*
-Copyright © 2019, 2020 Red Hat, Inc.
+Copyright © 2019, 2020, 2021, 2022 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,21 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package env contains functions to work with environment variables.
-package env
-
-// Documentation in literate-programming-style is available at:
-// https://redhatinsights.github.io/insights-operator-utils/packages/env/env.html
-
-import (
-	"os"
-)
-
-// GetEnv return value of environment variable if it exists, or provided
-// fallback value otherwise.
-func GetEnv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return fallback
-}
+// Utility packages (written in Go) that are shared between different Insights
+// Operator, Insights Results Aggregator, and CCX Notification Service
+// repositories.
+package main

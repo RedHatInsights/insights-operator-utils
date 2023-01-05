@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package httputils contains HTTP-related utility functions.
 package httputils
-
-// HTTP-related utility functions.
 
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/http.html

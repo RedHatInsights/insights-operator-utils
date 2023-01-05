@@ -16,6 +16,9 @@ limitations under the License.
 
 package migrations
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/migrations/errors.html
+
 import (
 	"database/sql"
 	"errors"

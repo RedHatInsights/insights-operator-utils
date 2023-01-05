@@ -170,9 +170,8 @@ func TestAssertAPIRequest(t *testing.T) {
 	token := helpers.MakeXRHTokenString(t, &types.Token{
 		Identity: types.Identity{
 			AccountNumber: testdata.UserID,
-			Internal: types.Internal{
-				OrgID: testdata.OrgID,
-			},
+			OrgID:         testdata.Org2ID,
+			User:          types.User{UserID: testdata.UserID},
 		},
 	})
 

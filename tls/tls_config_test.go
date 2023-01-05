@@ -14,6 +14,9 @@
 
 package tlsutil_test
 
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/tls/tls_config_test.html
+
 import (
 	"testing"
 

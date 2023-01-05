@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2022 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package types
+// Package s3util contains helper functions to provide high level interface to
+// S3 storage.
+package s3util
 
 // Documentation in literate-programming-style is available at:
-// https://redhatinsights.github.io/insights-operator-utils/packages/types/metrics.html
-
-// MetricsConfiguration holds metrics related configuration
-type MetricsConfiguration struct {
-	Job              string `mapstructure:"job_name" toml:"job_name"`
-	GatewayURL       string `mapstructure:"gateway_url" toml:"gateway_url"`
-	GatewayAuthToken string `mapstructure:"gateway_auth_token" toml:"gateway_auth_token"`
-	TimeBetweenPush  int    `mapstructure:"time_between_push" toml:"time_between_push"`
-}
+// https://redhatinsights.github.io/insights-operator-utils/packages/s3/s3util.html

@@ -16,6 +16,7 @@
     * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
     * [`github.com/RedHatInsights/insights-operator-utils/evaluator`](#githubcomredhatinsightsinsights-operator-utilsevaluator)
     * [`github.com/RedHatInsights/insights-operator-utils/generators`](#githubcomredhatinsightsinsights-operator-utilsgenerators)
+    * [`github.com/RedHatInsights/insights-operator-utils/formatters`](#githubcomredhatinsightsinsights-operator-utilsformatters)
     * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
     * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
     * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
@@ -36,12 +37,15 @@
     * [Travis CI](#travis-ci)
     * [GolangCI](#golangci)
 * [Package manifest](#package-manifest)
+* [Open Source Insights status](#open-source-insights-status)
 
 <!-- vim-markdown-toc -->
 
 ## Description
 
-Utils that are shared between different insights-operator repositories.
+Utility packages (written in Go) that are shared between different Insights
+Operator, Insights Results Aggregator, and CCX Notification Service
+repositories.
 
 ## Sub-modules in this library
 
@@ -60,6 +64,10 @@ Expression evaluator with ability to provide named values into expressions.
 ### `github.com/RedHatInsights/insights-operator-utils/generators`
 
 Value generators - rule FQDNs etc.
+
+### `github.com/RedHatInsights/insights-operator-utils/formatters`
+
+Various text formatters utility functions.
 
 ### `github.com/RedHatInsights/insights-operator-utils/http`
 
@@ -217,3 +225,6 @@ Also GolangCI is configured for this repository and is run for all pull requests
 
 Package manifest is available at [docs/manifest.txt](docs/manifest.txt).
 
+## Open Source Insights status
+
+Open Source Insights status is available at [https://deps.dev/go/github.com%2Fredhatinsights%2Finsights-operator-utils/](https://deps.dev/go/github.com%2Fredhatinsights%2Finsights-operator-utils/)

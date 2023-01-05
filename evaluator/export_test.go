@@ -25,6 +25,9 @@ package evaluator
 // Please look into the following blogpost:
 // https://medium.com/@robiplus/golang-trick-export-for-test-aa16cbd7b8cd
 // to see why this trick is needed.
+//
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/evaluator/export_test.html
 var (
 	ToInt                      = toint
 	ToBool                     = tobool

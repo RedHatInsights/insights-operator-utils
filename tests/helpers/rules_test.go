@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	// "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
 	types "github.com/RedHatInsights/insights-results-types"
@@ -73,4 +73,116 @@ func TestCompareReportResponsesRealTimestamp(t *testing.T) {
 
 	// reports should be equal
 	helpers.CompareReportResponses(t, expectedReport, actualReport, timestamp)
+}
+
+// TestSortReportsEmptySlice function checks the function
+// SortReports when the input slice is empty
+func TestSortReportsEmptySlice(t *testing.T) {
+	var reports []types.RuleOnReport
+	sorted := helpers.SortReports(reports)
+
+	assert.Nil(t, sorted)
+	assert.Len(t, sorted, 0)
+}
+
+// TestSortReportsSliceWithOneItem function checks the function
+// SortReports when the input slice contains just one value
+func TestSortReportsSliceWithOneItem(t *testing.T) {
+	var reports []types.RuleOnReport
+	report := types.RuleOnReport{
+		Module:          "",
+		ErrorKey:        "",
+		UserVote:        types.UserVoteNone,
+		Disabled:        false,
+		DisableFeedback: "",
+		DisabledAt:      "",
+		TemplateData:    nil,
+		CreatedAt:       "",
+	}
+
+	// put the only report into the slice
+	reports = append(reports, report)
+
+	sorted := helpers.SortReports(reports)
+
+	assert.NotNil(t, sorted)
+	assert.Len(t, sorted, 1)
+
+	assert.Equal(t, sorted[0], report)
+}
+
+// TestSortReportsSliceWithTwoSortedItems function checks the function
+// SortReports when the input slice contains just two already sorted values
+func TestSortReportsSliceWithTwoSortedItems(t *testing.T) {
+	var reports []types.RuleOnReport
+	report1 := types.RuleOnReport{
+		Module:          "",
+		ErrorKey:        "AAA",
+		UserVote:        types.UserVoteNone,
+		Disabled:        false,
+		DisableFeedback: "",
+		DisabledAt:      "",
+		TemplateData:    nil,
+		CreatedAt:       "",
+	}
+
+	report2 := types.RuleOnReport{
+		Module:          "",
+		ErrorKey:        "BBB",
+		UserVote:        types.UserVoteNone,
+		Disabled:        false,
+		DisableFeedback: "",
+		DisabledAt:      "",
+		TemplateData:    nil,
+		CreatedAt:       "",
+	}
+
+	// put both reports into the slice
+	reports = append(reports, report1, report2)
+
+	sorted := helpers.SortReports(reports)
+
+	assert.NotNil(t, sorted)
+	assert.Len(t, sorted, 2)
+
+	assert.Equal(t, sorted[0], report1)
+	assert.Equal(t, sorted[1], report2)
+}
+
+// TestSortReportsSliceWithTwoUnsortedItems function checks the function
+// SortReports when the input slice contains just two unsorted values
+func TestSortReportsSliceWithTwoUnsortedItems(t *testing.T) {
+	var reports []types.RuleOnReport
+	report1 := types.RuleOnReport{
+		Module:          "",
+		ErrorKey:        "BBB",
+		UserVote:        types.UserVoteNone,
+		Disabled:        false,
+		DisableFeedback: "",
+		DisabledAt:      "",
+		TemplateData:    nil,
+		CreatedAt:       "",
+	}
+
+	report2 := types.RuleOnReport{
+		Module:          "",
+		ErrorKey:        "AAA",
+		UserVote:        types.UserVoteNone,
+		Disabled:        false,
+		DisableFeedback: "",
+		DisabledAt:      "",
+		TemplateData:    nil,
+		CreatedAt:       "",
+	}
+
+	// put both reports into the slice
+	reports = append(reports, report1, report2)
+
+	sorted := helpers.SortReports(reports)
+
+	assert.NotNil(t, sorted)
+	assert.Len(t, sorted, 2)
+
+	assert.Equal(t, sorted[0], report2)
+	assert.Equal(t, sorted[1], report1)
 }

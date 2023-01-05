@@ -1,6 +1,5 @@
 #!/bin/bash
-
-# Copyright 2020, 2021 Red Hat, Inc
+# Copyright 2020 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,24 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BLUE=$(tput setaf 4)
-RED_BG=$(tput setab 1)
-GREEN_BG=$(tput setab 2)
-NC=$(tput sgr0) # No Color
-
-cd "$(dirname "$0")" || exit
-
-echo -e "${BLUE}go vet check${NC}"
-
-# shellcheck disable=SC2046
-go vet $(go list ./...)
-
-# shellcheck disable=SC2181
-if [[ $? -ne 0 ]]
-then
-    echo -e "${RED_BG}[FAIL]${NC} go vet tool finds issues in source code"
-    exit 1
+if ! command -v shellcheck > /dev/null 2>&1; then
+    scversion="stable" # or "v0.4.7", or "latest"
+    wget -qO- "https://github.com/koalaman/shellcheck/releases/download/${scversion?}/shellcheck-${scversion?}.linux.x86_64.tar.xz" | tar -xJv
+    shellcheck-stable/shellcheck --version
+    shellcheck-stable/shellcheck --exclude=SC1090,SC2086,SC2034,SC1091 -- *.sh
 else
-    echo -e "${GREEN_BG}[OK]${NC} All source codes are correct according to go vet"
-    exit 0
+    shellcheck --exclude=SC1090,SC2086,SC2034,SC1091 -- *.sh
 fi

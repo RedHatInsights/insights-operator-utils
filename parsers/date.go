@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package parsers contains various text parser utility functions.
 package parsers
-
-// Various text parser utility functions.
 
 // Documentation in literate-programming-style is available at:
 // https://redhatinsights.github.io/insights-operator-utils/packages/parsers/date.html

@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package generators contains functions that provide value generators for
+// given input.
 package generators
+
+// Documentation in literate-programming-style is available at:
+// https://redhatinsights.github.io/insights-operator-utils/packages/generators/rule.html
 
 import (
 	"fmt"

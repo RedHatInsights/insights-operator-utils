@@ -3,8 +3,9 @@ layout: default
 ---
 # Description
 
-Utility packages (written in Go) that are shared between different
-insights-operator and insights-aggregator repositories.
+Utility packages (written in Go) that are shared between different Insights
+Operator, Insights Results Aggregator, and CCX Notification Service
+repositories.
 
 ## Documentation for source files from this repository
 
@@ -27,6 +28,8 @@ insights-operator and insights-aggregator repositories.
 * [responses/responses.go](packages/responses/responses.html)
 * [parsers/date_test.go](packages/parsers/date_test.html)
 * [parsers/date.go](packages/parsers/date.html)
+* [formatters/formatters](packages/formatters/formatters.html)
+* [formatters/formatters_test.go](packages/formatters/formatters_test.html)
 * [tests/helpers/serialization.go](packages/tests/helpers/serialization.html)
 * [tests/helpers/strings.go](packages/tests/helpers/strings.html)
 * [tests/helpers/timeout.go](packages/tests/helpers/timeout.html)
