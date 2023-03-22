@@ -54,6 +54,17 @@ func (e *RouterParsingError) Error() string {
 	)
 }
 
+// NoContentError means the client request is correct but the server doesn't
+// have any data to return. For example, if a feature is disabled for a given
+// cluster.
+type NoContentError struct {
+	ErrString string
+}
+
+func (e *NoContentError) Error() string {
+	return e.ErrString
+}
+
 // UnauthorizedError means server can't authorize you, for example the token is missing or malformed
 type UnauthorizedError struct {
 	ErrString string
