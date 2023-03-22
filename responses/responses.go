@@ -86,6 +86,11 @@ func SendAccepted(w http.ResponseWriter, data map[string]interface{}) error {
 	return Send(http.StatusAccepted, w, data)
 }
 
+// SendNoContent returns error response with status SendNoContent 204
+func SendNoContent(w http.ResponseWriter, errorMessage string) error {
+	return Send(http.StatusNoContent, w, errorMessage)
+}
+
 // SendBadRequest returns error response with status Bad Request 400
 func SendBadRequest(w http.ResponseWriter, errorMessage string) error {
 	return Send(http.StatusBadRequest, w, errorMessage)
