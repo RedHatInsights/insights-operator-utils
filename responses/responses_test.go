@@ -22,13 +22,14 @@ package responses_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/RedHatInsights/insights-operator-utils/responses"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/RedHatInsights/insights-operator-utils/responses"
 )
 
 // Define types used in table tests struct
@@ -249,6 +250,24 @@ func TestHeaders(t *testing.T) {
 			)
 		})
 	}
+
+	t.Run("responses.SendNoContent", func(t *testing.T) {
+		testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := responses.SendNoContent(w) // call the function without any payload
+			if err != nil {
+				t.Fatal(err)
+			}
+		}))
+		defer testServer.Close()
+
+		checkResponse(
+			testServer.URL,
+			http.StatusNoContent,
+			false,
+			"",
+			t,
+		)
+	})
 
 	for _, test := range sendTests {
 		t.Run(test.testName, func(t *testing.T) {
