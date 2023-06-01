@@ -61,6 +61,10 @@ func BuildOkResponseWithData(dataName string, data interface{}) map[string]inter
 func Send(statusCode int, w http.ResponseWriter, data interface{}) error {
 	setDefaultContentType(w)
 	w.WriteHeader(statusCode)
+	if data == nil {
+		return nil
+	}
+
 	if status, ok := data.(string); ok {
 		return json.NewEncoder(w).Encode(BuildResponse(status))
 	} else if rawData, ok := data.([]byte); ok {
@@ -84,6 +88,11 @@ func SendCreated(w http.ResponseWriter, data map[string]interface{}) error {
 // SendAccepted returns response with status Accepted 202
 func SendAccepted(w http.ResponseWriter, data map[string]interface{}) error {
 	return Send(http.StatusAccepted, w, data)
+}
+
+// SendNoContent returns error response with status SendNoContent 204
+func SendNoContent(w http.ResponseWriter) error {
+	return Send(http.StatusNoContent, w, nil)
 }
 
 // SendBadRequest returns error response with status Bad Request 400
