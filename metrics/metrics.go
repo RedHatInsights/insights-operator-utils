@@ -22,7 +22,6 @@ limitations under the License.
 // api_endpoints_response_time - response times for all REST API endpoints
 //
 // api_endpoints_status_codes - number of responses for each status code
-//
 package metrics
 
 // Documentation in literate-programming-style is available at:
