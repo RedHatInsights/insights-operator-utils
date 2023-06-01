@@ -41,10 +41,10 @@ func init() {
 }
 
 func getMockRedis() (
-	mockClient redis.RedisClient, mockServer redismock.ClientMock,
+	mockClient redis.Client, mockServer redismock.ClientMock,
 ) {
 	client, mockServer := redismock.NewClientMock()
-	mockClient = redis.RedisClient{
+	mockClient = redis.Client{
 		Client: client,
 	}
 	return

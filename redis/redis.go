@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package services contains interface implementations to other
-// services that are called from Smart Proxy.
+// Package redis contains shared functionality related to Redis
 package redis
 
 import (
@@ -29,13 +28,13 @@ const (
 	redisExecutionFailedMsg = "unexpected response from Redis server"
 )
 
-// RedisBasicInterface represents an interface for shared Redis-related functions, which will be extended.
-type RedisBasicInterface interface {
+// BasicInterface represents an interface for shared Redis-related functions, which will be extended.
+type BasicInterface interface {
 	HealthCheck() error
 }
 
-// RedisClient is an implementation of the Redis client for Redis server
-type RedisClient struct {
+// Client is an implementation of the Redis client for Redis server
+type Client struct {
 	Client *redisV9.Client
 }
 
@@ -80,20 +79,20 @@ func NewRedisClient(
 	databaseIndex int,
 	password string,
 	timeoutSeconds int,
-) (RedisBasicInterface, error) {
+) (BasicInterface, error) {
 	client, err := createRedisClient(address, databaseIndex, password, timeoutSeconds)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create Redis client")
 		return nil, err
 	}
 
-	return &RedisClient{
+	return &Client{
 		Client: client,
 	}, nil
 }
 
 // HealthCheck executes PING command to check for liveness status of Redis server
-func (redis *RedisClient) HealthCheck() (err error) {
+func (redis *Client) HealthCheck() (err error) {
 	ctx := context.Background()
 
 	// .Result() gets value and error of executed command at once
