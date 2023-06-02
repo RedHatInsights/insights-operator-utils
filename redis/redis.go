@@ -28,19 +28,15 @@ const (
 	redisExecutionFailedMsg = "unexpected response from Redis server"
 )
 
-// BasicInterface represents an interface for shared Redis-related functions, which will be extended.
-type BasicInterface interface {
-	HealthCheck() error
-}
-
 // Client is an implementation of the Redis client for Redis server
 type Client struct {
-	Client *redisV9.Client
+	Connection *redisV9.Client
 }
 
-// explicit checks for config params are done because the go-redis package lets us create a client
-// with incorrect params, so errors are only found during subsequent command executions
-func createRedisClient(
+// CreateRedisClient creates a Redis V9 client, it has explicit checks for config params
+// because the go-redis package lets us create a client with incorrect params
+// so errors are only found during subsequent command executions
+func CreateRedisClient(
 	address string,
 	databaseIndex int,
 	password string,
@@ -73,30 +69,12 @@ func createRedisClient(
 	return c, nil
 }
 
-// NewRedisClient creates a new Redis client based on configuration and returns RedisInterface
-func NewRedisClient(
-	address string,
-	databaseIndex int,
-	password string,
-	timeoutSeconds int,
-) (BasicInterface, error) {
-	client, err := createRedisClient(address, databaseIndex, password, timeoutSeconds)
-	if err != nil {
-		// message logged already
-		return nil, err
-	}
-
-	return &Client{
-		Client: client,
-	}, nil
-}
-
 // HealthCheck executes PING command to check for liveness status of Redis server
 func (redis *Client) HealthCheck() (err error) {
 	ctx := context.Background()
 
 	// .Result() gets value and error of executed command at once
-	res, err := redis.Client.Ping(ctx).Result()
+	res, err := redis.Connection.Ping(ctx).Result()
 	if err != nil || res != "PONG" {
 		log.Error().Err(err).Msg("Redis PING command failed")
 		return errors.New(redisExecutionFailedMsg)

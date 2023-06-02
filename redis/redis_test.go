@@ -45,7 +45,7 @@ func getMockRedis() (
 ) {
 	client, mockServer := redismock.NewClientMock()
 	mockClient = redis.Client{
-		Client: client,
+		Connection: client,
 	}
 	return
 }
@@ -54,23 +54,6 @@ func redisExpectationsMet(t *testing.T, mock redismock.ClientMock) {
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Error(err)
 	}
-}
-
-func TestNewRedisClient(t *testing.T) {
-	client, err := redis.NewRedisClient(
-		defaultRedisAddress, defaultRedisDatabase, defaultRedisPassword, defaultRedisTimeoutSeconds,
-	)
-	assert.NotNil(t, client)
-	assert.NoError(t, err)
-}
-
-func TestNewRedisClientFail(t *testing.T) {
-	// db index == -1
-	client, err := redis.NewRedisClient(
-		defaultRedisAddress, -1, defaultRedisPassword, defaultRedisTimeoutSeconds,
-	)
-	assert.Nil(t, client)
-	assert.Error(t, err)
 }
 
 func TestCreateRedisClientOK(t *testing.T) {
