@@ -46,10 +46,6 @@ func createRedisClient(
 	password string,
 	timeoutSeconds int,
 ) (*redisV9.Client, error) {
-	log.Info().Msgf("creating redis client. endpoint %v, selected DB %d, timeout seconds %d",
-		address, databaseIndex, timeoutSeconds,
-	)
-
 	if address == "" {
 		err := errors.New("Redis server address must not be empty")
 		log.Error().Err(err)
@@ -61,6 +57,10 @@ func createRedisClient(
 		log.Error().Err(err)
 		return nil, err
 	}
+
+	log.Info().Msgf("creating redis client. endpoint %v, selected DB %d, timeout seconds %d",
+		address, databaseIndex, timeoutSeconds,
+	)
 
 	// DB is configurable in case we want to change data structure
 	c := redisV9.NewClient(&redisV9.Options{
@@ -82,7 +82,7 @@ func NewRedisClient(
 ) (BasicInterface, error) {
 	client, err := createRedisClient(address, databaseIndex, password, timeoutSeconds)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create Redis client")
+		// message logged already
 		return nil, err
 	}
 
