@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 Pavel Tisnovsky
+Copyright © 2022, 2023 Pavel Tisnovsky
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import (
 )
 
 // toRPN function transforms sequence of tokens with expression into PRN code
-func toRPN(s scanner.Scanner) []TokenWithValue {
+func toRPN(s *scanner.Scanner) []TokenWithValue {
 	// operators with precedence
 	var operators = map[token.Token]int{
 		// arithmetic operators
