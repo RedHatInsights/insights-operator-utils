@@ -369,7 +369,7 @@ func TestEvaluateRPNInvalidToken(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			// tokens to be tokenized
 			tokens := []evaluator.TokenWithValue{
-				evaluator.TokenWithValue{invalidToken, -1, ""},
+				{invalidToken, -1, ""},
 			}
 
 			// value map used during evaluation
