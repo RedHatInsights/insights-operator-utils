@@ -4,8 +4,8 @@ go 1.18
 
 require (
 	github.com/RedHatInsights/cloudwatch v0.0.0-20210111105023-1df2bdfe3291
-	github.com/RedHatInsights/insights-results-aggregator-data v1.3.8
-	github.com/RedHatInsights/insights-results-types v1.3.22
+	github.com/RedHatInsights/insights-results-aggregator-data v1.3.9
+	github.com/RedHatInsights/insights-results-types v1.3.23
 	github.com/RedHatInsights/kafka-zerolog v1.0.0
 	github.com/Shopify/sarama v1.27.1
 	github.com/archdx/zerolog-sentry v0.0.1
