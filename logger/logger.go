@@ -111,7 +111,7 @@ func InitZerolog(
 	writers = append(writers, consoleWriter)
 
 	if loggingConf.LoggingToCloudWatchEnabled {
-		cloudWatchWriter, err := setupCloudwatchLogging(cloudWatchConf)
+		cloudWatchWriter, err := setupCloudwatchLogging(&cloudWatchConf)
 		if err != nil {
 			err = fmt.Errorf("Error initializing Cloudwatch logging: %s", err.Error())
 			return err
@@ -181,7 +181,7 @@ func convertLogLevel(level string) zerolog.Level {
 	return zerolog.DebugLevel
 }
 
-func setupCloudwatchLogging(conf CloudWatchConfiguration) (io.Writer, error) {
+func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 	conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", os.Getenv("HOSTNAME"))
 	awsLogLevel := aws.LogOff
 	if conf.Debug {
