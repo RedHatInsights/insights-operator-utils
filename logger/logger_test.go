@@ -210,6 +210,24 @@ func TestWorkaroundForRHIOPS729_Write(t *testing.T) {
 	}
 }
 
+// TestInitZerolog_DebugEnabled check if/how instance of zerolog is constructed
+// when debug output is enabled.
+func TestInitZerolog_DebugEnabled(t *testing.T) {
+	err := logger.InitZerolog(
+		logger.LoggingConfiguration{
+			Debug:                      true,
+			LogLevel:                   "debug",
+			LoggingToCloudWatchEnabled: true,
+		},
+		logger.CloudWatchConfiguration{},
+		logger.SentryLoggingConfiguration{},
+		logger.KafkaZerologConfiguration{},
+	)
+	helpers.FailOnError(t, err)
+}
+
+// TestInitZerolog_LogToCloudWatch check if/how instance of zerolog is
+// constructed when logging to CloudWatch is enabled.
 func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 	err := logger.InitZerolog(
 		logger.LoggingConfiguration{
@@ -218,6 +236,25 @@ func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 			LoggingToCloudWatchEnabled: true,
 		},
 		logger.CloudWatchConfiguration{},
+		logger.SentryLoggingConfiguration{},
+		logger.KafkaZerologConfiguration{},
+	)
+	helpers.FailOnError(t, err)
+}
+
+// TestInitZerolog_LogToCloudWatch check if/how instance of zerolog is
+// constructed when logging to CloudWatch is enabled, including debug output
+// for CloudWatch.
+func TestInitZerolog_LogToCloudWatchWithDebug(t *testing.T) {
+	err := logger.InitZerolog(
+		logger.LoggingConfiguration{
+			Debug:                      false,
+			LogLevel:                   "debug",
+			LoggingToCloudWatchEnabled: true,
+		},
+		logger.CloudWatchConfiguration{
+			Debug: true,
+		},
 		logger.SentryLoggingConfiguration{},
 		logger.KafkaZerologConfiguration{},
 	)
