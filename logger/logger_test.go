@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2022 Red Hat, Inc
+// Copyright 2020, 2021, 2022, 2023 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -417,4 +417,52 @@ func TestKafkaLogging(t *testing.T) {
 		kafkaLoggingConf,
 	)
 	helpers.FailOnError(t, err)
+}
+
+func TestConvertLogLevel(t *testing.T) {
+	type logLevelTestStruct struct {
+		Input       string
+		Output      zerolog.Level
+		Description string
+	}
+
+	logLevelTests := []logLevelTestStruct{
+		logLevelTestStruct{
+			Description: "debug log level",
+			Input:       "debug",
+			Output:      zerolog.DebugLevel,
+		},
+		logLevelTestStruct{
+			Description: "info log level",
+			Input:       "info",
+			Output:      zerolog.InfoLevel,
+		},
+		logLevelTestStruct{
+			Description: "warning log level",
+			Input:       "warn",
+			Output:      zerolog.WarnLevel,
+		},
+		logLevelTestStruct{
+			Description: "warning log level",
+			Input:       "warning",
+			Output:      zerolog.WarnLevel,
+		},
+		logLevelTestStruct{
+			Description: "error log level",
+			Input:       "error",
+			Output:      zerolog.ErrorLevel,
+		},
+		logLevelTestStruct{
+			Description: "fatal log level",
+			Input:       "fatal",
+			Output:      zerolog.FatalLevel,
+		},
+	}
+
+	for _, logLevelTest := range logLevelTests {
+		t.Run(logLevelTest.Description, func(t *testing.T) {
+			level := logger.ConvertLogLevel(logLevelTest.Input)
+			assert.Equal(t, logLevelTest.Output, level)
+		})
+	}
 }
