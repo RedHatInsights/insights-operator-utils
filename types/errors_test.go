@@ -117,3 +117,20 @@ func TestNoBodyError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestValidationError checks the method Error() for data structure
+// ValidationError
+func TestValidationError(t *testing.T) {
+	// expected error value
+	const expected = "Error during validating param 'PARAMETER' with value 'VALUE'. Error: 'ERROR'"
+
+	// construct an instance of error interface
+	err := types.ValidationError{
+		ParamName:  "PARAMETER",
+		ParamValue: "VALUE",
+		ErrString:  "ERROR",
+	}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
