@@ -40,3 +40,19 @@ func TestRouterMissingParamError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestRouterParsingError checks the method Error() for data structure
+// RouterParsingError
+func TestRouterParsingError(t *testing.T) {
+	// expected error value
+	const expected = "Error during parsing param 'paramName' with value 'paramValue'. Error: 'errorMessage'"
+
+	// construct an instance of error interface
+	err := types.RouterParsingError{
+		ParamName:  "paramName",
+		ParamValue: "paramValue",
+		ErrString:  "errorMessage"}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
