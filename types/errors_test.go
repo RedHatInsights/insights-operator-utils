@@ -134,3 +134,17 @@ func TestValidationError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestItemNotFoundError checks the method Error() for data structure
+// ItemNotFoundError.
+func TestItemNotFoundError(t *testing.T) {
+	// expected error value
+	const expected = "Item with ID ITEM_ID was not found in the storage"
+
+	// construct an instance of error interface
+	err := types.ItemNotFoundError{
+		ItemID: "ITEM_ID"}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
