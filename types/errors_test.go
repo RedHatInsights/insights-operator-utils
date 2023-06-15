@@ -72,3 +72,19 @@ func TestNoContentError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestUnauthorizedError checks the method Error() for data structure
+// UnauthorizedError
+func TestUnauthorizedError(t *testing.T) {
+	// expected error value
+	const errorString = "unauthorized error message"
+	const expected = errorString
+
+	// construct an instance of error interface
+	err := types.UnauthorizedError{
+		ErrString: errorString,
+	}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
