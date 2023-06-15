@@ -104,3 +104,16 @@ func TestForbiddenError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestNoBodyError checks the method Error() for data structure
+// NoBodyError
+func TestNoBodyError(t *testing.T) {
+	// expected error value
+	const expected = "client didn't provide request body"
+
+	// construct an instance of error interface
+	err := types.NoBodyError{}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
