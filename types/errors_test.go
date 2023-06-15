@@ -88,3 +88,19 @@ func TestUnauthorizedError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestForbiddenError checks the method Error() for data structure
+// ForbiddenError
+func TestForbiddenError(t *testing.T) {
+	// expected error value
+	const errorString = "forbidden error message"
+	const expected = errorString
+
+	// construct an instance of error interface
+	err := types.ForbiddenError{
+		ErrString: errorString,
+	}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
