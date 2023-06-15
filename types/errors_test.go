@@ -56,3 +56,19 @@ func TestRouterParsingError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestNoContentError checks the method Error() for data structure
+// NoContentError
+func TestNoContentError(t *testing.T) {
+	// expected error value
+	const errorString = "error message"
+	const expected = errorString
+
+	// construct an instance of error interface
+	err := types.NoContentError{
+		ErrString: errorString,
+	}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
