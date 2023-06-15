@@ -148,3 +148,43 @@ func TestItemNotFoundError(t *testing.T) {
 	// check if error value is correct
 	assert.Equal(t, err.Error(), expected)
 }
+
+// TestHandleServer error check the function HandleServerError defined in errors.go
+func TestHandleServerError(t *testing.T) {
+	// check the behaviour with all error types defined in this package
+	testResponse(t, &types.RouterMissingParamError{}, http.StatusBadRequest)
+	testResponse(t, &types.RouterParsingError{}, http.StatusBadRequest)
+	testResponse(t, &types.ItemNotFoundError{}, http.StatusNotFound)
+	testResponse(t, &types.UnauthorizedError{}, http.StatusUnauthorized)
+	testResponse(t, &types.ForbiddenError{}, http.StatusForbidden)
+	testResponse(t, &types.ForbiddenError{}, http.StatusForbidden)
+
+	// we need to retriev json.UnmarshalTypeError
+	// so let's try to unmarshal "foo" string into an integer
+	var x int
+	err := json.Unmarshal([]byte("\"foo\""), &x)
+
+	/// test with json.UnmarshalTypeError
+	testResponse(t, err, http.StatusBadRequest)
+
+	// error can be nil
+	testResponse(t, nil, http.StatusInternalServerError)
+}
+
+// testResponse function uses HTTP server mock to check server response
+// handlers
+func testResponse(t *testing.T, e error, expectedCode int) {
+	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		types.HandleServerError(w, e)
+	}))
+	defer testServer.Close()
+
+	res, err := http.Get(testServer.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != expectedCode {
+		t.Errorf("Expected status code %v but got %v", expectedCode, res.StatusCode)
+	}
+}
