@@ -19,6 +19,7 @@ Please delete options that are not relevant.
 - Security fix in dependent library (changes made in the code)
 - Benchmarks (no changes in the code)
 - Documentation update
+- Configuration update
 
 ## Testing steps
 
