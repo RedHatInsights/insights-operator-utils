@@ -22,7 +22,7 @@ require (
 	github.com/prometheus/client_model v0.4.0
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/rs/zerolog v1.29.1
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 	github.com/verdverm/frisby v0.0.0-20170604211311-b16556248a9a
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
