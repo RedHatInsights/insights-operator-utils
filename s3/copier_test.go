@@ -30,12 +30,8 @@ import (
 
 var newFile = "a_new_path"
 
-func TestCopyObject(t *testing.T) {
-	want := s3mocks.MockContents{
-		testFile: []byte(fileContent),
-		newFile:  []byte(fileContent)}
-
-	testCases := []testCase{
+func getTestCases() []testCase {
+	return []testCase{
 		{
 			description:    "bucket exists and file exists",
 			errorExpected:  false,
@@ -75,6 +71,14 @@ func TestCopyObject(t *testing.T) {
 			errorMsg:       randomError,
 		},
 	}
+}
+
+func TestCopyObject(t *testing.T) {
+	want := s3mocks.MockContents{
+		testFile: []byte(fileContent),
+		newFile:  []byte(fileContent)}
+
+	testCases := getTestCases()
 
 	mockClient := &s3mocks.MockS3Client{
 		Contents: make(s3mocks.MockContents),
@@ -100,46 +104,7 @@ func TestRenameObject(t *testing.T) {
 	want := s3mocks.MockContents{
 		newFile: []byte(fileContent)}
 
-	testCases := []testCase{
-		{
-			description:    "bucket exists and file exists",
-			errorExpected:  false,
-			mockErrorValue: nil,
-			mockContents: s3mocks.MockContents{
-				testFile: []byte(fileContent)},
-			file: testFile,
-		},
-		{
-			description:   "bucket exists and file does not exist",
-			errorExpected: true,
-			file:          "this does not exist",
-		},
-		{
-			description:    "bucket doesn't exist",
-			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
-			file:           testFile,
-		},
-		{
-			description:   "empty key input",
-			errorExpected: true,
-			errorMsg:      s3.ErrCodeNoSuchKey,
-			file:          "",
-		},
-		{
-			description:    "unknown aws error",
-			errorExpected:  true,
-			mockErrorValue: awserr.New(randomError, "", nil),
-			errorMsg:       randomError,
-		},
-		{
-			description:    "unknown error",
-			errorExpected:  true,
-			mockErrorValue: errors.New(randomError),
-			errorMsg:       randomError,
-		},
-	}
+	testCases := getTestCases()
 
 	mockClient := &s3mocks.MockS3Client{
 		Contents: make(s3mocks.MockContents),
