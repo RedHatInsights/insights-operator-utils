@@ -328,10 +328,10 @@ func TestGockExpectAPIRequest(t *testing.T) {
 func TestNewGockAPIEndpointMatcher(t *testing.T) {
 	matcher := helpers.NewGockAPIEndpointMatcher(testEndpoint)
 
-	request, err := http.NewRequest(http.MethodGet, testEndpoint, http.NoBody)
+	httpRequest, err := http.NewRequest(http.MethodGet, testEndpoint, http.NoBody)
 	helpers.FailOnError(t, err)
 
-	result, err := matcher(request, nil)
+	result, err := matcher(httpRequest, nil)
 	helpers.FailOnError(t, err)
 
 	assert.True(t, result)
