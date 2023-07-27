@@ -1,7 +1,8 @@
 title: Insights Operator Utils
 description: Utility functions that are shared for insights-operator-* repositories 
-baseurl: "/insights-operator-utils"
+baseurl: /insights-operator-utils
 url: "https://redhatinsights.github.io"
+repository: "RedHatInsights/insights-operator-utils"
 
 heading_anchors: true
 search_enabled: false
@@ -13,12 +14,14 @@ aux_links:
 footer_content: "Copyright &copy; 2020 Red Hat, Inc.</a>"
 
 # Build settings
-markdown: kramdown
+# markdown: kramdown
 remote_theme: pmarsceill/just-the-docs
 plugins:
+  - jekyll-feed
   - jekyll-remote-theme
 
 exclude:
   - Gemfile
   - Gemfile.lock
   - vendor/
+  - sources.tmpl.md
