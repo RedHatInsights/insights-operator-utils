@@ -50,7 +50,7 @@ var (
 	APIResponseStatusCodes *prometheus.CounterVec = promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_endpoints_status_codes",
 		Help: "API endpoints status codes",
-	}, []string{"status_code"})
+	}, []string{"status_code", "endpoint"})
 )
 
 // AddAPIMetricsWithNamespace overwrite the defined metrics with namespaced version of them
@@ -76,5 +76,5 @@ func AddAPIMetricsWithNamespace(namespace string) {
 		Namespace: namespace,
 		Name:      "api_endpoints_status_codes",
 		Help:      "API endpoints status codes",
-	}, []string{"status_code"})
+	}, []string{"status_code", "endpoint"})
 }

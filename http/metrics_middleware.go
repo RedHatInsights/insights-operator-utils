@@ -31,12 +31,15 @@ import (
 
 type loggingResponseWriter struct {
 	http.ResponseWriter
+	endpoint string
 }
 
 func (writer loggingResponseWriter) WriteHeader(statusCode int) {
 	writer.ResponseWriter.WriteHeader(statusCode)
 	metrics.APIResponseStatusCodes.With(
-		prometheus.Labels{"status_code": fmt.Sprint(statusCode)},
+		prometheus.Labels{
+			"status_code": fmt.Sprint(statusCode),
+			"endpoint":    writer.endpoint},
 	).Inc()
 }
 
@@ -53,7 +56,10 @@ func logRequestHandler(writer http.ResponseWriter, request *http.Request, nextHa
 	metrics.APIRequests.With(prometheus.Labels{"endpoint": endpoint}).Inc()
 
 	startTime := time.Now()
-	nextHandler.ServeHTTP(&loggingResponseWriter{ResponseWriter: writer}, request)
+	nextHandler.ServeHTTP(&loggingResponseWriter{
+		ResponseWriter: writer,
+		endpoint:       endpoint,
+	}, request)
 	duration := time.Since(startTime)
 
 	metrics.APIResponsesTime.With(
