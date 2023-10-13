@@ -8,7 +8,7 @@ require (
 	github.com/RedHatInsights/insights-results-types v1.3.23
 	github.com/RedHatInsights/kafka-zerolog v1.0.0
 	github.com/Shopify/sarama v1.27.1
-	github.com/archdx/zerolog-sentry v1.5.0
+	github.com/archdx/zerolog-sentry v1.6.1
 	github.com/aws/aws-sdk-go v1.45.25
 	github.com/getkin/kin-openapi v0.22.1
 	github.com/go-redis/redismock/v9 v9.2.0
@@ -39,7 +39,7 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/frankban/quicktest v1.14.3 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/getsentry/sentry-go v0.21.0 // indirect
+	github.com/getsentry/sentry-go v0.24.1 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
