@@ -9,7 +9,7 @@ require (
 	github.com/RedHatInsights/kafka-zerolog v1.0.0
 	github.com/Shopify/sarama v1.27.1
 	github.com/archdx/zerolog-sentry v1.5.0
-	github.com/aws/aws-sdk-go v1.45.24
+	github.com/aws/aws-sdk-go v1.45.25
 	github.com/getkin/kin-openapi v0.22.1
 	github.com/go-redis/redismock/v9 v9.0.3
 	github.com/golang/mock v1.6.0
@@ -24,7 +24,6 @@ require (
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
 	github.com/verdverm/frisby v0.0.0-20170604211311-b16556248a9a
-	google.golang.org/grpc v1.58.3
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
 
