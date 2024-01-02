@@ -24,6 +24,7 @@ require (
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
 	github.com/verdverm/frisby v0.0.0-20170604211311-b16556248a9a
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
 
@@ -56,6 +57,7 @@ require (
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 // indirect
 	github.com/segmentio/kafka-go v0.4.10 // indirect
+	github.com/xdg/stringprep v1.0.0 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
