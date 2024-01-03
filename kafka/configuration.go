@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package broker contains data types, interfaces, and methods related to
-// brokers that can be used to consume input messages by aggegator.
+// Package kafka contains data types, interfaces, and methods related to
+// Kafka that can be used to configure brokers, as well as consume/produce
+// messages.
 package kafka
 
 import (
