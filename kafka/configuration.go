@@ -29,8 +29,18 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// BrokerConfiguration represents configuration of Kafka broker
-type BrokerConfiguration struct {
+// SASLConfiguration represents configuration of SASL authentication for
+// a given Kafka broker
+type SASLConfiguration struct {
+	SecurityProtocol string `mapstructure:"security_protocol" toml:"security_protocol"`
+	CertPath         string `mapstructure:"cert_path" toml:"cert_path"`
+	SaslMechanism    string `mapstructure:"sasl_mechanism" toml:"sasl_mechanism"`
+	SaslUsername     string `mapstructure:"sasl_username" toml:"sasl_username"`
+	SaslPassword     string `mapstructure:"sasl_password" toml:"sasl_password"`
+}
+
+// SingleBrokerConfiguration represents configuration of a single-instance Kafka broker
+type SingleBrokerConfiguration struct {
 	Address          string        `mapstructure:"address" toml:"address"`
 	SecurityProtocol string        `mapstructure:"security_protocol" toml:"security_protocol"`
 	CertPath         string        `mapstructure:"cert_path" toml:"cert_path"`
@@ -44,8 +54,21 @@ type BrokerConfiguration struct {
 	Enabled          bool          `mapstructure:"enabled" toml:"enabled"`
 }
 
+// MultiBrokerConfiguration represents configuration of Kafka broker with
+// multiple instances running on different hosts
+type MultiBrokerConfiguration struct {
+	Addresses        []string            `mapstructure:"addresses" toml:"addresses"`
+	SecurityProtocol string              `mapstructure:"security_protocol" toml:"security_protocol"`
+	SASLConfigs      []SASLConfiguration `mapstructure:"sasl_configs" toml:"sasl_configs"`
+	Topic            string              `mapstructure:"topic" toml:"topic"`
+	Timeout          time.Duration       `mapstructure:"timeout" toml:"timeout"`
+	Group            string              `mapstructure:"group" toml:"group"`
+	ClientID         string              `mapstructure:"client_id" toml:"client_id"`
+	Enabled          bool                `mapstructure:"enabled" toml:"enabled"`
+}
+
 // SaramaConfigFromBrokerConfig returns a Config struct from broker.Configuration parameters
-func SaramaConfigFromBrokerConfig(cfg *BrokerConfiguration) (*sarama.Config, error) {
+func SaramaConfigFromBrokerConfig(cfg *SingleBrokerConfiguration) (*sarama.Config, error) {
 	saramaConfig := sarama.NewConfig()
 	saramaConfig.Version = sarama.V0_10_2_0
 
