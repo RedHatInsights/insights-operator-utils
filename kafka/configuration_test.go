@@ -25,12 +25,12 @@ import (
 )
 
 func TestSaramaConfigFromBrokerConfig(t *testing.T) {
-	cfg := kafka.BrokerConfiguration{}
+	cfg := kafka.SingleBrokerConfiguration{}
 	saramaConfig, err := kafka.SaramaConfigFromBrokerConfig(&cfg)
 	helpers.FailOnError(t, err)
 	assert.Equal(t, sarama.V0_10_2_0, saramaConfig.Version)
 
-	cfg = kafka.BrokerConfiguration{
+	cfg = kafka.SingleBrokerConfiguration{
 		Timeout: time.Second,
 	}
 	saramaConfig, err = kafka.SaramaConfigFromBrokerConfig(&cfg)
@@ -41,7 +41,7 @@ func TestSaramaConfigFromBrokerConfig(t *testing.T) {
 	assert.Equal(t, time.Second, saramaConfig.Net.WriteTimeout)
 	assert.Equal(t, "sarama", saramaConfig.ClientID) // default value
 
-	cfg = kafka.BrokerConfiguration{
+	cfg = kafka.SingleBrokerConfiguration{
 		SecurityProtocol: "SSL",
 	}
 
@@ -50,7 +50,7 @@ func TestSaramaConfigFromBrokerConfig(t *testing.T) {
 	assert.Equal(t, sarama.V0_10_2_0, saramaConfig.Version)
 	assert.True(t, saramaConfig.Net.TLS.Enable)
 
-	cfg = kafka.BrokerConfiguration{
+	cfg = kafka.SingleBrokerConfiguration{
 		SecurityProtocol: "SASL_SSL",
 		SaslMechanism:    "PLAIN",
 		SaslUsername:     "username",
@@ -80,7 +80,7 @@ func TestSaramaConfigFromBrokerConfig(t *testing.T) {
 }
 
 func TestBadConfiguration(t *testing.T) {
-	cfg := kafka.BrokerConfiguration{
+	cfg := kafka.SingleBrokerConfiguration{
 		SecurityProtocol: "SSL",
 		CertPath:         "missing_path",
 	}
