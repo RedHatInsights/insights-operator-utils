@@ -15,6 +15,7 @@
 package clowder_test
 
 import (
+	"fmt"
 	"github.com/RedHatInsights/insights-operator-utils/clowder"
 	"github.com/RedHatInsights/insights-operator-utils/kafka"
 	"github.com/RedHatInsights/insights-operator-utils/postgres"
@@ -111,12 +112,13 @@ func TestUseBrokerConfigNoKafkaBrokers(t *testing.T) {
 }
 
 func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
+	addr := "test_broker"
 	brokerCfg := kafka.BrokerConfiguration{}
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
 				{
-					Hostname: "test_broker",
+					Hostname: addr,
 					Port:     nil,
 				},
 			},
@@ -124,17 +126,18 @@ func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
 	}
 
 	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, "test_broker", brokerCfg.Address)
+	assert.Equal(t, addr, brokerCfg.Address)
 }
 
 func TestUseBrokerConfigNoAuth(t *testing.T) {
 	brokerCfg := kafka.BrokerConfiguration{}
 	port := 12345
+	addr := "test_broker"
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
 				{
-					Hostname: "test_broker",
+					Hostname: addr,
 					Port:     &port,
 				},
 			},
@@ -142,18 +145,19 @@ func TestUseBrokerConfigNoAuth(t *testing.T) {
 	}
 
 	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, "test_broker:12345", brokerCfg.Address)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg.Address)
 }
 
 func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
 	brokerCfg := kafka.BrokerConfiguration{}
 	port := 12345
+	addr := "test_broker"
 	authType := api.BrokerConfigAuthtypeSasl
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
 				{
-					Hostname: "test_broker",
+					Hostname: addr,
 					Port:     &port,
 					Authtype: &authType,
 				},
@@ -165,14 +169,17 @@ func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
 		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
 	})
 
-	assert.Equal(t, "test_broker:12345", brokerCfg.Address)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg.Address)
 	assert.Contains(t, output, clowder.NoSaslCfg)
 }
 
 func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
 	brokerCfg := kafka.BrokerConfiguration{}
 	port := 12345
-	saslCfg := "user_pwd"
+	addr := "test_broker"
+	saslUsr := "user"
+	saslPwd := "pwd"
+	saslMechanism := "sasl"
 	protocol := "tls"
 
 	authType := api.BrokerConfigAuthtypeSasl
@@ -180,13 +187,13 @@ func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
 				{
-					Hostname: "test_broker",
+					Hostname: addr,
 					Port:     &port,
 					Authtype: &authType,
 					Sasl: &api.KafkaSASLConfig{
-						Password:      &saslCfg,
-						Username:      &saslCfg,
-						SaslMechanism: &saslCfg,
+						Password:      &saslPwd,
+						Username:      &saslUsr,
+						SaslMechanism: &saslMechanism,
 					},
 					SecurityProtocol: &protocol,
 				},
@@ -198,10 +205,10 @@ func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
 		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
 	})
 
-	assert.Equal(t, "test_broker:12345", brokerCfg.Address)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg.Address)
 	assert.Contains(t, output, "kafka is configured to use authentication")
-	assert.Equal(t, saslCfg, brokerCfg.SaslUsername)
-	assert.Equal(t, saslCfg, brokerCfg.SaslPassword)
-	assert.Equal(t, saslCfg, brokerCfg.SaslMechanism)
+	assert.Equal(t, saslUsr, brokerCfg.SaslUsername)
+	assert.Equal(t, saslPwd, brokerCfg.SaslPassword)
+	assert.Equal(t, saslMechanism, brokerCfg.SaslMechanism)
 	assert.Equal(t, protocol, brokerCfg.SecurityProtocol)
 }
