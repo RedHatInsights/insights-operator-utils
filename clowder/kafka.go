@@ -1,3 +1,17 @@
+// Copyright 2024 Red Hat, Inc
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package clowder
 
 import (
@@ -13,6 +27,8 @@ const (
 	noTopicMapping = "warning: no kafka mapping found for topic %s"
 )
 
+// UseBrokerConfig tries to replace parts of the BrokerConfiguration with the values
+// loaded by Clowder
 func UseBrokerConfig(brokerCfg *kafka.BrokerConfiguration, loadedConfig *api.AppConfig) {
 	// make sure broker(s) are configured in Clowder
 	if loadedConfig.Kafka != nil && len(loadedConfig.Kafka.Brokers) > 0 {
@@ -46,6 +62,9 @@ func UseBrokerConfig(brokerCfg *kafka.BrokerConfiguration, loadedConfig *api.App
 		fmt.Println(noBrokerConfig)
 	}
 }
+
+// UseClowderTopics tries to replace the configured topic with the corresponding
+// topic loaded by Clowder
 func UseClowderTopics(configuration *kafka.BrokerConfiguration, kafkaTopics map[string]api.TopicConfig) {
 	// Get the correct topic name from clowder mapping if available
 	if clowderTopic, ok := kafkaTopics[configuration.Topic]; ok {
