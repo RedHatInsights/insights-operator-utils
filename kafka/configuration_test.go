@@ -15,22 +15,23 @@
 package kafka_test
 
 import (
-	"github.com/RedHatInsights/insights-operator-utils/kafka"
-	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
 	"testing"
 	"time"
+
+	"github.com/RedHatInsights/insights-operator-utils/kafka"
+	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
 
 	"github.com/Shopify/sarama"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSaramaConfigFromBrokerConfig(t *testing.T) {
-	cfg := kafka.SingleBrokerConfiguration{}
+	cfg := kafka.BrokerConfiguration{}
 	saramaConfig, err := kafka.SaramaConfigFromBrokerConfig(&cfg)
 	helpers.FailOnError(t, err)
 	assert.Equal(t, sarama.V0_10_2_0, saramaConfig.Version)
 
-	cfg = kafka.SingleBrokerConfiguration{
+	cfg = kafka.BrokerConfiguration{
 		Timeout: time.Second,
 	}
 	saramaConfig, err = kafka.SaramaConfigFromBrokerConfig(&cfg)
@@ -41,7 +42,7 @@ func TestSaramaConfigFromBrokerConfig(t *testing.T) {
 	assert.Equal(t, time.Second, saramaConfig.Net.WriteTimeout)
 	assert.Equal(t, "sarama", saramaConfig.ClientID) // default value
 
-	cfg = kafka.SingleBrokerConfiguration{
+	cfg = kafka.BrokerConfiguration{
 		SecurityProtocol: "SSL",
 	}
 
@@ -50,7 +51,7 @@ func TestSaramaConfigFromBrokerConfig(t *testing.T) {
 	assert.Equal(t, sarama.V0_10_2_0, saramaConfig.Version)
 	assert.True(t, saramaConfig.Net.TLS.Enable)
 
-	cfg = kafka.SingleBrokerConfiguration{
+	cfg = kafka.BrokerConfiguration{
 		SecurityProtocol: "SASL_SSL",
 		SaslMechanism:    "PLAIN",
 		SaslUsername:     "username",
@@ -80,7 +81,7 @@ func TestSaramaConfigFromBrokerConfig(t *testing.T) {
 }
 
 func TestBadConfiguration(t *testing.T) {
-	cfg := kafka.SingleBrokerConfiguration{
+	cfg := kafka.BrokerConfiguration{
 		SecurityProtocol: "SSL",
 		CertPath:         "missing_path",
 	}

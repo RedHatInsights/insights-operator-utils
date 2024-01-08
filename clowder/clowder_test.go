@@ -16,13 +16,14 @@ package clowder_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/RedHatInsights/insights-operator-utils/clowder"
 	"github.com/RedHatInsights/insights-operator-utils/kafka"
 	"github.com/RedHatInsights/insights-operator-utils/postgres"
 	api "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/tisnik/go-capture"
-	"testing"
 )
 
 func TestUseDBConfig(t *testing.T) {
@@ -54,8 +55,10 @@ func TestUseDBConfig(t *testing.T) {
 func TestUseClowderTopicsTopicFound(t *testing.T) {
 	originalTopicName := "topic1"
 	clowderTopicName := "NewTopicName"
-	brokerCfg := kafka.SingleBrokerConfiguration{
-		Topic: originalTopicName,
+	brokerCfg := kafka.BrokersConfig{
+		{
+			Topic: originalTopicName,
+		},
 	}
 	kafkaTopics := map[string]api.TopicConfig{
 		originalTopicName: {
@@ -66,15 +69,17 @@ func TestUseClowderTopicsTopicFound(t *testing.T) {
 		},
 	}
 
-	clowder.UseClowderTopics(&brokerCfg, kafkaTopics)
-	assert.Equal(t, clowderTopicName, brokerCfg.Topic, "Clowder topic name was not used")
+	clowder.UseClowderTopics(brokerCfg, kafkaTopics)
+	assert.Equal(t, clowderTopicName, brokerCfg[0].Topic, "Clowder topic name was not used")
 }
 
 func TestUseClowderTopicsTopicFoundMultiBrokers(t *testing.T) {
 	originalTopicName := "topic1"
 	clowderTopicName := "NewTopicName"
-	brokerCfg := kafka.MultiBrokerConfiguration{
-		Topic: originalTopicName,
+	brokerCfg := kafka.BrokersConfig{
+		{
+			Topic: originalTopicName,
+		},
 	}
 	kafkaTopics := map[string]api.TopicConfig{
 		originalTopicName: {
@@ -85,15 +90,17 @@ func TestUseClowderTopicsTopicFoundMultiBrokers(t *testing.T) {
 		},
 	}
 
-	clowder.UseClowderTopics(&brokerCfg, kafkaTopics)
-	assert.Equal(t, clowderTopicName, brokerCfg.Topic, "Clowder topic name was not used")
+	clowder.UseClowderTopics(brokerCfg, kafkaTopics)
+	assert.Equal(t, clowderTopicName, brokerCfg[0].Topic, "Clowder topic name was not used")
 }
 
 func TestUseClowderTopicsTopicNotFound(t *testing.T) {
 	originalTopicName := "topic1"
 
-	brokerCfg := kafka.SingleBrokerConfiguration{
-		Topic: originalTopicName,
+	brokerCfg := kafka.BrokersConfig{
+		{
+			Topic: originalTopicName,
+		},
 	}
 	kafkaTopics := map[string]api.TopicConfig{
 		"topic2": {
@@ -102,39 +109,73 @@ func TestUseClowderTopicsTopicNotFound(t *testing.T) {
 	}
 
 	output, _ := capture.StandardOutput(func() {
-		clowder.UseClowderTopics(&brokerCfg, kafkaTopics)
+		clowder.UseClowderTopics(brokerCfg, kafkaTopics)
 	})
-	assert.Equal(t, originalTopicName, brokerCfg.Topic, "topic name should not change")
+	assert.Equal(t, originalTopicName, brokerCfg[0].Topic, "topic name should not change")
 	assert.Contains(t, output, "warning: no kafka mapping found for topic topic1")
 }
 
-func TestUseBrokerConfigNoKafkaConfig(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+func TestGetBrokersAddressesNoBrokerConfig(t *testing.T) {
+	cfg := kafka.BrokersConfig{}
+	assert.Equal(t, []string{}, kafka.GetBrokersAddresses(cfg))
+}
+
+func TestGetBrokersAddressesSingleBrokerConfig(t *testing.T) {
+	const addr = "some_addr"
+	cfg := kafka.BrokersConfig{
+		{Address: addr},
+	}
+	assert.Equal(t, []string{addr}, kafka.GetBrokersAddresses(cfg))
+}
+
+func TestGetBrokersAddressesMultipleBrokerConfig(t *testing.T) {
+	const addr, addr2 = "some_addr", "some_other_addr"
+	cfg := kafka.BrokersConfig{
+		{Address: addr},
+		{Address: addr2},
+	}
+	assert.Equal(t, []string{addr, addr2}, kafka.GetBrokersAddresses(cfg))
+}
+
+func TestUseBrokerConfigNoClowderKafkaConfig(t *testing.T) {
+	brokerCfg := kafka.BrokersConfig{{}}
 	loadedConfig := api.AppConfig{}
 
 	output, _ := capture.StandardOutput(func() {
-		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
+		clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
 	})
 	assert.Contains(t, output, clowder.NoBrokerCfg)
 }
 
-func TestUseBrokerConfigNoKafkaBrokers(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+func TestUseBrokerConfigNoOriginalKafkaBrokers(t *testing.T) {
+	brokerCfg := kafka.BrokersConfig{}
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{},
 	}
 
 	output, _ := capture.StandardOutput(func() {
-		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
+		clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
+	})
+	assert.Contains(t, output, clowder.NoOriginalBroker)
+}
+
+func TestUseBrokerConfigNoClowderKafkaBrokers(t *testing.T) {
+	brokerCfg := kafka.BrokersConfig{{}}
+	loadedConfig := api.AppConfig{
+		Kafka: &api.KafkaConfig{},
+	}
+
+	output, _ := capture.StandardOutput(func() {
+		clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
 	})
 	assert.Contains(t, output, clowder.NoBrokerCfg)
 }
 
-func TestUseBrokerConfigMultipleKafkaBrokers(t *testing.T) {
+func TestUseBrokerConfigMultipleClowderKafkaBrokers(t *testing.T) {
 	addr1 := "test_broker"
 	addr2 := "test_broker_backup"
 	port := 12345
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokersConfig{{}}
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
@@ -150,13 +191,14 @@ func TestUseBrokerConfigMultipleKafkaBrokers(t *testing.T) {
 		},
 	}
 
-	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr1, port), addr2}, brokerCfg.Addresses)
+	brokerCfg = clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr1, port), brokerCfg[0].Address)
+	assert.Equal(t, addr2, brokerCfg[1].Address)
 }
 
 func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
 	addr := "test_broker"
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokersConfig{{}}
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
@@ -168,12 +210,12 @@ func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
 		},
 	}
 
-	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, []string{addr}, brokerCfg.Addresses)
+	brokerCfg = clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
+	assert.Equal(t, addr, brokerCfg[0].Address)
 }
 
 func TestUseBrokerConfigNoAuth(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokersConfig{{}}
 	port := 12345
 	addr := "test_broker"
 	loadedConfig := api.AppConfig{
@@ -187,12 +229,12 @@ func TestUseBrokerConfigNoAuth(t *testing.T) {
 		},
 	}
 
-	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr, port)}, brokerCfg.Addresses)
+	brokerCfg = clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg[0].Address)
 }
 
 func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokersConfig{{}}
 	port := 12345
 	addr := "test_broker"
 	authType := api.BrokerConfigAuthtypeSasl
@@ -209,15 +251,15 @@ func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
 	}
 
 	output, _ := capture.StandardOutput(func() {
-		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
+		brokerCfg = clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
 	})
 
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr, port)}, brokerCfg.Addresses)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg[0].Address)
 	assert.Contains(t, output, clowder.NoSaslCfg)
 }
 
 func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokersConfig{{}}
 	port := 12345
 	addr := "test_broker"
 	addr2 := "test_broker_backup"
@@ -258,19 +300,20 @@ func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
 	}
 
 	output, _ := capture.StandardOutput(func() {
-		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
+		brokerCfg = clowder.UseBrokerConfig(brokerCfg, &loadedConfig)
 	})
 
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr, port), fmt.Sprintf("%s:%d", addr2, port)}, brokerCfg.Addresses)
 	assert.Contains(t, output, "kafka is configured to use authentication")
-	assert.Equal(t, 2, len(brokerCfg.SASLConfigs))
-	assert.Equal(t, saslUsr, brokerCfg.SASLConfigs[0].SaslUsername)
-	assert.Equal(t, saslPwd, brokerCfg.SASLConfigs[0].SaslPassword)
-	assert.Equal(t, saslMechanism, brokerCfg.SASLConfigs[0].SaslMechanism)
-	assert.Equal(t, protocol, brokerCfg.SASLConfigs[0].SecurityProtocol)
 
-	assert.Equal(t, saslUsr2, brokerCfg.SASLConfigs[1].SaslUsername)
-	assert.Equal(t, saslPwd, brokerCfg.SASLConfigs[1].SaslPassword)
-	assert.Equal(t, saslMechanism, brokerCfg.SASLConfigs[1].SaslMechanism)
-	assert.Equal(t, protocol, brokerCfg.SASLConfigs[1].SecurityProtocol)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg[0].Address)
+	assert.Equal(t, saslUsr, brokerCfg[0].SaslUsername)
+	assert.Equal(t, saslPwd, brokerCfg[0].SaslPassword)
+	assert.Equal(t, saslMechanism, brokerCfg[0].SaslMechanism)
+	assert.Equal(t, protocol, brokerCfg[0].SecurityProtocol)
+
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr2, port), brokerCfg[1].Address)
+	assert.Equal(t, saslUsr2, brokerCfg[1].SaslUsername)
+	assert.Equal(t, saslPwd, brokerCfg[1].SaslPassword)
+	assert.Equal(t, saslMechanism, brokerCfg[1].SaslMechanism)
+	assert.Equal(t, protocol, brokerCfg[1].SecurityProtocol)
 }
