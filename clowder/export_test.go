@@ -15,7 +15,6 @@
 package clowder
 
 var (
-	NoBrokerCfg      = noBrokerConfig
-	NoOriginalBroker = noOriginalBroker
-	NoSaslCfg        = noSaslConfig
+	NoBrokerCfg = noBrokerConfig
+	NoSaslCfg   = noSaslConfig
 )
