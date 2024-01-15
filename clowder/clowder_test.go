@@ -16,13 +16,14 @@ package clowder_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/RedHatInsights/insights-operator-utils/clowder"
 	"github.com/RedHatInsights/insights-operator-utils/kafka"
 	"github.com/RedHatInsights/insights-operator-utils/postgres"
 	api "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/tisnik/go-capture"
-	"testing"
 )
 
 func TestUseDBConfig(t *testing.T) {
@@ -54,7 +55,7 @@ func TestUseDBConfig(t *testing.T) {
 func TestUseClowderTopicsTopicFound(t *testing.T) {
 	originalTopicName := "topic1"
 	clowderTopicName := "NewTopicName"
-	brokerCfg := kafka.SingleBrokerConfiguration{
+	brokerCfg := kafka.BrokerConfiguration{
 		Topic: originalTopicName,
 	}
 	kafkaTopics := map[string]api.TopicConfig{
@@ -73,7 +74,7 @@ func TestUseClowderTopicsTopicFound(t *testing.T) {
 func TestUseClowderTopicsTopicFoundMultiBrokers(t *testing.T) {
 	originalTopicName := "topic1"
 	clowderTopicName := "NewTopicName"
-	brokerCfg := kafka.MultiBrokerConfiguration{
+	brokerCfg := kafka.BrokerConfiguration{
 		Topic: originalTopicName,
 	}
 	kafkaTopics := map[string]api.TopicConfig{
@@ -92,7 +93,7 @@ func TestUseClowderTopicsTopicFoundMultiBrokers(t *testing.T) {
 func TestUseClowderTopicsTopicNotFound(t *testing.T) {
 	originalTopicName := "topic1"
 
-	brokerCfg := kafka.SingleBrokerConfiguration{
+	brokerCfg := kafka.BrokerConfiguration{
 		Topic: originalTopicName,
 	}
 	kafkaTopics := map[string]api.TopicConfig{
@@ -109,7 +110,7 @@ func TestUseClowderTopicsTopicNotFound(t *testing.T) {
 }
 
 func TestUseBrokerConfigNoKafkaConfig(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokerConfiguration{}
 	loadedConfig := api.AppConfig{}
 
 	output, _ := capture.StandardOutput(func() {
@@ -119,7 +120,7 @@ func TestUseBrokerConfigNoKafkaConfig(t *testing.T) {
 }
 
 func TestUseBrokerConfigNoKafkaBrokers(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokerConfiguration{}
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{},
 	}
@@ -134,7 +135,7 @@ func TestUseBrokerConfigMultipleKafkaBrokers(t *testing.T) {
 	addr1 := "test_broker"
 	addr2 := "test_broker_backup"
 	port := 12345
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokerConfiguration{}
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
@@ -156,7 +157,7 @@ func TestUseBrokerConfigMultipleKafkaBrokers(t *testing.T) {
 
 func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
 	addr := "test_broker"
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokerConfiguration{}
 	loadedConfig := api.AppConfig{
 		Kafka: &api.KafkaConfig{
 			Brokers: []api.BrokerConfig{
@@ -173,7 +174,7 @@ func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
 }
 
 func TestUseBrokerConfigNoAuth(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokerConfiguration{}
 	port := 12345
 	addr := "test_broker"
 	loadedConfig := api.AppConfig{
@@ -192,7 +193,7 @@ func TestUseBrokerConfigNoAuth(t *testing.T) {
 }
 
 func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokerConfiguration{}
 	port := 12345
 	addr := "test_broker"
 	authType := api.BrokerConfigAuthtypeSasl
@@ -217,7 +218,7 @@ func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
 }
 
 func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
-	brokerCfg := kafka.MultiBrokerConfiguration{}
+	brokerCfg := kafka.BrokerConfiguration{}
 	port := 12345
 	addr := "test_broker"
 	addr2 := "test_broker_backup"
@@ -263,14 +264,9 @@ func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
 
 	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr, port), fmt.Sprintf("%s:%d", addr2, port)}, brokerCfg.Addresses)
 	assert.Contains(t, output, "kafka is configured to use authentication")
-	assert.Equal(t, 2, len(brokerCfg.SASLConfigs))
-	assert.Equal(t, saslUsr, brokerCfg.SASLConfigs[0].SaslUsername)
-	assert.Equal(t, saslPwd, brokerCfg.SASLConfigs[0].SaslPassword)
-	assert.Equal(t, saslMechanism, brokerCfg.SASLConfigs[0].SaslMechanism)
-	assert.Equal(t, protocol, brokerCfg.SASLConfigs[0].SecurityProtocol)
+	assert.Equal(t, saslUsr, brokerCfg.SaslUsername)
+	assert.Equal(t, saslPwd, brokerCfg.SaslPassword)
+	assert.Equal(t, saslMechanism, brokerCfg.SaslMechanism)
+	assert.Equal(t, protocol, brokerCfg.SecurityProtocol)
 
-	assert.Equal(t, saslUsr2, brokerCfg.SASLConfigs[1].SaslUsername)
-	assert.Equal(t, saslPwd, brokerCfg.SASLConfigs[1].SaslPassword)
-	assert.Equal(t, saslMechanism, brokerCfg.SASLConfigs[1].SaslMechanism)
-	assert.Equal(t, protocol, brokerCfg.SASLConfigs[1].SecurityProtocol)
 }
