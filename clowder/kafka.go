@@ -16,6 +16,7 @@ package clowder
 
 import (
 	"fmt"
+
 	"github.com/RedHatInsights/insights-operator-utils/kafka"
 	api "github.com/redhatinsights/app-common-go/pkg/api/v1"
 )
@@ -29,33 +30,33 @@ const (
 
 // UseBrokerConfig tries to replace parts of the BrokerConfiguration with the values
 // loaded by Clowder
-func UseBrokerConfig(brokerCfg *kafka.MultiBrokerConfiguration, loadedConfig *api.AppConfig) {
+func UseBrokerConfig(brokerCfg *kafka.BrokerConfiguration, loadedConfig *api.AppConfig) {
 	if loadedConfig.Kafka != nil && len(loadedConfig.Kafka.Brokers) > 0 {
 		brokerCfg.Addresses = make([]string, len(loadedConfig.Kafka.Brokers))
-		brokerCfg.SASLConfigs = make([]kafka.SASLConfiguration, len(loadedConfig.Kafka.Brokers))
 		for i, broker := range loadedConfig.Kafka.Brokers {
 			if broker.Port != nil {
 				brokerCfg.Addresses[i] = fmt.Sprintf("%s:%d", broker.Hostname, *broker.Port)
 			} else {
 				brokerCfg.Addresses[i] = broker.Hostname
 			}
-			// SSL config
-			if broker.Authtype != nil {
-				fmt.Println("kafka is configured to use authentication")
-				if broker.Sasl != nil {
-					// we are trusting that these values are set and
-					// dereferencing the pointers without any check...
-					brokerCfg.SASLConfigs[i].SaslUsername = *broker.Sasl.Username
-					brokerCfg.SASLConfigs[i].SaslPassword = *broker.Sasl.Password
-					brokerCfg.SASLConfigs[i].SaslMechanism = *broker.Sasl.SaslMechanism
-					brokerCfg.SASLConfigs[i].SecurityProtocol = *broker.SecurityProtocol
+		}
+		// SSL config
+		clowderCfg := loadedConfig.Kafka.Brokers[0]
+		if clowderCfg.Authtype != nil {
+			fmt.Println("kafka is configured to use authentication")
+			if clowderCfg.Sasl != nil {
+				// we are trusting that these values are set and
+				// dereferencing the pointers without any check...
+				brokerCfg.SaslUsername = *clowderCfg.Sasl.Username
+				brokerCfg.SaslPassword = *clowderCfg.Sasl.Password
+				brokerCfg.SaslMechanism = *clowderCfg.Sasl.SaslMechanism
+				brokerCfg.SecurityProtocol = *clowderCfg.SecurityProtocol
 
-					if caPath, err := loadedConfig.KafkaCa(broker); err == nil {
-						brokerCfg.SASLConfigs[i].CertPath = caPath
-					}
-				} else {
-					fmt.Println(noSaslConfig)
+				if caPath, err := loadedConfig.KafkaCa(clowderCfg); err == nil {
+					brokerCfg.CertPath = caPath
 				}
+			} else {
+				fmt.Println(noSaslConfig)
 			}
 		}
 	} else {
@@ -65,21 +66,11 @@ func UseBrokerConfig(brokerCfg *kafka.MultiBrokerConfiguration, loadedConfig *ap
 
 // UseClowderTopics tries to replace the configured topic with the corresponding
 // topic loaded by Clowder
-func UseClowderTopics(brokerCfg interface{}, kafkaTopics map[string]api.TopicConfig) {
-	switch cfg := brokerCfg.(type) {
-	case *kafka.SingleBrokerConfiguration:
-		if clowderTopic, ok := kafkaTopics[cfg.Topic]; ok {
-			cfg.Topic = clowderTopic.Name
-		} else {
-			fmt.Printf(noTopicMapping, cfg.Topic)
-		}
-	case *kafka.MultiBrokerConfiguration:
-		if clowderTopic, ok := kafkaTopics[cfg.Topic]; ok {
-			cfg.Topic = clowderTopic.Name
-		} else {
-			fmt.Printf(noTopicMapping, cfg.Topic)
-		}
-	default:
-		fmt.Printf("Unknown Broker configuration type")
+func UseClowderTopics(brokerCfg *kafka.BrokerConfiguration, kafkaTopics map[string]api.TopicConfig) {
+	if clowderTopic, ok := kafkaTopics[brokerCfg.Topic]; ok {
+		brokerCfg.Topic = clowderTopic.Name
+	} else {
+		fmt.Printf(noTopicMapping, brokerCfg.Topic)
 	}
+
 }
