@@ -47,7 +47,6 @@ type BrokerConfiguration struct {
 // SaramaConfigFromBrokerConfig returns a Config struct from broker.Configuration parameters
 func SaramaConfigFromBrokerConfig(cfg *BrokerConfiguration) (*sarama.Config, error) {
 	saramaConfig := sarama.NewConfig()
-	saramaConfig.Version = sarama.V0_10_2_0
 
 	if cfg.Timeout > 0 {
 		saramaConfig.Net.DialTimeout = cfg.Timeout
