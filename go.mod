@@ -9,7 +9,7 @@ require (
 	github.com/RedHatInsights/kafka-zerolog v1.0.0
 	github.com/Shopify/sarama v1.27.1
 	github.com/archdx/zerolog-sentry v1.8.2
-	github.com/aws/aws-sdk-go v1.49.24
+	github.com/aws/aws-sdk-go v1.50.0
 	github.com/getkin/kin-openapi v0.22.1
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/golang/mock v1.6.0
