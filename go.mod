@@ -22,7 +22,7 @@ require (
 	github.com/prometheus/client_model v0.5.0
 	github.com/redhatinsights/app-common-go v1.6.7
 	github.com/redis/go-redis/v9 v9.4.0
-	github.com/rs/zerolog v1.31.0
+	github.com/rs/zerolog v1.32.0
 	github.com/stretchr/testify v1.8.4
 	github.com/tisnik/go-capture v1.0.1
 	github.com/verdverm/frisby v0.0.0-20170604211311-b16556248a9a
