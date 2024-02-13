@@ -152,7 +152,7 @@ func TestUseBrokerConfigMultipleKafkaBrokers(t *testing.T) {
 	}
 
 	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr1, port), addr2}, brokerCfg.Addresses)
+	assert.Equal(t, fmt.Sprintf("%s:%d,%s", addr1, port, addr2), brokerCfg.Addresses)
 }
 
 func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
@@ -170,7 +170,7 @@ func TestUseBrokerConfigNoAuthNoPort(t *testing.T) {
 	}
 
 	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, []string{addr}, brokerCfg.Addresses)
+	assert.Equal(t, addr, brokerCfg.Addresses)
 }
 
 func TestUseBrokerConfigNoAuth(t *testing.T) {
@@ -189,7 +189,7 @@ func TestUseBrokerConfigNoAuth(t *testing.T) {
 	}
 
 	clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr, port)}, brokerCfg.Addresses)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg.Addresses)
 }
 
 func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
@@ -213,7 +213,7 @@ func TestUseBrokerConfigAuthEnabledNoSasl(t *testing.T) {
 		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
 	})
 
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr, port)}, brokerCfg.Addresses)
+	assert.Equal(t, fmt.Sprintf("%s:%d", addr, port), brokerCfg.Addresses)
 	assert.Contains(t, output, clowder.NoSaslCfg)
 }
 
@@ -262,7 +262,7 @@ func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
 		clowder.UseBrokerConfig(&brokerCfg, &loadedConfig)
 	})
 
-	assert.Equal(t, []string{fmt.Sprintf("%s:%d", addr, port), fmt.Sprintf("%s:%d", addr2, port)}, brokerCfg.Addresses)
+	assert.Equal(t, fmt.Sprintf("%s:%d,%s:%d", addr, port, addr2, port), brokerCfg.Addresses)
 	assert.Contains(t, output, "kafka is configured to use authentication")
 	assert.Equal(t, saslUsr, brokerCfg.SaslUsername)
 	assert.Equal(t, saslPwd, brokerCfg.SaslPassword)

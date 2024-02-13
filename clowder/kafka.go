@@ -16,7 +16,6 @@ package clowder
 
 import (
 	"fmt"
-
 	"github.com/RedHatInsights/insights-operator-utils/kafka"
 	api "github.com/redhatinsights/app-common-go/pkg/api/v1"
 )
@@ -32,14 +31,16 @@ const (
 // loaded by Clowder
 func UseBrokerConfig(brokerCfg *kafka.BrokerConfiguration, loadedConfig *api.AppConfig) {
 	if loadedConfig.Kafka != nil && len(loadedConfig.Kafka.Brokers) > 0 {
-		brokerCfg.Addresses = make([]string, len(loadedConfig.Kafka.Brokers))
-		for i, broker := range loadedConfig.Kafka.Brokers {
+		brokerCfg.Addresses = ""
+		for _, broker := range loadedConfig.Kafka.Brokers {
 			if broker.Port != nil {
-				brokerCfg.Addresses[i] = fmt.Sprintf("%s:%d", broker.Hostname, *broker.Port)
+				brokerCfg.Addresses += fmt.Sprintf("%s:%d", broker.Hostname, *broker.Port) + ","
 			} else {
-				brokerCfg.Addresses[i] = broker.Hostname
+				brokerCfg.Addresses += broker.Hostname + ","
 			}
 		}
+		// remove the extra comma
+		brokerCfg.Addresses = brokerCfg.Addresses[:len(brokerCfg.Addresses)-1]
 		// SSL config
 		clowderCfg := loadedConfig.Kafka.Brokers[0]
 		if clowderCfg.Authtype != nil {
