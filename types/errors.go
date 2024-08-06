@@ -30,6 +30,7 @@ import (
 
 // responseDataError is used as the error message when the responses functions return an error
 const responseDataError = "Unexpected error during response data encoding"
+const handleServerErrorStr = "handleServerError()"
 
 // RouterMissingParamError missing parameter in request
 type RouterMissingParamError struct {
@@ -107,7 +108,7 @@ func (e *ValidationError) Error() string {
 
 // HandleServerError handles separate server errors and sends appropriate responses
 func HandleServerError(writer http.ResponseWriter, err error) {
-	log.Error().Err(err).Msg("handleServerError()")
+	log.Warn().Err(err).Msg(handleServerErrorStr)
 
 	var respErr error
 
@@ -123,6 +124,7 @@ func HandleServerError(writer http.ResponseWriter, err error) {
 	case *ForbiddenError:
 		respErr = responses.SendForbidden(writer, err.Error())
 	default:
+		log.Error().Err(err).Msg(handleServerErrorStr)
 		respErr = responses.SendInternalServerError(writer, "Internal Server Error")
 	}
 
