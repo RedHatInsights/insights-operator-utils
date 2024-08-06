@@ -108,7 +108,7 @@ func (e *ValidationError) Error() string {
 
 // HandleServerError handles separate server errors and sends appropriate responses
 func HandleServerError(writer http.ResponseWriter, err error) {
-	log.Warn().Err(err).Msg(handleServerErrorStr)
+	var level = log.Warn() // set the default log level for most HTTP responses
 
 	var respErr error
 
@@ -124,9 +124,11 @@ func HandleServerError(writer http.ResponseWriter, err error) {
 	case *ForbiddenError:
 		respErr = responses.SendForbidden(writer, err.Error())
 	default:
-		log.Error().Err(err).Msg(handleServerErrorStr)
+		level = log.Error()
 		respErr = responses.SendInternalServerError(writer, "Internal Server Error")
 	}
+
+	level.Err(err).Msg(handleServerErrorStr)
 
 	if respErr != nil {
 		log.Error().Err(respErr).Msg(responseDataError)
