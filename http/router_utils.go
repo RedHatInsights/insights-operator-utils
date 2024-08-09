@@ -109,7 +109,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (ctypes.RuleI
 	ruleID, err := GetRouterParam(request, "rule_id")
 	if err != nil {
 		const message = "unable to get rule id"
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
 		return ctypes.RuleID("0"), false
 	}
@@ -118,7 +118,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (ctypes.RuleI
 
 	if !isRuleIDValid {
 		err = fmt.Errorf("invalid rule ID, it must contain only from latin characters, number, underscores or dots")
-		log.Error().Err(err)
+		log.Warn().Err(err)
 		types.HandleServerError(writer, &types.RouterParsingError{
 			ParamName:  "rule_id",
 			ParamValue: ruleID,
@@ -136,7 +136,7 @@ func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (ctypes.Err
 	errorKey, err := GetRouterParam(request, "error_key")
 	if err != nil {
 		const message = "unable to get error_key"
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
 		return ctypes.ErrorKey("0"), false
 	}
@@ -151,7 +151,7 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes
 	ruleSelector, err := GetRouterParam(request, "rule_selector")
 	if err != nil {
 		const message = "Unable to get rule selector from request"
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
 		return "", false
 	}
@@ -250,7 +250,7 @@ func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]c
 
 // HandleOrgIDError logs org id error and writes corresponding http response
 func HandleOrgIDError(writer http.ResponseWriter, err error) {
-	log.Error().Err(err).Msg("error getting organization ID from request")
+	log.Warn().Err(err).Msg("error getting organization ID from request")
 	types.HandleServerError(writer, err)
 }
 
@@ -279,7 +279,7 @@ func ValidateClusterName(clusterName string) (ctypes.ClusterName, error) {
 	if _, err := uuid.Parse(clusterName); err != nil {
 		message := fmt.Sprintf("invalid cluster name: '%s'. Error: %s", clusterName, err.Error())
 
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 
 		return "", &types.RouterParsingError{
 			ParamName:  "cluster",
