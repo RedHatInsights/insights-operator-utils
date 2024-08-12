@@ -160,7 +160,7 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes
 
 	if !isRuleSelectorValid {
 		errMsg := "Param rule_selector is not a valid rule selector (plugin_name|error_key)"
-		log.Error().Msg(errMsg)
+		log.Warn().Msg(errMsg)
 		types.HandleServerError(writer, &types.RouterParsingError{
 			ParamName:  "rule_selector",
 			ParamValue: ruleSelector,
@@ -202,7 +202,7 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]ctyp
 	clusterNamesParam, err := GetRouterParam(request, "clusters")
 	if err != nil {
 		message := fmt.Sprintf("Cluster names are not provided %v", err.Error())
-		log.Error().Msg(message)
+		log.Warn().Msg(message)
 
 		types.HandleServerError(writer, err)
 
@@ -264,7 +264,7 @@ func CheckPermissions(writer http.ResponseWriter, request *http.Request, orgID c
 		if identity.OrgID != orgID {
 			message := fmt.Sprintf("you have no permissions to get or change info about the organization "+
 				"with ID %d; you can access info about organization with ID %d", orgID, identity.OrgID)
-			log.Error().Msg(message)
+			log.Warn().Msg(message)
 			types.HandleServerError(writer, &types.ForbiddenError{ErrString: message})
 
 			return false
@@ -292,7 +292,7 @@ func ValidateClusterName(clusterName string) (ctypes.ClusterName, error) {
 }
 
 func handleClusterNameError(writer http.ResponseWriter, err error) {
-	log.Error().Msg(err.Error())
+	log.Warn().Msg(err.Error())
 
 	// query parameter 'cluster' can't be found in request, which might be caused by issue in Gorilla mux
 	// (not on client side), but let's assume it won't :)
