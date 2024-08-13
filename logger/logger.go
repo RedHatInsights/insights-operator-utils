@@ -28,9 +28,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/IBM/sarama"
 	"github.com/RedHatInsights/cloudwatch"
 	"github.com/RedHatInsights/kafka-zerolog/kafkazerolog"
+	"github.com/Shopify/sarama"
 	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
