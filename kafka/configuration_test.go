@@ -21,7 +21,7 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/kafka"
 	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
 
-	"github.com/IBM/sarama"
+	"github.com/Shopify/sarama"
 	"github.com/stretchr/testify/assert"
 )
 

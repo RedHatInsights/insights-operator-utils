@@ -20,7 +20,7 @@ package saramahelpers
 import (
 	"time"
 
-	"github.com/IBM/sarama"
+	"github.com/Shopify/sarama"
 )
 
 // MockConsumerGroupClaim MockConsumerGroupClaim
