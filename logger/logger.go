@@ -36,7 +36,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
-	"github.com/getsentry/sentry-go"
+	sentry "github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -223,7 +223,7 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 	return cloudWatchWriter, nil
 }
 
-func sentryBeforeSend(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+func sentryBeforeSend(event *sentry.Event, _ *sentry.EventHint) *sentry.Event {
 	event.Fingerprint = []string{event.Message}
 	return event
 }
