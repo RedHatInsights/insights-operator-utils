@@ -36,6 +36,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
+	"github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -222,8 +223,17 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 	return cloudWatchWriter, nil
 }
 
+func sentryBeforeSend(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+	event.Fingerprint = []string{event.Message}
+	return event
+}
+
 func setupSentryLogging(conf SentryLoggingConfiguration) (io.WriteCloser, error) {
-	sentryWriter, err := zlogsentry.New(conf.SentryDSN, zlogsentry.WithEnvironment(conf.SentryEnvironment))
+	sentryWriter, err := zlogsentry.New(
+		conf.SentryDSN,
+		zlogsentry.WithEnvironment(conf.SentryEnvironment),
+		zlogsentry.WithBeforeSend(sentryBeforeSend),
+	)
 	if err != nil {
 		return nil, err
 	}
