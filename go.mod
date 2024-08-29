@@ -11,10 +11,10 @@ require (
 	github.com/archdx/zerolog-sentry v1.8.4
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/getkin/kin-openapi v0.22.1
-	github.com/getsentry/sentry-go v0.24.1
+	github.com/getsentry/sentry-go v0.28.1
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
@@ -52,7 +52,7 @@ require (
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
