@@ -192,9 +192,15 @@ func ReadOrganizationID(writer http.ResponseWriter, request *http.Request, auth 
 		return 0, false
 	}
 
-	successful := CheckPermissions(writer, request, ctypes.OrgID(organizationID), auth)
+	orgID, err := types.Uint64ToUint32(organizationID)
+	if err != nil {
+		HandleOrgIDError(writer, err)
+		return 0, false
+	}
 
-	return ctypes.OrgID(organizationID), successful
+	successful := CheckPermissions(writer, request, ctypes.OrgID(orgID), auth)
+
+	return ctypes.OrgID(orgID), successful
 }
 
 // ReadClusterNames does the same as `readClusterName`, except for multiple clusters.
@@ -223,6 +229,30 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]ctyp
 	return clusterNamesConverted, true
 }
 
+// parseAndValidateOrgID parses and validates a single organization ID string.
+func parseAndValidateOrgID(writer http.ResponseWriter, orgStr string) (ctypes.OrgID, bool) {
+	v, err := strconv.ParseUint(orgStr, 10, 64)
+	if err != nil {
+		handleOrgIDParsingError(writer, orgStr, "integer array expected")
+		return 0, false
+	}
+	orgInt, err := types.Uint64ToUint32(v)
+	if err != nil {
+		handleOrgIDParsingError(writer, orgStr, "integer array expected")
+		return 0, false
+	}
+	return ctypes.OrgID(orgInt), true
+}
+
+// handleOrgIDParsingError handles the error for parsing organization IDs.
+func handleOrgIDParsingError(writer http.ResponseWriter, orgStr, errString string) {
+	types.HandleServerError(writer, &types.RouterParsingError{
+		ParamName:  "organizations",
+		ParamValue: orgStr,
+		ErrString:  errString,
+	})
+}
+
 // ReadOrganizationIDs does the same as `readOrganizationID`, except for multiple organizations.
 func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]ctypes.OrgID, bool) {
 	organizationsParam, err := GetRouterParam(request, "organizations")
@@ -233,16 +263,11 @@ func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]c
 
 	organizationsConverted := make([]ctypes.OrgID, 0)
 	for _, orgStr := range SplitRequestParamArray(organizationsParam) {
-		orgInt, err := strconv.ParseUint(orgStr, 10, 64)
-		if err != nil {
-			types.HandleServerError(writer, &types.RouterParsingError{
-				ParamName:  "organizations",
-				ParamValue: orgStr,
-				ErrString:  "integer array expected",
-			})
+		orgID, ok := parseAndValidateOrgID(writer, orgStr)
+		if !ok {
 			return []ctypes.OrgID{}, false
 		}
-		organizationsConverted = append(organizationsConverted, ctypes.OrgID(orgInt))
+		organizationsConverted = append(organizationsConverted, orgID)
 	}
 
 	return organizationsConverted, true
