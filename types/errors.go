@@ -106,6 +106,17 @@ func (e *ValidationError) Error() string {
 	)
 }
 
+// OutOfRangeError indicates that a value is outside the expected range.
+type OutOfRangeError struct {
+	Value uint64
+	Type  string
+}
+
+// Error returns a formatted error string for the OutOfRangeError.
+func (e *OutOfRangeError) Error() string {
+	return fmt.Sprintf("value %d out of range for %s", e.Value, e.Type)
+}
+
 // HandleServerError handles separate server errors and sends appropriate responses
 func HandleServerError(writer http.ResponseWriter, err error) {
 	var level = log.Warn() // set the default log level for most HTTP responses
@@ -113,7 +124,7 @@ func HandleServerError(writer http.ResponseWriter, err error) {
 	var respErr error
 
 	switch err := err.(type) {
-	case *RouterMissingParamError, *RouterParsingError, *json.SyntaxError, *NoBodyError, *ValidationError:
+	case *RouterMissingParamError, *RouterParsingError, *json.SyntaxError, *NoBodyError, *ValidationError, *OutOfRangeError:
 		respErr = responses.SendBadRequest(writer, err.Error())
 	case *json.UnmarshalTypeError:
 		respErr = responses.SendBadRequest(writer, "bad type in json data")

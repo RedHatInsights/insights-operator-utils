@@ -22,24 +22,33 @@ func TestUint64ToUint32(t *testing.T) {
 		name    string
 		input   uint64
 		want    uint32
-		wantErr bool
+		errType error
 	}{
-		{"Zero", 0, 0, false},
-		{"Max uint32", 4294967295, 4294967295, false},
-		{"Overflow", 4294967296, 0, true},
-		{"Large overflow", 18446744073709551615, 0, true},
-		{"Mid-range value", 2147483648, 2147483648, false},
+		{"Zero", 0, 0, nil},
+		{"Max uint32", 4294967295, 4294967295, nil},
+		{"Overflow", 4294967296, 0, &OutOfRangeError{}},
+		{"Large overflow", 18446744073709551615, 0, &OutOfRangeError{}},
+		{"Mid-range value", 2147483648, 2147483648, nil},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Uint64ToUint32(tt.input)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Uint64ToUint32() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Uint64ToUint32() = %v, want %v", got, tt.want)
+			if tt.errType != nil {
+				// Check if the error is of the expected type
+				if err == nil {
+					t.Errorf("Expected error type %T, got no error", tt.errType)
+				} else if _, ok := err.(*OutOfRangeError); !ok {
+					t.Errorf("Expected error type *OutOfRangeError, got %T", err)
+				}
+			} else {
+				if err != nil {
+					t.Errorf("Uint64ToUint32() error = %v, want no error", err)
+					return
+				}
+				if got != tt.want {
+					t.Errorf("Uint64ToUint32() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}
