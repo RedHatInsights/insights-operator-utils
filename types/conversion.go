@@ -14,15 +14,14 @@
 
 package types
 
-import (
-	"errors"
-)
-
 // Uint64ToUint32 safely converts a uint64 into a uint32 without overflow
 func Uint64ToUint32(v uint64) (uint32, error) {
 	// Check for overflow without casting
 	if v > uint64(^uint32(0)) { // ^uint32(0) is the maximum uint32 value (4,294,967,295)
-		return 0, errors.New("value exceeds uint32 range")
+		return 0, &OutOfRangeError{
+			Value: v,
+			Type:  "uint32",
+		}
 	}
 
 	return uint32(v), nil // #nosec G103: safe after bounds check
