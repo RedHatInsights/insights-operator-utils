@@ -15,6 +15,9 @@ package types
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUint64ToUint32(t *testing.T) {
@@ -22,33 +25,25 @@ func TestUint64ToUint32(t *testing.T) {
 		name    string
 		input   uint64
 		want    uint32
-		errType error
+		wantErr bool
 	}{
-		{"Zero", 0, 0, nil},
-		{"Max uint32", 4294967295, 4294967295, nil},
-		{"Overflow", 4294967296, 0, &OutOfRangeError{}},
-		{"Large overflow", 18446744073709551615, 0, &OutOfRangeError{}},
-		{"Mid-range value", 2147483648, 2147483648, nil},
+		{"Zero", 0, 0, false},
+		{"Max uint32", 4294967295, 4294967295, false},
+		{"Overflow", 4294967296, 0, true},
+		{"Large overflow", 18446744073709551615, 0, true},
+		{"Mid-range value", 2147483648, 2147483648, false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Uint64ToUint32(tt.input)
-			if tt.errType != nil {
+			if tt.wantErr {
 				// Check if the error is of the expected type
-				if err == nil {
-					t.Errorf("Expected error type %T, got no error", tt.errType)
-				} else if _, ok := err.(*OutOfRangeError); !ok {
-					t.Errorf("Expected error type *OutOfRangeError, got %T", err)
-				}
+				require.Error(t, err)
+				assert.Equal(t, err, &OutOfRangeError{tt.input, "uint32"})
 			} else {
-				if err != nil {
-					t.Errorf("Uint64ToUint32() error = %v, want no error", err)
-					return
-				}
-				if got != tt.want {
-					t.Errorf("Uint64ToUint32() = %v, want %v", got, tt.want)
-				}
+				require.NoError(t, err)
+				assert.Equal(t, tt.want, got)
 			}
 		})
 	}
