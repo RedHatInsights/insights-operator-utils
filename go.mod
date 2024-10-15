@@ -11,7 +11,7 @@ require (
 	github.com/archdx/zerolog-sentry v1.8.4
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/getkin/kin-openapi v0.22.1
-	github.com/getsentry/sentry-go v0.28.1
+	github.com/getsentry/sentry-go v0.29.1
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
