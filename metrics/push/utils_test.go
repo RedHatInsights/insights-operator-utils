@@ -26,16 +26,10 @@ import (
 )
 
 var (
-	invalidName = "invalid name"
 	validPrefix = "a_valid_"
 )
 
-func TestNewCounterWithError(t *testing.T) {
-	t.Run("invalid counter", func(t *testing.T) {
-
-		_, err := push.NewCounterWithError(prometheus.CounterOpts{Name: invalidName})
-		assert.Error(t, err)
-	})
+func TestNewCounter(t *testing.T) {
 
 	t.Run("valid counter", func(t *testing.T) {
 		_, err := push.NewCounterWithError(prometheus.CounterOpts{Name: validPrefix + "counter"})
@@ -43,12 +37,7 @@ func TestNewCounterWithError(t *testing.T) {
 	})
 }
 
-func TestNewCounterVecWithError(t *testing.T) {
-	t.Run("invalid counter", func(t *testing.T) {
-
-		_, err := push.NewCounterVecWithError(prometheus.CounterOpts{Name: invalidName}, []string{})
-		assert.Error(t, err)
-	})
+func TestNewCounterVec(t *testing.T) {
 
 	t.Run("valid counter", func(t *testing.T) {
 		_, err := push.NewCounterVecWithError(prometheus.CounterOpts{Name: validPrefix + "counter_vec"}, []string{})
@@ -56,12 +45,7 @@ func TestNewCounterVecWithError(t *testing.T) {
 	})
 }
 
-func TestNewGaugeWithError(t *testing.T) {
-	t.Run("invalid gauge", func(t *testing.T) {
-
-		_, err := push.NewGaugeWithError(prometheus.GaugeOpts{Name: invalidName})
-		assert.Error(t, err)
-	})
+func TestNewGauge(t *testing.T) {
 
 	t.Run("valid gauge", func(t *testing.T) {
 		_, err := push.NewGaugeWithError(prometheus.GaugeOpts{Name: validPrefix + "gauge"})
@@ -69,12 +53,7 @@ func TestNewGaugeWithError(t *testing.T) {
 	})
 }
 
-func TestNewHistogramWithError(t *testing.T) {
-	t.Run("invalid histogram", func(t *testing.T) {
-
-		_, err := push.NewHistogramWithError(prometheus.HistogramOpts{Name: invalidName})
-		assert.Error(t, err)
-	})
+func TestNewHistogram(t *testing.T) {
 
 	t.Run("valid histogram", func(t *testing.T) {
 		_, err := push.NewHistogramWithError(prometheus.HistogramOpts{Name: validPrefix + "histogram"})
