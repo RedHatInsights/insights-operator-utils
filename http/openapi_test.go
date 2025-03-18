@@ -42,9 +42,9 @@ func TestFilterOutDebugMethods(t *testing.T) {
 	})
 
 	t.Run("Error", func(t *testing.T) {
-		expectedErr := `error unmarshaling JSON: Failed to unmarshal extension properties: ` +
-			`json: cannot unmarshal string into Go value of type map[string]json.RawMessage` + "\n" +
-			`Input: "definitely-not-json"`
+		expectedErr := `failed to unmarshal data: json error: invalid character 'd' ` +
+			`looking for beginning of value, yaml error: error unmarshaling JSON: ` +
+			`while decoding JSON: json: cannot unmarshal string into Go value of type openapi3.TBis`
 		_, err := httputils.FilterOutDebugMethods("definitely-not-json")
 		assert.EqualError(t, err, expectedErr)
 	})
