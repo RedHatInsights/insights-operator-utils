@@ -30,14 +30,14 @@ import (
 
 // FilterOutDebugMethods returns the same openapi spec, but without endpoints tagged as debug.
 func FilterOutDebugMethods(openAPIFileContent string) (string, error) {
-	swagger, err := openapi3.NewSwaggerLoader().LoadSwaggerFromData([]byte(openAPIFileContent))
+	swagger, err := openapi3.NewLoader().LoadFromData([]byte(openAPIFileContent))
 	if err != nil {
 		return "", err
 	}
 
-	newPaths := make(openapi3.Paths)
+	newPaths := openapi3.NewPaths()
 
-	for path, pathItem := range swagger.Paths {
+	for path, pathItem := range swagger.Paths.Map() {
 		for method, operation := range pathItem.Operations() {
 			debugTagFound := false
 			for _, tag := range operation.Tags {
@@ -53,7 +53,7 @@ func FilterOutDebugMethods(openAPIFileContent string) (string, error) {
 		}
 
 		if len(pathItem.Operations()) > 0 {
-			newPaths[path] = pathItem
+			newPaths.Set(path, pathItem)
 		}
 	}
 
