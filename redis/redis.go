@@ -39,6 +39,7 @@ type Client struct {
 func CreateRedisClient(
 	address string,
 	databaseIndex int,
+	username string,
 	password string,
 	timeoutSeconds int,
 ) (*redisV9.Client, error) {
@@ -62,6 +63,7 @@ func CreateRedisClient(
 	c := redisV9.NewClient(&redisV9.Options{
 		Addr:        address,
 		DB:          databaseIndex,
+		Username:    username,
 		Password:    password,
 		ReadTimeout: time.Duration(timeoutSeconds) * time.Second,
 	})

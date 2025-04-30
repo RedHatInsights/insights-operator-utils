@@ -31,6 +31,7 @@ var (
 	ctx                        context.Context
 	defaultRedisAddress        = "loclahost:6379"
 	defaultRedisDatabase       = 0
+	defaultRedisUsername       = "default"
 	defaultRedisPassword       = "psw"
 	defaultRedisTimeoutSeconds = 30
 )
@@ -58,7 +59,7 @@ func redisExpectationsMet(t *testing.T, mock redismock.ClientMock) {
 
 func TestCreateRedisClientOK(t *testing.T) {
 	client, err := redis.CreateRedisClient(
-		defaultRedisAddress, defaultRedisDatabase, defaultRedisPassword, defaultRedisTimeoutSeconds,
+		defaultRedisAddress, defaultRedisDatabase, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds,
 	)
 	assert.NoError(t, err)
 
@@ -73,7 +74,7 @@ func TestCreateRedisClientOK(t *testing.T) {
 func TestCreateRedisClientBadAddress(t *testing.T) {
 	// empty address
 	client, err := redis.CreateRedisClient(
-		"", defaultRedisDatabase, defaultRedisPassword, defaultRedisTimeoutSeconds,
+		"", defaultRedisDatabase, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds,
 	)
 	assert.Nil(t, client)
 	assert.Error(t, err)
@@ -82,7 +83,7 @@ func TestCreateRedisClientBadAddress(t *testing.T) {
 func TestCreateRedisClientDBIndexOutOfRange(t *testing.T) {
 	// Redis supports "only" 16 different databases with indices 0-15
 	client, err := redis.CreateRedisClient(
-		defaultRedisAddress, 16, defaultRedisPassword, defaultRedisTimeoutSeconds,
+		defaultRedisAddress, 16, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds,
 	)
 	assert.Nil(t, client)
 	assert.Error(t, err)
