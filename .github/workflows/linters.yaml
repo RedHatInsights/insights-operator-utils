@@ -7,19 +7,14 @@ on:
 jobs:
   golint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version:
-          - "1.22"
-          - "1.23"
-    name: Linters for Go ${{ matrix.go-version}}
+    name: Linters
     steps:
       - uses: actions/checkout@v4
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.23"
       - name: Build project
         run: go build
-      - name: Style linters
-        run: make style
+      - name: ABC metrics checker
+        run: make abcgo
