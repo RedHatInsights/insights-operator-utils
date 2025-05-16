@@ -21,7 +21,7 @@ linters:
     - govet
     - ineffassign
     - nilerr
-    - prealloc
+    # - prealloc
     # - revive
     - staticcheck
     - unconvert
@@ -31,6 +31,19 @@ linters:
   settings:
     goconst:
       min-occurrences: 3
+    staticcheck:
+      checks:
+        - all
+        - "-ST1005" # disable error string should not be capitalized
+        - "-ST1000" # disable at least one file in a package should have a package comment
+  exclusions:
+    rules:
+      # Exclude some linters from running on tests files.
+      - path: _test\.go
+        linters:
+          - gosec
+          - goconst
+          - unconvert
 formatters:
   enable:
     - gofmt
