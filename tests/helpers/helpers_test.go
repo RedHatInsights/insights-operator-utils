@@ -19,6 +19,7 @@ package helpers_test
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -50,7 +51,7 @@ const (
 
 var (
 	serverAddress = localhostAddress + ":" + fmt.Sprint(port)
-	testError     = fmt.Errorf("test error")
+	testError     = errors.New("test error") //nolint:staticcheck // ST1012
 	devNull       interface{}
 )
 

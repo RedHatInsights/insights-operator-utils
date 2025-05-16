@@ -53,7 +53,6 @@ var (
 )
 
 func TestListNObjectsInBucket(t *testing.T) {
-
 	testCases := []testCase{
 		{
 			description:  "bucket exists",

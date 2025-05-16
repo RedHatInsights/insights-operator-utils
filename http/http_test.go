@@ -18,11 +18,12 @@ package httputils_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/http/http_test.html
 
 import (
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/stretchr/testify/assert"
 
@@ -97,7 +98,6 @@ func TestSetHTTPPrefixWithCompleteURL(t *testing.T) {
 		"http://someaddress:8000",
 		httputils.SetHTTPPrefix("http://someaddress:8000"),
 	)
-
 }
 
 // TestSendRequest test the behaviour of function SendRequest

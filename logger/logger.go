@@ -151,7 +151,6 @@ func InitZerolog(
 
 // CloseZerolog closes properly the zerolog, if needed
 func CloseZerolog() {
-
 	for _, toClose := range needClose {
 		if err := toClose.Close(); err != nil {
 			log.Debug().Err(err).Msg("Error when closing")
