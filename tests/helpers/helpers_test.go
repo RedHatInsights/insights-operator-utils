@@ -50,7 +50,7 @@ const (
 
 var (
 	serverAddress = localhostAddress + ":" + fmt.Sprint(port)
-	testError     = fmt.Errorf("test error")
+	testError     = fmt.Errorf("test error") //nolint:staticcheck // ST1012
 	devNull       interface{}
 )
 

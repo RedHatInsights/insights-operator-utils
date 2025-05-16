@@ -19,7 +19,6 @@ package httputils_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -347,7 +346,7 @@ func TestCreateAPIHandlerPathToExistingFileNoDebugMode(t *testing.T) {
 // when regular JSON file name is provided and debug mode is disabled
 func TestCreateAPIHandlerPathToExistingJSONFile(t *testing.T) {
 	// temporary file with OpenAPI.json content
-	tempFile, err := ioutil.TempFile("", "test_openapi.json")
+	tempFile, err := os.CreateTemp("", "test_openapi.json")
 	if err != nil {
 		t.Fatal(err)
 	}

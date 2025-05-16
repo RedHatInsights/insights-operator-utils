@@ -268,5 +268,4 @@ func TestUseBrokerConfigAuthEnabledWithSaslConfig(t *testing.T) {
 	assert.Equal(t, saslPwd, brokerCfg.SaslPassword)
 	assert.Equal(t, saslMechanism, brokerCfg.SaslMechanism)
 	assert.Equal(t, protocol, brokerCfg.SecurityProtocol)
-
 }

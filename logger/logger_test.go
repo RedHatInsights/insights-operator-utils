@@ -464,32 +464,32 @@ func TestConvertLogLevel(t *testing.T) {
 	}
 
 	logLevelTests := []logLevelTestStruct{
-		logLevelTestStruct{
+		{
 			Description: "debug log level",
 			Input:       "debug",
 			Output:      zerolog.DebugLevel,
 		},
-		logLevelTestStruct{
+		{
 			Description: "info log level",
 			Input:       "info",
 			Output:      zerolog.InfoLevel,
 		},
-		logLevelTestStruct{
+		{
 			Description: "warning log level",
 			Input:       "warn",
 			Output:      zerolog.WarnLevel,
 		},
-		logLevelTestStruct{
+		{
 			Description: "warning log level",
 			Input:       "warning",
 			Output:      zerolog.WarnLevel,
 		},
-		logLevelTestStruct{
+		{
 			Description: "error log level",
 			Input:       "error",
 			Output:      zerolog.ErrorLevel,
 		},
-		logLevelTestStruct{
+		{
 			Description: "fatal log level",
 			Input:       "fatal",
 			Output:      zerolog.FatalLevel,

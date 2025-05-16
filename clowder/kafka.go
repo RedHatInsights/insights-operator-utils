@@ -16,6 +16,7 @@ package clowder
 
 import (
 	"fmt"
+
 	"github.com/RedHatInsights/insights-operator-utils/kafka"
 	api "github.com/redhatinsights/app-common-go/pkg/api/v1"
 )
@@ -73,5 +74,4 @@ func UseClowderTopics(brokerCfg *kafka.BrokerConfiguration, kafkaTopics map[stri
 	} else {
 		fmt.Printf(noTopicMapping, brokerCfg.Topic)
 	}
-
 }

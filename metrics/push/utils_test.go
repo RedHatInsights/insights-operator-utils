@@ -30,7 +30,6 @@ var (
 )
 
 func TestNewCounter(t *testing.T) {
-
 	t.Run("valid counter", func(t *testing.T) {
 		_, err := push.NewCounterWithError(prometheus.CounterOpts{Name: validPrefix + "counter"})
 		assert.NoError(t, err)
@@ -38,7 +37,6 @@ func TestNewCounter(t *testing.T) {
 }
 
 func TestNewCounterVec(t *testing.T) {
-
 	t.Run("valid counter", func(t *testing.T) {
 		_, err := push.NewCounterVecWithError(prometheus.CounterOpts{Name: validPrefix + "counter_vec"}, []string{})
 		assert.NoError(t, err)
@@ -46,7 +44,6 @@ func TestNewCounterVec(t *testing.T) {
 }
 
 func TestNewGauge(t *testing.T) {
-
 	t.Run("valid gauge", func(t *testing.T) {
 		_, err := push.NewGaugeWithError(prometheus.GaugeOpts{Name: validPrefix + "gauge"})
 		assert.NoError(t, err)
@@ -54,7 +51,6 @@ func TestNewGauge(t *testing.T) {
 }
 
 func TestNewHistogram(t *testing.T) {
-
 	t.Run("valid histogram", func(t *testing.T) {
 		_, err := push.NewHistogramWithError(prometheus.HistogramOpts{Name: validPrefix + "histogram"})
 		assert.NoError(t, err)

@@ -67,7 +67,7 @@ func FrisbyExpectItemInArray(fieldName string, expectedItem interface{}) frisby.
 
 		return false, fmt.Sprintf(
 			"Item %v was not found in array %v in response %v",
-			expectedItem, array, string(jsonResp),
+			expectedItem, array, jsonResp,
 		)
 	}
 }

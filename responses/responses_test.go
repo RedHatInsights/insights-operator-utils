@@ -153,7 +153,7 @@ func checkResponse(
 		}
 		defer closeResponseBody(t, res)
 
-		fmt.Println(body)
+		fmt.Println(string(body))
 
 		var expected map[string]interface{}
 		err = json.NewDecoder(strings.NewReader(expectedBody)).Decode(&expected)
