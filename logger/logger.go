@@ -182,16 +182,19 @@ func convertLogLevel(level string) zerolog.Level {
 }
 
 func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
+	// os.Hostname is preferred to os.Getenv("HOSTNAME") because the env var might
+	// not be populated yet (e.g. GitHub runners)
+	hostname, err := os.Hostname()
+	if err != nil {
+		return nil, err
+	}
+
 	// if no log stream name is explicitly provided, HOSTNAME is used
 	if conf.StreamName == "" {
-		hostname, err := os.Hostname()
-		if err != nil {
-			return nil, err
-		}
 		conf.StreamName = hostname
 	} else {
 		// take provided log stream name and replace any $HOSTNAME placeholders with real hostname
-		conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", os.Getenv("HOSTNAME"))
+		conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", hostname)
 	}
 	awsLogLevel := aws.LogOff
 	if conf.Debug {

@@ -367,7 +367,8 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 		const baseURL = "http://localhost:9999"
 		logger.AWSCloudWatchEndpoint = baseURL + "/cloudwatch"
 
-		hostname := os.Getenv("HOSTNAME")
+		hostname, err := os.Hostname()
+		helpers.FailOnError(t, err)
 
 		expects := []RemoteLoggingExpect{
 			{
@@ -406,7 +407,7 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 		cloudWatchConfCopy := &cloudWatchConf
 		cloudWatchConfCopy.StreamName = "" // empty stream name == expeting HOSTNAME as stream name
 
-		err := logger.InitZerolog(logger.LoggingConfiguration{
+		err = logger.InitZerolog(logger.LoggingConfiguration{
 			Debug:                      false,
 			LogLevel:                   "debug",
 			LoggingToCloudWatchEnabled: true,
