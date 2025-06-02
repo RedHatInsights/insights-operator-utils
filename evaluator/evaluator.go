@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 Pavel Tisnovsky
+Copyright © 2022, 2023 Pavel Tisnovsky
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -155,7 +155,7 @@ func Evaluate(expression string, values map[string]int) (int, error) {
 	s.Init(file, []byte(expression), nil, scanner.ScanComments)
 
 	// transform input expression into postfix notation
-	postfixExpression := toRPN(s)
+	postfixExpression := toRPN(&s)
 
 	// evaluate the expression represented in postfix notation
 	stack, err := evaluateRPN(postfixExpression, values)

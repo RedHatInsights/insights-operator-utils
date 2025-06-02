@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -31,8 +32,11 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	httputils "github.com/RedHatInsights/insights-operator-utils/http"
+	"github.com/RedHatInsights/insights-operator-utils/metrics"
 	"github.com/RedHatInsights/insights-operator-utils/responses"
 	"github.com/RedHatInsights/insights-operator-utils/tests/helpers"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/testutil"
 )
 
 const (
@@ -64,6 +68,20 @@ func TestLogRequest(t *testing.T) {
 	helpers.FailOnError(t, err)
 
 	assert.Contains(t, buf.String(), "Request received - URI: /, Method: GET")
+
+	expected := `
+	# HELP api_endpoints_requests The total number of requests per endpoint
+	# TYPE api_endpoints_requests counter
+	api_endpoints_requests{endpoint="/"} 1
+	`
+	assertCollectorEquals(t, metrics.APIRequests, expected)
+
+	expected = `
+	# HELP api_endpoints_status_codes API endpoints status codes
+	# TYPE api_endpoints_status_codes counter
+	api_endpoints_status_codes{endpoint="/", status_code="200"} 1
+	`
+	assertCollectorEquals(t, metrics.APIResponseStatusCodes, expected)
 }
 
 type Endpoint struct {
@@ -92,4 +110,9 @@ func createTestServer(t testing.TB, endpoints []Endpoint) *http.Server {
 	}()
 
 	return server
+}
+
+func assertCollectorEquals(t *testing.T, c prometheus.Collector, expected string) {
+	err := testutil.CollectAndCompare(c, strings.NewReader(expected))
+	helpers.FailOnError(t, err)
 }

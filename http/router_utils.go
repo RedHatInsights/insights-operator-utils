@@ -109,7 +109,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (ctypes.RuleI
 	ruleID, err := GetRouterParam(request, "rule_id")
 	if err != nil {
 		const message = "unable to get rule id"
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
 		return ctypes.RuleID("0"), false
 	}
@@ -118,7 +118,7 @@ func ReadRuleID(writer http.ResponseWriter, request *http.Request) (ctypes.RuleI
 
 	if !isRuleIDValid {
 		err = fmt.Errorf("invalid rule ID, it must contain only from latin characters, number, underscores or dots")
-		log.Error().Err(err)
+		log.Warn().Err(err)
 		types.HandleServerError(writer, &types.RouterParsingError{
 			ParamName:  "rule_id",
 			ParamValue: ruleID,
@@ -136,7 +136,7 @@ func ReadErrorKey(writer http.ResponseWriter, request *http.Request) (ctypes.Err
 	errorKey, err := GetRouterParam(request, "error_key")
 	if err != nil {
 		const message = "unable to get error_key"
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
 		return ctypes.ErrorKey("0"), false
 	}
@@ -151,7 +151,7 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes
 	ruleSelector, err := GetRouterParam(request, "rule_selector")
 	if err != nil {
 		const message = "Unable to get rule selector from request"
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 		types.HandleServerError(writer, err)
 		return "", false
 	}
@@ -160,7 +160,7 @@ func ReadRuleSelector(writer http.ResponseWriter, request *http.Request) (ctypes
 
 	if !isRuleSelectorValid {
 		errMsg := "Param rule_selector is not a valid rule selector (plugin_name|error_key)"
-		log.Error().Msg(errMsg)
+		log.Warn().Msg(errMsg)
 		types.HandleServerError(writer, &types.RouterParsingError{
 			ParamName:  "rule_selector",
 			ParamValue: ruleSelector,
@@ -192,9 +192,15 @@ func ReadOrganizationID(writer http.ResponseWriter, request *http.Request, auth 
 		return 0, false
 	}
 
-	successful := CheckPermissions(writer, request, ctypes.OrgID(organizationID), auth)
+	orgID, err := types.Uint64ToUint32(organizationID)
+	if err != nil {
+		HandleOrgIDError(writer, err)
+		return 0, false
+	}
 
-	return ctypes.OrgID(organizationID), successful
+	successful := CheckPermissions(writer, request, ctypes.OrgID(orgID), auth)
+
+	return ctypes.OrgID(orgID), successful
 }
 
 // ReadClusterNames does the same as `readClusterName`, except for multiple clusters.
@@ -202,7 +208,7 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]ctyp
 	clusterNamesParam, err := GetRouterParam(request, "clusters")
 	if err != nil {
 		message := fmt.Sprintf("Cluster names are not provided %v", err.Error())
-		log.Error().Msg(message)
+		log.Warn().Msg(message)
 
 		types.HandleServerError(writer, err)
 
@@ -223,6 +229,30 @@ func ReadClusterNames(writer http.ResponseWriter, request *http.Request) ([]ctyp
 	return clusterNamesConverted, true
 }
 
+// parseAndValidateOrgID parses and validates a single organization ID string.
+func parseAndValidateOrgID(writer http.ResponseWriter, orgStr string) (ctypes.OrgID, bool) {
+	v, err := strconv.ParseUint(orgStr, 10, 64)
+	if err != nil {
+		handleOrgIDParsingError(writer, orgStr, "integer array expected")
+		return 0, false
+	}
+	orgInt, err := types.Uint64ToUint32(v)
+	if err != nil {
+		handleOrgIDParsingError(writer, orgStr, "integer array expected")
+		return 0, false
+	}
+	return ctypes.OrgID(orgInt), true
+}
+
+// handleOrgIDParsingError handles the error for parsing organization IDs.
+func handleOrgIDParsingError(writer http.ResponseWriter, orgStr, errString string) {
+	types.HandleServerError(writer, &types.RouterParsingError{
+		ParamName:  "organizations",
+		ParamValue: orgStr,
+		ErrString:  errString,
+	})
+}
+
 // ReadOrganizationIDs does the same as `readOrganizationID`, except for multiple organizations.
 func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]ctypes.OrgID, bool) {
 	organizationsParam, err := GetRouterParam(request, "organizations")
@@ -233,16 +263,11 @@ func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]c
 
 	organizationsConverted := make([]ctypes.OrgID, 0)
 	for _, orgStr := range SplitRequestParamArray(organizationsParam) {
-		orgInt, err := strconv.ParseUint(orgStr, 10, 64)
-		if err != nil {
-			types.HandleServerError(writer, &types.RouterParsingError{
-				ParamName:  "organizations",
-				ParamValue: orgStr,
-				ErrString:  "integer array expected",
-			})
+		orgID, ok := parseAndValidateOrgID(writer, orgStr)
+		if !ok {
 			return []ctypes.OrgID{}, false
 		}
-		organizationsConverted = append(organizationsConverted, ctypes.OrgID(orgInt))
+		organizationsConverted = append(organizationsConverted, orgID)
 	}
 
 	return organizationsConverted, true
@@ -250,7 +275,7 @@ func ReadOrganizationIDs(writer http.ResponseWriter, request *http.Request) ([]c
 
 // HandleOrgIDError logs org id error and writes corresponding http response
 func HandleOrgIDError(writer http.ResponseWriter, err error) {
-	log.Error().Err(err).Msg("error getting organization ID from request")
+	log.Warn().Err(err).Msg("error getting organization ID from request")
 	types.HandleServerError(writer, err)
 }
 
@@ -264,7 +289,7 @@ func CheckPermissions(writer http.ResponseWriter, request *http.Request, orgID c
 		if identity.OrgID != orgID {
 			message := fmt.Sprintf("you have no permissions to get or change info about the organization "+
 				"with ID %d; you can access info about organization with ID %d", orgID, identity.OrgID)
-			log.Error().Msg(message)
+			log.Warn().Msg(message)
 			types.HandleServerError(writer, &types.ForbiddenError{ErrString: message})
 
 			return false
@@ -279,7 +304,7 @@ func ValidateClusterName(clusterName string) (ctypes.ClusterName, error) {
 	if _, err := uuid.Parse(clusterName); err != nil {
 		message := fmt.Sprintf("invalid cluster name: '%s'. Error: %s", clusterName, err.Error())
 
-		log.Error().Err(err).Msg(message)
+		log.Warn().Err(err).Msg(message)
 
 		return "", &types.RouterParsingError{
 			ParamName:  "cluster",
@@ -292,7 +317,7 @@ func ValidateClusterName(clusterName string) (ctypes.ClusterName, error) {
 }
 
 func handleClusterNameError(writer http.ResponseWriter, err error) {
-	log.Error().Msg(err.Error())
+	log.Warn().Msg(err.Error())
 
 	// query parameter 'cluster' can't be found in request, which might be caused by issue in Gorilla mux
 	// (not on client side), but let's assume it won't :)

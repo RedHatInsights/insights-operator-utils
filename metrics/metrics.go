@@ -22,7 +22,6 @@ limitations under the License.
 // api_endpoints_response_time - response times for all REST API endpoints
 //
 // api_endpoints_status_codes - number of responses for each status code
-//
 package metrics
 
 // Documentation in literate-programming-style is available at:
@@ -51,7 +50,7 @@ var (
 	APIResponseStatusCodes *prometheus.CounterVec = promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_endpoints_status_codes",
 		Help: "API endpoints status codes",
-	}, []string{"status_code"})
+	}, []string{"status_code", "endpoint"})
 )
 
 // AddAPIMetricsWithNamespace overwrite the defined metrics with namespaced version of them
@@ -77,5 +76,5 @@ func AddAPIMetricsWithNamespace(namespace string) {
 		Namespace: namespace,
 		Name:      "api_endpoints_status_codes",
 		Help:      "API endpoints status codes",
-	}, []string{"status_code"})
+	}, []string{"status_code", "endpoint"})
 }

@@ -27,15 +27,10 @@ import (
 	types "github.com/RedHatInsights/insights-results-types"
 )
 
-// TestCompareReportResponsesZeroTimestamp function checks the function
-// CompareReportResponses when timestamp is set to zero
-func TestCompareReportResponsesZeroTimestamp(t *testing.T) {
-	// let's use zero time value there
-	var timestamp time.Time
-
-	expectedReport := types.RuleOnReport{
+func reportWithErrorKey(errorKey string) types.RuleOnReport {
+	return types.RuleOnReport{
 		Module:          "",
-		ErrorKey:        "",
+		ErrorKey:        types.ErrorKey(errorKey),
 		UserVote:        types.UserVoteNone,
 		Disabled:        false,
 		DisableFeedback: "",
@@ -43,6 +38,15 @@ func TestCompareReportResponsesZeroTimestamp(t *testing.T) {
 		TemplateData:    nil,
 		CreatedAt:       "",
 	}
+}
+
+// TestCompareReportResponsesZeroTimestamp function checks the function
+// CompareReportResponses when timestamp is set to zero
+func TestCompareReportResponsesZeroTimestamp(t *testing.T) {
+	// let's use zero time value there
+	var timestamp time.Time
+
+	expectedReport := reportWithErrorKey("")
 
 	// exactly the same report
 	actualReport := expectedReport
@@ -115,27 +119,8 @@ func TestSortReportsSliceWithOneItem(t *testing.T) {
 // SortReports when the input slice contains just two already sorted values
 func TestSortReportsSliceWithTwoSortedItems(t *testing.T) {
 	var reports []types.RuleOnReport
-	report1 := types.RuleOnReport{
-		Module:          "",
-		ErrorKey:        "AAA",
-		UserVote:        types.UserVoteNone,
-		Disabled:        false,
-		DisableFeedback: "",
-		DisabledAt:      "",
-		TemplateData:    nil,
-		CreatedAt:       "",
-	}
-
-	report2 := types.RuleOnReport{
-		Module:          "",
-		ErrorKey:        "BBB",
-		UserVote:        types.UserVoteNone,
-		Disabled:        false,
-		DisableFeedback: "",
-		DisabledAt:      "",
-		TemplateData:    nil,
-		CreatedAt:       "",
-	}
+	report1 := reportWithErrorKey("AAA")
+	report2 := reportWithErrorKey("BBB")
 
 	// put both reports into the slice
 	reports = append(reports, report1, report2)
@@ -153,27 +138,8 @@ func TestSortReportsSliceWithTwoSortedItems(t *testing.T) {
 // SortReports when the input slice contains just two unsorted values
 func TestSortReportsSliceWithTwoUnsortedItems(t *testing.T) {
 	var reports []types.RuleOnReport
-	report1 := types.RuleOnReport{
-		Module:          "",
-		ErrorKey:        "BBB",
-		UserVote:        types.UserVoteNone,
-		Disabled:        false,
-		DisableFeedback: "",
-		DisabledAt:      "",
-		TemplateData:    nil,
-		CreatedAt:       "",
-	}
-
-	report2 := types.RuleOnReport{
-		Module:          "",
-		ErrorKey:        "AAA",
-		UserVote:        types.UserVoteNone,
-		Disabled:        false,
-		DisableFeedback: "",
-		DisabledAt:      "",
-		TemplateData:    nil,
-		CreatedAt:       "",
-	}
+	report1 := reportWithErrorKey("BBB")
+	report2 := reportWithErrorKey("AAA")
 
 	// put both reports into the slice
 	reports = append(reports, report1, report2)

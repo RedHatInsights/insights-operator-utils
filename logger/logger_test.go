@@ -1,4 +1,4 @@
-// Copyright 2020, 2021, 2022 Red Hat, Inc
+// Copyright 2020, 2021, 2022, 2023 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -210,6 +210,24 @@ func TestWorkaroundForRHIOPS729_Write(t *testing.T) {
 	}
 }
 
+// TestInitZerolog_DebugEnabled check if/how instance of zerolog is constructed
+// when debug output is enabled.
+func TestInitZerolog_DebugEnabled(t *testing.T) {
+	err := logger.InitZerolog(
+		logger.LoggingConfiguration{
+			Debug:                      true,
+			LogLevel:                   "debug",
+			LoggingToCloudWatchEnabled: true,
+		},
+		logger.CloudWatchConfiguration{},
+		logger.SentryLoggingConfiguration{},
+		logger.KafkaZerologConfiguration{},
+	)
+	helpers.FailOnError(t, err)
+}
+
+// TestInitZerolog_LogToCloudWatch check if/how instance of zerolog is
+// constructed when logging to CloudWatch is enabled.
 func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 	err := logger.InitZerolog(
 		logger.LoggingConfiguration{
@@ -218,6 +236,25 @@ func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 			LoggingToCloudWatchEnabled: true,
 		},
 		logger.CloudWatchConfiguration{},
+		logger.SentryLoggingConfiguration{},
+		logger.KafkaZerologConfiguration{},
+	)
+	helpers.FailOnError(t, err)
+}
+
+// TestInitZerolog_LogToCloudWatch check if/how instance of zerolog is
+// constructed when logging to CloudWatch is enabled, including debug output
+// for CloudWatch.
+func TestInitZerolog_LogToCloudWatchWithDebug(t *testing.T) {
+	err := logger.InitZerolog(
+		logger.LoggingConfiguration{
+			Debug:                      false,
+			LogLevel:                   "debug",
+			LoggingToCloudWatchEnabled: true,
+		},
+		logger.CloudWatchConfiguration{
+			Debug: true,
+		},
 		logger.SentryLoggingConfiguration{},
 		logger.KafkaZerologConfiguration{},
 	)
@@ -417,4 +454,52 @@ func TestKafkaLogging(t *testing.T) {
 		kafkaLoggingConf,
 	)
 	helpers.FailOnError(t, err)
+}
+
+func TestConvertLogLevel(t *testing.T) {
+	type logLevelTestStruct struct {
+		Input       string
+		Output      zerolog.Level
+		Description string
+	}
+
+	logLevelTests := []logLevelTestStruct{
+		{
+			Description: "debug log level",
+			Input:       "debug",
+			Output:      zerolog.DebugLevel,
+		},
+		{
+			Description: "info log level",
+			Input:       "info",
+			Output:      zerolog.InfoLevel,
+		},
+		{
+			Description: "warning log level",
+			Input:       "warn",
+			Output:      zerolog.WarnLevel,
+		},
+		{
+			Description: "warning log level",
+			Input:       "warning",
+			Output:      zerolog.WarnLevel,
+		},
+		{
+			Description: "error log level",
+			Input:       "error",
+			Output:      zerolog.ErrorLevel,
+		},
+		{
+			Description: "fatal log level",
+			Input:       "fatal",
+			Output:      zerolog.FatalLevel,
+		},
+	}
+
+	for _, logLevelTest := range logLevelTests {
+		t.Run(logLevelTest.Description, func(t *testing.T) {
+			level := logger.ConvertLogLevel(logLevelTest.Input)
+			assert.Equal(t, logLevelTest.Output, level)
+		})
+	}
 }

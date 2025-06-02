@@ -85,13 +85,13 @@ func MakeURLToEndpointMap(apiPrefix, endpoint string, args map[string]interface{
 }
 
 // SetHTTPPrefix adds HTTP prefix if it is not already present in the given string
-func SetHTTPPrefix(url string) string {
-	if !strings.HasPrefix(url, "http") {
+func SetHTTPPrefix(originalURL string) string {
+	if !strings.HasPrefix(originalURL, "http") {
 		// if no protocol is specified in given URL, assume it is not
 		// needed to use https
-		url = "http://" + url
+		return "http://" + originalURL
 	}
-	return url
+	return originalURL
 }
 
 // SendRequest sends the given request, reads the body and handles related errors

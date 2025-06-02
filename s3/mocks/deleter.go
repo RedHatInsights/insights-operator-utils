@@ -48,7 +48,6 @@ func (m *MockS3Client) DeleteObjects(input *s3.DeleteObjectsInput) (*s3.DeleteOb
 	}
 
 	for _, obj := range input.Delete.Objects {
-
 		if *obj.Key == "" {
 			return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
 		}

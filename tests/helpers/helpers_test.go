@@ -19,6 +19,7 @@ package helpers_test
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -50,7 +51,7 @@ const (
 
 var (
 	serverAddress = localhostAddress + ":" + fmt.Sprint(port)
-	testError     = fmt.Errorf("test error")
+	testError     = errors.New("test error") //nolint:staticcheck // ST1012
 	devNull       interface{}
 )
 
@@ -328,10 +329,10 @@ func TestGockExpectAPIRequest(t *testing.T) {
 func TestNewGockAPIEndpointMatcher(t *testing.T) {
 	matcher := helpers.NewGockAPIEndpointMatcher(testEndpoint)
 
-	request, err := http.NewRequest(http.MethodGet, testEndpoint, http.NoBody)
+	httpRequest, err := http.NewRequest(http.MethodGet, testEndpoint, http.NoBody)
 	helpers.FailOnError(t, err)
 
-	result, err := matcher(request, nil)
+	result, err := matcher(httpRequest, nil)
 	helpers.FailOnError(t, err)
 
 	assert.True(t, result)

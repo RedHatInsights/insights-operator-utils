@@ -21,7 +21,7 @@ NC='\033[0m' # No Color
 if ! [ -x "$(command -v abcgo)" ]
 then
     echo -e "${BLUE}Installing abcgo${NC}"
-    GO111MODULE=off go get -u github.com/droptheplot/abcgo
+    go install github.com/droptheplot/abcgo
 fi
 
 

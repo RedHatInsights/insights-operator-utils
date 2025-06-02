@@ -58,5 +58,4 @@ func TestGenerateCompositeRuleID(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, err.Error(), "empty rule FQDN")
 	})
-
 }

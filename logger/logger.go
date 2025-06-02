@@ -1,5 +1,5 @@
 /*
-Copyright © 2020, 2021, 2022 Red Hat, Inc.
+Copyright © 2020, 2021, 2022, 2023 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
+	sentry "github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -111,7 +112,7 @@ func InitZerolog(
 	writers = append(writers, consoleWriter)
 
 	if loggingConf.LoggingToCloudWatchEnabled {
-		cloudWatchWriter, err := setupCloudwatchLogging(cloudWatchConf)
+		cloudWatchWriter, err := setupCloudwatchLogging(&cloudWatchConf)
 		if err != nil {
 			err = fmt.Errorf("Error initializing Cloudwatch logging: %s", err.Error())
 			return err
@@ -150,7 +151,6 @@ func InitZerolog(
 
 // CloseZerolog closes properly the zerolog, if needed
 func CloseZerolog() {
-
 	for _, toClose := range needClose {
 		if err := toClose.Close(); err != nil {
 			log.Debug().Err(err).Msg("Error when closing")
@@ -181,7 +181,7 @@ func convertLogLevel(level string) zerolog.Level {
 	return zerolog.DebugLevel
 }
 
-func setupCloudwatchLogging(conf CloudWatchConfiguration) (io.Writer, error) {
+func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 	conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", os.Getenv("HOSTNAME"))
 	awsLogLevel := aws.LogOff
 	if conf.Debug {
@@ -222,8 +222,17 @@ func setupCloudwatchLogging(conf CloudWatchConfiguration) (io.Writer, error) {
 	return cloudWatchWriter, nil
 }
 
+func sentryBeforeSend(event *sentry.Event, _ *sentry.EventHint) *sentry.Event {
+	event.Fingerprint = []string{event.Message}
+	return event
+}
+
 func setupSentryLogging(conf SentryLoggingConfiguration) (io.WriteCloser, error) {
-	sentryWriter, err := zlogsentry.New(conf.SentryDSN, zlogsentry.WithEnvironment(conf.SentryEnvironment))
+	sentryWriter, err := zlogsentry.New(
+		conf.SentryDSN,
+		zlogsentry.WithEnvironment(conf.SentryEnvironment),
+		zlogsentry.WithBeforeSend(sentryBeforeSend),
+	)
 	if err != nil {
 		return nil, err
 	}

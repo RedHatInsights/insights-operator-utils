@@ -145,6 +145,7 @@ func TestApiResponseStatusCodesMetric_StatusOK(t *testing.T) {
 
 		assert.Equal(t, 0.0, getCounterVecValue(metrics.APIResponseStatusCodes, map[string]string{
 			"status_code": fmt.Sprint(http.StatusOK),
+			"endpoint":    fmt.Sprintf("%s%s", apiPrefix, testEndpoint),
 		}))
 
 		server := prepareServer(http.StatusOK)
@@ -160,6 +161,7 @@ func TestApiResponseStatusCodesMetric_StatusOK(t *testing.T) {
 
 		assert.Equal(t, 15.0, getCounterVecValue(metrics.APIResponseStatusCodes, map[string]string{
 			"status_code": fmt.Sprint(http.StatusOK),
+			"endpoint":    fmt.Sprintf("%s%s", apiPrefix, testEndpoint),
 		}))
 	}, testCaseTimeLimit)
 }
@@ -170,6 +172,7 @@ func TestApiResponseStatusCodesMetric_StatusBadRequest(t *testing.T) {
 
 		assert.Equal(t, 0.0, getCounterVecValue(metrics.APIResponseStatusCodes, map[string]string{
 			"status_code": fmt.Sprint(http.StatusBadRequest),
+			"endpoint":    fmt.Sprintf("%s%s", apiPrefix, testEndpoint),
 		}))
 
 		server := prepareServer(http.StatusBadRequest)
@@ -183,6 +186,7 @@ func TestApiResponseStatusCodesMetric_StatusBadRequest(t *testing.T) {
 
 		assert.Equal(t, 1.0, getCounterVecValue(metrics.APIResponseStatusCodes, map[string]string{
 			"status_code": fmt.Sprint(http.StatusBadRequest),
+			"endpoint":    fmt.Sprintf("%s%s", apiPrefix, testEndpoint),
 		}))
 	}, testCaseTimeLimit)
 }
