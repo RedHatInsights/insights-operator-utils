@@ -20,6 +20,7 @@ package logger_test
 import (
 	"bytes"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -47,34 +48,6 @@ var (
 		CreateStreamIfNotExists: true,
 		Debug:                   false,
 	}
-	describeLogStreamsEvent = RemoteLoggingExpect{
-		http.MethodPost,
-		"Logs_20140328.DescribeLogStreams",
-		`{
-					"descending": true,
-					"logGroupName": "` + cloudWatchConf.LogGroup + `",
-					"logStreamNamePrefix": "` + cloudWatchConf.StreamName + `",
-					"orderBy": "LogStreamName"
-				}`,
-		http.StatusOK,
-		`{
-					"logStreams": [
-						{
-							"arn": "arn:aws:logs:` +
-			cloudWatchConf.AWSRegion + `:012345678910:log-group:` + cloudWatchConf.LogGroup +
-			`:log-stream:` + cloudWatchConf.StreamName + `",
-							"creationTime": 1,
-							"firstEventTimestamp": 2,
-							"lastEventTimestamp": 3,
-							"lastIngestionTime": 4,
-							"logStreamName": "` + cloudWatchConf.StreamName + `",
-							"storedBytes": 100,
-							"uploadSequenceToken": "1"
-						}
-					],
-					"nextToken": "token1"
-				}`,
-	}
 )
 
 type RemoteLoggingExpect struct {
@@ -83,6 +56,37 @@ type RemoteLoggingExpect struct {
 	ExpectedBody     string
 	ResultStatusCode int
 	ResultBody       string
+}
+
+func getDescribeLogStreamsEvent(logStreamName string) RemoteLoggingExpect {
+	return RemoteLoggingExpect{
+		http.MethodPost,
+		"Logs_20140328.DescribeLogStreams",
+		`{
+			"descending": true,
+			"logGroupName": "` + cloudWatchConf.LogGroup + `",
+			"logStreamNamePrefix": "` + logStreamName + `",
+			"orderBy": "LogStreamName"
+		}`,
+		http.StatusOK,
+		`{
+			"logStreams": [
+				{
+					"arn": "arn:aws:logs:` +
+			cloudWatchConf.AWSRegion + `:012345678910:log-group:` + cloudWatchConf.LogGroup +
+			`:log-stream:` + logStreamName + `",
+					"creationTime": 1,
+					"firstEventTimestamp": 2,
+					"lastEventTimestamp": 3,
+					"lastIngestionTime": 4,
+					"logStreamName": "` + logStreamName + `",
+					"storedBytes": 100,
+					"uploadSequenceToken": "1"
+				}
+			],
+			"nextToken": "token1"
+		}`,
+	}
 }
 
 func TestSaramaZerologger(t *testing.T) {
@@ -282,7 +286,7 @@ func TestLoggingToCloudwatch(t *testing.T) {
 					"message": "The specified log stream already exists"
 				}`,
 			},
-			describeLogStreamsEvent,
+			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
 			{
 				http.MethodPost,
 				"Logs_20140328.PutLogEvents",
@@ -317,9 +321,9 @@ func TestLoggingToCloudwatch(t *testing.T) {
 				http.StatusOK,
 				`{"nextSequenceToken":"3"}`,
 			},
-			describeLogStreamsEvent,
-			describeLogStreamsEvent,
-			describeLogStreamsEvent,
+			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
+			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
+			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
 		}
 
 		for _, expect := range expects {
@@ -351,6 +355,68 @@ func TestLoggingToCloudwatch(t *testing.T) {
 		helpers.FailOnError(t, err)
 
 		log.Error().Msg("test message")
+	}, testTimeout)
+}
+
+// TestLoggingToCloudwatch_LogStreamMissing tests log stream name behavior when the log stream is missing
+// == expecting HOSTNAME as the log stream name
+func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
+	helpers.RunTestWithTimeout(t, func(t testing.TB) {
+		defer helpers.CleanAfterGock(t)
+
+		const baseURL = "http://localhost:9999"
+		logger.AWSCloudWatchEndpoint = baseURL + "/cloudwatch"
+
+		hostname, err := os.Hostname()
+		helpers.FailOnError(t, err)
+
+		expects := []RemoteLoggingExpect{
+			{
+				http.MethodPost,
+				"Logs_20140328.CreateLogStream",
+				`{
+					"logGroupName": "` + cloudWatchConf.LogGroup + `",
+					"logStreamName": "` + hostname + `"
+				}`,
+				http.StatusBadRequest,
+				`{
+					"__type": "ResourceAlreadyExistsException",
+					"message": "The specified log stream already exists"
+				}`,
+			},
+			getDescribeLogStreamsEvent(hostname),
+		}
+
+		for _, expect := range expects {
+			helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
+				Method:   expect.ExpectedMethod,
+				Body:     expect.ExpectedBody,
+				Endpoint: "cloudwatch/",
+				ExtraHeaders: http.Header{
+					"X-Amz-Target": []string{expect.ExpectedTarget},
+				},
+			}, &helpers.APIResponse{
+				StatusCode: expect.ResultStatusCode,
+				Body:       expect.ResultBody,
+				Headers: map[string]string{
+					"Content-Type": "application/x-amz-json-1.1",
+				},
+			})
+		}
+
+		cloudWatchConfCopy := &cloudWatchConf
+		cloudWatchConfCopy.StreamName = "" // empty stream name == expeting HOSTNAME as stream name
+
+		err = logger.InitZerolog(logger.LoggingConfiguration{
+			Debug:                      false,
+			LogLevel:                   "debug",
+			LoggingToCloudWatchEnabled: true,
+		},
+			*cloudWatchConfCopy,
+			logger.SentryLoggingConfiguration{},
+			logger.KafkaZerologConfiguration{},
+		)
+		helpers.FailOnError(t, err)
 	}, testTimeout)
 }
 
