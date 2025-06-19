@@ -20,7 +20,7 @@ package saramahelpers
 import (
 	"context"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 )
 
 // MockConsumerGroupSession MockConsumerGroupSession
