@@ -12,34 +12,34 @@
 
 <!-- vim-markdown-toc GFM -->
 
-* [Description](#description)
-* [Sub-modules in this library](#sub-modules-in-this-library)
-    * [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
-    * [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
-    * [`github.com/RedHatInsights/insights-operator-utils/evaluator`](#githubcomredhatinsightsinsights-operator-utilsevaluator)
-    * [`github.com/RedHatInsights/insights-operator-utils/generators`](#githubcomredhatinsightsinsights-operator-utilsgenerators)
-    * [`github.com/RedHatInsights/insights-operator-utils/formatters`](#githubcomredhatinsightsinsights-operator-utilsformatters)
-    * [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
-    * [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
-    * [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
-    * [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
-    * [`github.com/RedHatInsights/insights-operator-utils/migrations`](#githubcomredhatinsightsinsights-operator-utilsmigrations)
-    * [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
-    * [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
-    * [`github.com/RedHatInsights/insights-operator-utils/s3`](#githubcomredhatinsightsinsights-operator-utilss3)
-    * [`github.com/RedHatInsights/insights-operator-utils/tls`](#githubcomredhatinsightsinsights-operator-utilstls)
-    * [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
-    * [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
-* [How to use this library](#how-to-use-this-library)
-* [Configuration](#configuration)
-* [Contribution](#contribution)
-* [Makefile targets](#makefile-targets)
-* [Testing](#testing)
-* [CI](#ci)
-    * [Travis CI](#travis-ci)
-    * [GolangCI](#golangci)
-* [Package manifest](#package-manifest)
-* [Open Source Insights status](#open-source-insights-status)
+- [insights-operator Utils](#insights-operator-utils)
+  - [Description](#description)
+  - [Sub-modules in this library](#sub-modules-in-this-library)
+    - [`github.com/RedHatInsights/insights-operator-utils/collections`](#githubcomredhatinsightsinsights-operator-utilscollections)
+    - [`github.com/RedHatInsights/insights-operator-utils/env`](#githubcomredhatinsightsinsights-operator-utilsenv)
+    - [`github.com/RedHatInsights/insights-operator-utils/evaluator`](#githubcomredhatinsightsinsights-operator-utilsevaluator)
+    - [`github.com/RedHatInsights/insights-operator-utils/generators`](#githubcomredhatinsightsinsights-operator-utilsgenerators)
+    - [`github.com/RedHatInsights/insights-operator-utils/formatters`](#githubcomredhatinsightsinsights-operator-utilsformatters)
+    - [`github.com/RedHatInsights/insights-operator-utils/http`](#githubcomredhatinsightsinsights-operator-utilshttp)
+    - [`github.com/RedHatInsights/insights-operator-utils/logger`](#githubcomredhatinsightsinsights-operator-utilslogger)
+    - [`github.com/RedHatInsights/insights-operator-utils/metrics`](#githubcomredhatinsightsinsights-operator-utilsmetrics)
+    - [`github.com/RedHatInsights/insights-operator-utils/metrics/push`](#githubcomredhatinsightsinsights-operator-utilsmetricspush)
+    - [`github.com/RedHatInsights/insights-operator-utils/migrations`](#githubcomredhatinsightsinsights-operator-utilsmigrations)
+    - [`github.com/RedHatInsights/insights-operator-utils/parsers`](#githubcomredhatinsightsinsights-operator-utilsparsers)
+    - [`github.com/RedHatInsights/insights-operator-utils/responses`](#githubcomredhatinsightsinsights-operator-utilsresponses)
+    - [`github.com/RedHatInsights/insights-operator-utils/s3`](#githubcomredhatinsightsinsights-operator-utilss3)
+    - [`github.com/RedHatInsights/insights-operator-utils/tls`](#githubcomredhatinsightsinsights-operator-utilstls)
+    - [`github.com/RedHatInsights/insights-operator-utils/tests`](#githubcomredhatinsightsinsights-operator-utilstests)
+    - [`github.com/RedHatInsights/insights-operator-utils/types`](#githubcomredhatinsightsinsights-operator-utilstypes)
+  - [How to use this library](#how-to-use-this-library)
+  - [Configuration](#configuration)
+  - [Contribution](#contribution)
+  - [Makefile targets](#makefile-targets)
+  - [Testing](#testing)
+  - [CI](#ci)
+    - [Travis CI](#travis-ci)
+    - [GolangCI](#golangci)
+  - [Open Source Insights status](#open-source-insights-status)
 
 <!-- vim-markdown-toc -->
 
@@ -222,10 +222,6 @@ History of checks performed by CI is available at [RedHatInsights / insights-ope
 ### GolangCI
 
 Also GolangCI is configured for this repository and is run for all pull requests.
-
-## Package manifest
-
-Package manifest is available at [docs/manifest.txt](docs/manifest.txt).
 
 ## Open Source Insights status
 
