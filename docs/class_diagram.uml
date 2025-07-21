@@ -92,20 +92,12 @@ namespace logger {
         + Debug bool
 
     }
-    class KafkaZerologConfiguration << (S,Aquamarine) >> {
-        + Broker string
-        + Topic string
-        + CertPath string
-        + Level string
-
-    }
     class LoggingConfiguration << (S,Aquamarine) >> {
         + Debug bool
         + UseStderr bool
         + LogLevel string
         + LoggingToCloudWatchEnabled bool
         + LoggingToSentryEnabled bool
-        + LoggingToKafkaEnabled bool
 
     }
     class SaramaZerologger << (S,Aquamarine) >> {

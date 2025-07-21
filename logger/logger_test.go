@@ -101,11 +101,9 @@ func TestSaramaZerologger(t *testing.T) {
 			LogLevel:                   "debug",
 			LoggingToCloudWatchEnabled: false,
 			LoggingToSentryEnabled:     false,
-			LoggingToKafkaEnabled:      false,
 		},
 		logger.CloudWatchConfiguration{},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 		zerolog.New(buf),
 	)
 	helpers.FailOnError(t, err)
@@ -161,7 +159,6 @@ func TestLoggerSetLogLevel(t *testing.T) {
 				},
 				logger.CloudWatchConfiguration{},
 				logger.SentryLoggingConfiguration{},
-				logger.KafkaZerologConfiguration{},
 				zerolog.New(buf),
 			)
 			helpers.FailOnError(t, err)
@@ -225,7 +222,6 @@ func TestInitZerolog_DebugEnabled(t *testing.T) {
 		},
 		logger.CloudWatchConfiguration{},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -241,7 +237,6 @@ func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 		},
 		logger.CloudWatchConfiguration{},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -260,7 +255,6 @@ func TestInitZerolog_LogToCloudWatchWithDebug(t *testing.T) {
 			Debug: true,
 		},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -350,7 +344,6 @@ func TestLoggingToCloudwatch(t *testing.T) {
 		},
 			cloudWatchConf,
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 		helpers.FailOnError(t, err)
 
@@ -414,7 +407,6 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 		},
 			*cloudWatchConfCopy,
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 		helpers.FailOnError(t, err)
 	}, testTimeout)
@@ -434,7 +426,6 @@ func TestInitZerolog_LogToSentry(t *testing.T) {
 	},
 		logger.CloudWatchConfiguration{},
 		sentryConf,
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -450,11 +441,9 @@ func TestCloseZerolog(t *testing.T) {
 		LogLevel:                   "debug",
 		LoggingToCloudWatchEnabled: false,
 		LoggingToSentryEnabled:     true,
-		LoggingToKafkaEnabled:      false,
 	},
 		logger.CloudWatchConfiguration{},
 		sentryConf,
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 	logger.CloseZerolog()
@@ -471,7 +460,6 @@ func TestStdoutLog(t *testing.T) {
 		},
 			logger.CloudWatchConfiguration{},
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 
 		log.Info().Msg("Hello world")
@@ -492,7 +480,6 @@ func TestStderrLog(t *testing.T) {
 		},
 			logger.CloudWatchConfiguration{},
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 
 		log.Info().Msg("Hello world")
@@ -503,21 +490,14 @@ func TestStderrLog(t *testing.T) {
 }
 
 func TestKafkaLogging(t *testing.T) {
-	kafkaLoggingConf := logger.KafkaZerologConfiguration{
-		Broker: "kafka:9092",
-		Topic:  "log_topic",
-	}
-
 	err := logger.InitZerolog(logger.LoggingConfiguration{
 		Debug:                      false,
 		LogLevel:                   "debug",
 		LoggingToCloudWatchEnabled: false,
 		LoggingToSentryEnabled:     false,
-		LoggingToKafkaEnabled:      true,
 	},
 		logger.CloudWatchConfiguration{},
 		logger.SentryLoggingConfiguration{},
-		kafkaLoggingConf,
 	)
 	helpers.FailOnError(t, err)
 }
