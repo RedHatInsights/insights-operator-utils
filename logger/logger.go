@@ -22,19 +22,21 @@ package logger
 // https://redhatinsights.github.io/insights-operator-utils/packages/logger/logger.html
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"strings"
 
 	"github.com/IBM/sarama"
-	"github.com/RedHatInsights/cloudwatch"
+	"github.com/RedHatInsights/insights-operator-utils/logger/cloudwatch"
 	zlogsentry "github.com/archdx/zerolog-sentry"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	sentry "github.com/getsentry/sentry-go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -185,30 +187,43 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 		// take provided log stream name and replace any $HOSTNAME placeholders with real hostname
 		conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", hostname)
 	}
-	awsLogLevel := aws.LogOff
-	if conf.Debug {
-		awsLogLevel = aws.LogDebugWithSigning |
-			aws.LogDebugWithHTTPBody |
-			aws.LogDebugWithEventStreamBody
+
+	// Build configuration options for AWS SDK v2
+	var configOptions []func(*config.LoadOptions) error
+
+	// Set region
+	if conf.AWSRegion != "" {
+		configOptions = append(configOptions, config.WithRegion(conf.AWSRegion))
 	}
 
-	awsConf := aws.NewConfig().
-		WithCredentials(credentials.NewStaticCredentials(
-			conf.AWSAccessID, conf.AWSSecretKey, conf.AWSSessionToken,
-		)).
-		WithRegion(conf.AWSRegion).
-		WithLogLevel(awsLogLevel)
+	// Set credentials if provided
+	if conf.AWSAccessID != "" && conf.AWSSecretKey != "" {
+		configOptions = append(configOptions, config.WithCredentialsProvider(
+			credentials.NewStaticCredentialsProvider(conf.AWSAccessID, conf.AWSSecretKey, conf.AWSSessionToken),
+		))
+	}
 
+	// Load the configuration
+	cfg, err := config.LoadDefaultConfig(context.TODO(), configOptions...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load AWS config: %w", err)
+	}
+
+	// Create CloudWatch Logs client with service-specific endpoint if provided
+	var cloudWatchClient *cloudwatchlogs.Client
 	if len(AWSCloudWatchEndpoint) > 0 {
-		awsConf = awsConf.WithEndpoint(AWSCloudWatchEndpoint)
+		cloudWatchClient = cloudwatchlogs.NewFromConfig(cfg, func(o *cloudwatchlogs.Options) {
+			o.BaseEndpoint = aws.String(AWSCloudWatchEndpoint)
+			// Use the default HTTP client to ensure gock can intercept requests
+			o.HTTPClient = http.DefaultClient
+		})
+	} else {
+		cloudWatchClient = cloudwatchlogs.NewFromConfig(cfg)
 	}
-
-	cloudWatchSession := session.Must(session.NewSession(awsConf))
-	CloudWatchClient := cloudwatchlogs.New(cloudWatchSession)
 
 	var cloudWatchWriter io.Writer
 	if conf.CreateStreamIfNotExists {
-		group := cloudwatch.NewGroup(conf.LogGroup, CloudWatchClient)
+		group := cloudwatch.NewGroup(conf.LogGroup, cloudWatchClient)
 
 		var err error
 		cloudWatchWriter, err = group.Create(conf.StreamName)
@@ -217,7 +232,7 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 		}
 	} else {
 		cloudWatchWriter = cloudwatch.NewWriter(
-			conf.LogGroup, conf.StreamName, CloudWatchClient,
+			conf.LogGroup, conf.StreamName, cloudWatchClient,
 		)
 	}
 

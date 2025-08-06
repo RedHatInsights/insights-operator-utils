@@ -263,8 +263,8 @@ func TestLoggingToCloudwatch(t *testing.T) {
 	helpers.RunTestWithTimeout(t, func(t testing.TB) {
 		defer helpers.CleanAfterGock(t)
 
-		const baseURL = "http://localhost:9999"
-		logger.AWSCloudWatchEndpoint = baseURL + "/cloudwatch"
+		const baseURL = "http://localhost:9999/"
+		logger.AWSCloudWatchEndpoint = baseURL
 
 		expects := []RemoteLoggingExpect{
 			{
@@ -324,7 +324,7 @@ func TestLoggingToCloudwatch(t *testing.T) {
 			helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
 				Method:   expect.ExpectedMethod,
 				Body:     expect.ExpectedBody,
-				Endpoint: "cloudwatch/",
+				Endpoint: "",
 				ExtraHeaders: http.Header{
 					"X-Amz-Target": []string{expect.ExpectedTarget},
 				},
@@ -357,8 +357,8 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 	helpers.RunTestWithTimeout(t, func(t testing.TB) {
 		defer helpers.CleanAfterGock(t)
 
-		const baseURL = "http://localhost:9999"
-		logger.AWSCloudWatchEndpoint = baseURL + "/cloudwatch"
+		const baseURL = "http://localhost:9999/"
+		logger.AWSCloudWatchEndpoint = baseURL
 
 		hostname, err := os.Hostname()
 		helpers.FailOnError(t, err)
@@ -384,7 +384,7 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 			helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
 				Method:   expect.ExpectedMethod,
 				Body:     expect.ExpectedBody,
-				Endpoint: "cloudwatch/",
+				Endpoint: "",
 				ExtraHeaders: http.Header{
 					"X-Amz-Target": []string{expect.ExpectedTarget},
 				},
