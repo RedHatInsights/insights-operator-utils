@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"sync"
 	"time"
@@ -19,7 +18,7 @@ type RejectedLogEventsInfoError struct {
 }
 
 func (e *RejectedLogEventsInfoError) Error() string {
-	return fmt.Sprintf("log messages were rejected")
+	return "log messages were rejected"
 }
 
 // Writer is an io.Writer implementation that writes lines to a cloudwatch logs
@@ -47,7 +46,13 @@ func NewWriter(group, stream string, client *cloudwatchlogs.Client) *Writer {
 		client:   client,
 		throttle: time.Tick(writeThrottle),
 	}
-	go w.start() // start flushing
+	go func() {
+		if err := w.start(); err != nil {
+			w.Lock()
+			w.err = err
+			w.Unlock()
+		}
+	}() // start flushing
 	return w
 }
 
@@ -60,7 +65,13 @@ func NewWriterWithToken(group, stream string, sequenceToken *string, client *clo
 		client:        client,
 		throttle:      time.Tick(writeThrottle),
 	}
-	go w.start() // start flushing
+	go func() {
+		if err := w.start(); err != nil {
+			w.Lock()
+			w.err = err
+			w.Unlock()
+		}
+	}() // start flushing
 	return w
 }
 
@@ -94,7 +105,7 @@ func (w *Writer) start() error {
 	}
 }
 
-// Closes the writer. Any subsequent calls to Write will return
+// Close closes the writer. Any subsequent calls to Write will return
 // io.ErrClosedPipe.
 func (w *Writer) Close() error {
 	w.closed = true

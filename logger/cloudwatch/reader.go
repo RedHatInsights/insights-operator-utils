@@ -51,7 +51,6 @@ func (r *Reader) start() {
 }
 
 func (r *Reader) read() error {
-
 	params := &cloudwatchlogs.GetLogEventsInput{
 		LogGroupName:  r.group,
 		LogStreamName: r.stream,
@@ -78,7 +77,9 @@ func (r *Reader) read() error {
 	}
 
 	for _, event := range resp.Events {
-		r.b.WriteString(*event.Message)
+		if _, err := r.b.WriteString(*event.Message); err != nil {
+			return err
+		}
 	}
 
 	return nil

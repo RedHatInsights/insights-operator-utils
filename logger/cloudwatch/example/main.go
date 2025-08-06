@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,5 +47,8 @@ func main() {
 		}
 	}()
 
-	io.Copy(os.Stdout, r)
+	_, err = io.Copy(os.Stdout, r)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

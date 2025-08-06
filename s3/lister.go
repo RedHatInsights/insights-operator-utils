@@ -27,12 +27,11 @@ import (
 
 // ListNObjectsInBucket returns a slice of the files at an S3 bucket at a given prefix. It starts
 // listing the files from `lastKey` and returns up to `maxKeys`.
-func ListNObjectsInBucket(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey, delimiter string, maxKeys int64) (objects []string, isTruncated bool, err error) {
-	maxKeysInt32 := int32(maxKeys)
+func ListNObjectsInBucket(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey, delimiter string, maxKeys int32) (objects []string, isTruncated bool, err error) {
 	input := s3.ListObjectsV2Input{
 		Bucket:     aws.String(bucket),
 		Prefix:     aws.String(prefix),
-		MaxKeys:    &maxKeysInt32,
+		MaxKeys:    &maxKeys,
 		StartAfter: aws.String(lastKey),
 		Delimiter:  aws.String(delimiter),
 	}
@@ -53,7 +52,7 @@ func ListNObjectsInBucket(ctx context.Context, client ListObjectsV2APIClient, bu
 // ListBucket returns a slice of the files at an S3 bucket at a given prefix. It lists the
 // objects using maxKeys in each iteration, but returns all of the objects, which may be
 // higher than maxKeys.
-func ListBucket(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey string, maxKeys int64) ([]string, error) {
+func ListBucket(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey string, maxKeys int32) ([]string, error) {
 	return listWithDelimiter(ctx, client, bucket, prefix, lastKey, "", maxKeys)
 }
 
@@ -65,11 +64,11 @@ func sliceObjectsToSliceString(input []types.Object) (output []string) {
 }
 
 // ListFolders returns the folders stored at `prefix` in the bucket `bucket`.
-func ListFolders(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey string, maxKeys int64) ([]string, error) {
+func ListFolders(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey string, maxKeys int32) ([]string, error) {
 	return listWithDelimiter(ctx, client, bucket, prefix, lastKey, "/", maxKeys)
 }
 
-func listWithDelimiter(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey, delimiter string, maxKeys int64) ([]string, error) {
+func listWithDelimiter(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey, delimiter string, maxKeys int32) ([]string, error) {
 	output, isTruncated, err := ListNObjectsInBucket(ctx, client, bucket, prefix, lastKey, delimiter, maxKeys)
 	if err != nil {
 		return []string{}, err

@@ -29,7 +29,7 @@ import (
 )
 
 var (
-	maxKeys      int64 = 2
+	maxKeys      int32 = 2
 	mockContents       = s3mocks.MockContents{
 		"folder1/key1": []byte(""),
 		"folder1/key2": []byte(""),
