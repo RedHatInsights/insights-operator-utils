@@ -10,7 +10,7 @@ require (
 	github.com/RedHatInsights/insights-results-aggregator-data v1.3.9
 	github.com/RedHatInsights/insights-results-types v1.23.5
 	github.com/archdx/zerolog-sentry v1.8.5
-	github.com/aws/aws-sdk-go v1.55.7
+	github.com/aws/aws-sdk-go v1.55.8
 	github.com/getkin/kin-openapi v0.132.0
 	github.com/getsentry/sentry-go v0.35.0
 	github.com/go-redis/redismock/v9 v9.2.0
