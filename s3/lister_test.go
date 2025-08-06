@@ -18,12 +18,12 @@ package s3util_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/lister_test.html
 
 import (
+	"context"
 	"testing"
 
 	s3util "github.com/RedHatInsights/insights-operator-utils/s3"
 	s3mocks "github.com/RedHatInsights/insights-operator-utils/s3/mocks"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -62,8 +62,8 @@ func TestListNObjectsInBucket(t *testing.T) {
 		{
 			description:    "bucket doesn't exist",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
+			mockErrorValue: &types.NoSuchBucket{},
+			errorMsg:       "NoSuchBucket",
 		},
 		{
 			description:  "use a last key",
@@ -85,7 +85,7 @@ func TestListNObjectsInBucket(t *testing.T) {
 		t.Run(tc.description, func(t *testing.T) {
 			mockClient.Err = tc.mockErrorValue
 			mockClient.Contents = tc.mockContents
-			got, _, err := s3util.ListNObjectsInBucket(mockClient, testBucket, "", tc.lastKey, "", maxKeys)
+			got, _, err := s3util.ListNObjectsInBucket(context.Background(), mockClient, testBucket, "", tc.lastKey, "", maxKeys)
 			if tc.errorExpected {
 				require.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)
@@ -108,8 +108,8 @@ func TestListBucket(t *testing.T) {
 		{
 			description:    "bucket doesn't exist",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
+			mockErrorValue: &types.NoSuchBucket{},
+			errorMsg:       "NoSuchBucket",
 		},
 		{
 			description:   "error in bucket in the second iteration",
@@ -126,7 +126,7 @@ func TestListBucket(t *testing.T) {
 		mockClient.Contents = tc.mockContents
 		mockClient.MaxCalls = tc.maxCalls
 		t.Run(tc.description, func(t *testing.T) {
-			got, err := s3util.ListBucket(mockClient, testBucket, "", "", maxKeys)
+			got, err := s3util.ListBucket(context.Background(), mockClient, testBucket, "", "", maxKeys)
 			if tc.errorExpected {
 				require.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)
@@ -148,8 +148,8 @@ func TestListFolders(t *testing.T) {
 		{
 			description:    "bucket doesn't exist",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
+			mockErrorValue: &types.NoSuchBucket{},
+			errorMsg:       "NoSuchBucket",
 		},
 	}
 
@@ -159,7 +159,7 @@ func TestListFolders(t *testing.T) {
 		mockClient.Folders = wantFolders
 		mockClient.MaxCalls = tc.maxCalls
 		t.Run(tc.description, func(t *testing.T) {
-			got, err := s3util.ListFolders(mockClient, testBucket, "", "", maxKeys)
+			got, err := s3util.ListFolders(context.Background(), mockClient, testBucket, "", "", maxKeys)
 			if tc.errorExpected {
 				require.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)

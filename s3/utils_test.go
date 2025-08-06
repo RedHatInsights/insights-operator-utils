@@ -18,13 +18,13 @@ package s3util_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/utils_test.html
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	s3util "github.com/RedHatInsights/insights-operator-utils/s3"
 	s3mocks "github.com/RedHatInsights/insights-operator-utils/s3/mocks"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,22 +40,22 @@ func TestObjectExists(t *testing.T) {
 		{
 			description:     "bucket exists and file does not exist",
 			errorExpected:   false,
-			mockErrorValue:  awserr.New(s3.ErrCodeNoSuchKey, "", nil),
+			mockErrorValue:  &types.NoSuchKey{},
 			shouldFileExist: false,
 			file:            testFile,
 		},
 		{
 			description:    "bucket doesn't exist",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
+			mockErrorValue: &types.NoSuchBucket{},
+			errorMsg:       "NoSuchBucket",
 			file:           testFile,
 		},
 		{
 			description:    "unknown aws error",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(randomError, "", nil),
-			errorMsg:       randomError,
+			mockErrorValue: &types.InvalidRequest{},
+			errorMsg:       "InvalidRequest",
 			file:           testFile,
 		},
 		{
@@ -74,7 +74,7 @@ func TestObjectExists(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
 			mockClient.Err = tc.mockErrorValue
-			ok, err := s3util.ObjectExists(mockClient, testBucket, tc.file)
+			ok, err := s3util.ObjectExists(context.Background(), mockClient, testBucket, tc.file)
 			if tc.errorExpected {
 				assert.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)

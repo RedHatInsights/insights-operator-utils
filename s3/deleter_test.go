@@ -18,13 +18,13 @@ package s3util_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/deleter_test.html
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	s3util "github.com/RedHatInsights/insights-operator-utils/s3"
 	s3mocks "github.com/RedHatInsights/insights-operator-utils/s3/mocks"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +39,7 @@ func TestDeleteObject(t *testing.T) {
 		t.Run(tc.description, func(t *testing.T) {
 			mockClient.Err = tc.mockErrorValue
 			mockClient.Contents = tc.mockContents
-			err := s3util.DeleteObject(mockClient, testBucket, tc.file)
+			err := s3util.DeleteObject(context.Background(), mockClient, testBucket, tc.file)
 			if tc.errorExpected {
 				assert.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)
@@ -99,27 +99,29 @@ func TestDeleteObjects(t *testing.T) {
 		{
 			description:    "bucket doesn't exist",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
+			mockErrorValue: &types.NoSuchBucket{},
+			errorMsg:       "NoSuchBucket",
 			files:          []string{testFile},
 		},
 		{
 			description:   "empty key input",
 			errorExpected: true,
-			errorMsg:      s3.ErrCodeNoSuchKey,
+			errorMsg:      "NoSuchKey",
 			files:         []string{""},
 		},
 		{
 			description:    "unknown aws error",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(randomError, "", nil),
-			errorMsg:       randomError,
+			mockErrorValue: &types.InvalidRequest{},
+			errorMsg:       "InvalidRequest",
+			files:          []string{testFile},
 		},
 		{
 			description:    "unknown error",
 			errorExpected:  true,
 			mockErrorValue: errors.New(randomError),
 			errorMsg:       randomError,
+			files:          []string{testFile},
 		},
 	}
 
@@ -131,7 +133,7 @@ func TestDeleteObjects(t *testing.T) {
 		t.Run(tc.description, func(t *testing.T) {
 			mockClient.Err = tc.mockErrorValue
 			mockClient.Contents = tc.mockContents
-			err := s3util.DeleteObjects(mockClient, testBucket, tc.files)
+			err := s3util.DeleteObjects(context.Background(), mockClient, testBucket, tc.files)
 			if tc.errorExpected {
 				assert.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)

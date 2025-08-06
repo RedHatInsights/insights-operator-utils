@@ -18,36 +18,38 @@ package s3util
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/deleter.html
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"context"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // DeleteObject delete the key in the specified bucket.
-func DeleteObject(client s3iface.S3API, bucket, file string) error {
+func DeleteObject(ctx context.Context, client DeleteObjectsAPIClient, bucket, file string) error {
 	input := &s3.DeleteObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(file),
 	}
-	_, err := client.DeleteObject(input)
+	_, err := client.DeleteObject(ctx, input)
 	return err
 }
 
 // DeleteObjects delete the keys in the specified bucket.
-func DeleteObjects(client s3iface.S3API, bucket string, files []string) error {
+func DeleteObjects(ctx context.Context, client DeleteObjectsAPIClient, bucket string, files []string) error {
 	input := &s3.DeleteObjectsInput{
 		Bucket: aws.String(bucket),
-		Delete: &s3.Delete{
+		Delete: &types.Delete{
 			Objects: filenamesToSliceObjects(files),
 		},
 	}
-	_, err := client.DeleteObjects(input)
+	_, err := client.DeleteObjects(ctx, input)
 	return err
 }
 
-func filenamesToSliceObjects(filenames []string) (objects []*s3.ObjectIdentifier) {
+func filenamesToSliceObjects(filenames []string) (objects []types.ObjectIdentifier) {
 	for _, filename := range filenames {
-		objects = append(objects, &s3.ObjectIdentifier{Key: aws.String(filename)})
+		objects = append(objects, types.ObjectIdentifier{Key: aws.String(filename)})
 	}
 	return objects
 }

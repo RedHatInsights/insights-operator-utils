@@ -18,22 +18,25 @@ package s3util
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/lister.html
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"context"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // ListNObjectsInBucket returns a slice of the files at an S3 bucket at a given prefix. It starts
 // listing the files from `lastKey` and returns up to `maxKeys`.
-func ListNObjectsInBucket(client s3iface.S3API, bucket, prefix, lastKey, delimiter string, maxKeys int64) (objects []string, isTruncated bool, err error) {
+func ListNObjectsInBucket(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey, delimiter string, maxKeys int64) (objects []string, isTruncated bool, err error) {
+	maxKeysInt32 := int32(maxKeys)
 	input := s3.ListObjectsV2Input{
 		Bucket:     aws.String(bucket),
 		Prefix:     aws.String(prefix),
-		MaxKeys:    &maxKeys,
+		MaxKeys:    &maxKeysInt32,
 		StartAfter: aws.String(lastKey),
 		Delimiter:  aws.String(delimiter),
 	}
-	result, err := client.ListObjectsV2(&input)
+	result, err := client.ListObjectsV2(ctx, &input)
 
 	if err != nil {
 		return nil, false, err
@@ -50,11 +53,11 @@ func ListNObjectsInBucket(client s3iface.S3API, bucket, prefix, lastKey, delimit
 // ListBucket returns a slice of the files at an S3 bucket at a given prefix. It lists the
 // objects using maxKeys in each iteration, but returns all of the objects, which may be
 // higher than maxKeys.
-func ListBucket(client s3iface.S3API, bucket, prefix, lastKey string, maxKeys int64) ([]string, error) {
-	return listWithDelimiter(client, bucket, prefix, lastKey, "", maxKeys)
+func ListBucket(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey string, maxKeys int64) ([]string, error) {
+	return listWithDelimiter(ctx, client, bucket, prefix, lastKey, "", maxKeys)
 }
 
-func sliceObjectsToSliceString(input []*s3.Object) (output []string) {
+func sliceObjectsToSliceString(input []types.Object) (output []string) {
 	for i := range input {
 		output = append(output, *input[i].Key)
 	}
@@ -62,19 +65,19 @@ func sliceObjectsToSliceString(input []*s3.Object) (output []string) {
 }
 
 // ListFolders returns the folders stored at `prefix` in the bucket `bucket`.
-func ListFolders(client s3iface.S3API, bucket, prefix, lastKey string, maxKeys int64) ([]string, error) {
-	return listWithDelimiter(client, bucket, prefix, lastKey, "/", maxKeys)
+func ListFolders(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey string, maxKeys int64) ([]string, error) {
+	return listWithDelimiter(ctx, client, bucket, prefix, lastKey, "/", maxKeys)
 }
 
-func listWithDelimiter(client s3iface.S3API, bucket, prefix, lastKey, delimiter string, maxKeys int64) ([]string, error) {
-	output, isTruncated, err := ListNObjectsInBucket(client, bucket, prefix, lastKey, delimiter, maxKeys)
+func listWithDelimiter(ctx context.Context, client ListObjectsV2APIClient, bucket, prefix, lastKey, delimiter string, maxKeys int64) ([]string, error) {
+	output, isTruncated, err := ListNObjectsInBucket(ctx, client, bucket, prefix, lastKey, delimiter, maxKeys)
 	if err != nil {
 		return []string{}, err
 	}
 
 	if isTruncated {
 		lastKey = output[len(output)-1]
-		newOutput, err := listWithDelimiter(client, bucket, prefix, lastKey, delimiter, maxKeys)
+		newOutput, err := listWithDelimiter(ctx, client, bucket, prefix, lastKey, delimiter, maxKeys)
 		if err != nil {
 			return []string{}, err
 		}
@@ -83,7 +86,7 @@ func listWithDelimiter(client s3iface.S3API, bucket, prefix, lastKey, delimiter 
 	return output, nil
 }
 
-func sliceCommonPrefixToSliceString(input []*s3.CommonPrefix) (output []string) {
+func sliceCommonPrefixToSliceString(input []types.CommonPrefix) (output []string) {
 	for i := range input {
 		output = append(output, *input[i].Prefix)
 	}
