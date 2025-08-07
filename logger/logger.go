@@ -29,20 +29,26 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/IBM/sarama"
-	"github.com/RedHatInsights/insights-operator-utils/logger/cloudwatch"
 	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	sentry "github.com/getsentry/sentry-go"
+	cww "github.com/lzap/cloudwatchwriter2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 var needClose []io.Closer = []io.Closer{}
+
+// AWSCloudWatchEndpoint allows you to mock cloudwatch client by redirecting requests to a local proxy
+var AWSCloudWatchEndpoint string
+
+const cloudwatchBatchInterval = 500 * time.Millisecond
 
 // WorkaroundForRHIOPS729 keeps only those fields that are currently getting their way to Kibana
 // TODO: delete when RHIOPS-729 is fixed
@@ -82,9 +88,6 @@ func (writer WorkaroundForRHIOPS729) Write(bytes []byte) (int, error) {
 
 	return len(bytes), nil
 }
-
-// AWSCloudWatchEndpoint allows you to mock cloudwatch client by redirecting requests to a local proxy
-var AWSCloudWatchEndpoint string
 
 // InitZerolog initializes zerolog with provided configs to use proper stdout and/or CloudWatch logging
 func InitZerolog(
@@ -172,12 +175,12 @@ func convertLogLevel(level string) zerolog.Level {
 	return zerolog.DebugLevel
 }
 
-func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
+func fillInMissingConfiguration(conf *CloudWatchConfiguration) error {
 	// os.Hostname is preferred to os.Getenv("HOSTNAME") because the env var might
 	// not be populated yet (e.g. GitHub runners)
 	hostname, err := os.Hostname()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// if no log stream name is explicitly provided, HOSTNAME is used
@@ -186,6 +189,17 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 	} else {
 		// take provided log stream name and replace any $HOSTNAME placeholders with real hostname
 		conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", hostname)
+	}
+	return nil
+}
+
+func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
+	if err := fillInMissingConfiguration(conf); err != nil {
+		return nil, err
+	}
+
+	if conf.LogGroup == "" {
+		return nil, fmt.Errorf("log group name cannot be empty")
 	}
 
 	// Build configuration options for AWS SDK v2
@@ -221,22 +235,8 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 		cloudWatchClient = cloudwatchlogs.NewFromConfig(cfg)
 	}
 
-	var cloudWatchWriter io.Writer
-	if conf.CreateStreamIfNotExists {
-		group := cloudwatch.NewGroup(conf.LogGroup, cloudWatchClient)
-
-		var err error
-		cloudWatchWriter, err = group.Create(conf.StreamName)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		cloudWatchWriter = cloudwatch.NewWriter(
-			conf.LogGroup, conf.StreamName, cloudWatchClient,
-		)
-	}
-
-	return cloudWatchWriter, nil
+	return cww.NewWithClient(
+		cloudWatchClient, cloudwatchBatchInterval, conf.LogGroup, conf.StreamName)
 }
 
 func sentryBeforeSend(event *sentry.Event, _ *sentry.EventHint) *sentry.Event {
