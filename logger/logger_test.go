@@ -279,8 +279,12 @@ func TestInitZerolog_DebugEnabled(t *testing.T) {
 			LoggingToCloudWatchEnabled: true,
 		},
 		logger.CloudWatchConfiguration{
-			LogGroup:   "test-group",
-			StreamName: "test-stream",
+			AWSAccessID:     cloudWatchConf.AWSAccessID,
+			AWSSecretKey:    cloudWatchConf.AWSSecretKey,
+			AWSSessionToken: cloudWatchConf.AWSSessionToken,
+			AWSRegion:       cloudWatchConf.AWSRegion,
+			LogGroup:        "test-group",
+			StreamName:      "test-stream",
 		},
 		logger.SentryLoggingConfiguration{},
 	)
@@ -304,8 +308,12 @@ func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 			LoggingToCloudWatchEnabled: true,
 		},
 		logger.CloudWatchConfiguration{
-			LogGroup:   "test-group",
-			StreamName: "test-stream",
+			AWSAccessID:     cloudWatchConf.AWSAccessID,
+			AWSSecretKey:    cloudWatchConf.AWSSecretKey,
+			AWSSessionToken: cloudWatchConf.AWSSessionToken,
+			AWSRegion:       cloudWatchConf.AWSRegion,
+			LogGroup:        "test-group",
+			StreamName:      "test-stream",
 		},
 		logger.SentryLoggingConfiguration{},
 	)
@@ -330,9 +338,13 @@ func TestInitZerolog_LogToCloudWatchWithDebug(t *testing.T) {
 			LoggingToCloudWatchEnabled: true,
 		},
 		logger.CloudWatchConfiguration{
-			LogGroup:   "test-group",
-			StreamName: "test-stream",
-			Debug:      true,
+			AWSAccessID:     cloudWatchConf.AWSAccessID,
+			AWSSecretKey:    cloudWatchConf.AWSSecretKey,
+			AWSSessionToken: cloudWatchConf.AWSSessionToken,
+			AWSRegion:       cloudWatchConf.AWSRegion,
+			LogGroup:        "test-group",
+			StreamName:      "test-stream",
+			Debug:           true,
 		},
 		logger.SentryLoggingConfiguration{},
 	)
