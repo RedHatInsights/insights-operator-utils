@@ -213,6 +213,22 @@ func TestWorkaroundForRHIOPS729_Write(t *testing.T) {
 func gockExpectLogStreamCreation(t testing.TB, baseURL string) {
 	logger.AWSCloudWatchEndpoint = baseURL
 
+	// Mock the CreateLogGroup call that cloudwatchwriter2 makes first
+	helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
+		Method:   http.MethodPost,
+		Body:     `{"logGroupName":"test-group"}`,
+		Endpoint: "",
+		ExtraHeaders: http.Header{
+			"X-Amz-Target": []string{"Logs_20140328.CreateLogGroup"},
+		},
+	}, &helpers.APIResponse{
+		StatusCode: http.StatusBadRequest,
+		Body:       `{"__type": "ResourceAlreadyExistsException", "message": "The specified log group already exists"}`,
+		Headers: map[string]string{
+			"Content-Type": "application/x-amz-json-1.1",
+		},
+	})
+
 	// Mock the CreateLogStream call that cloudwatchwriter2 makes
 	helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
 		Method:   http.MethodPost,
