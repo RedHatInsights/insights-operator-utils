@@ -205,6 +205,10 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 	// Build configuration options for AWS SDK v2
 	var configOptions []func(*config.LoadOptions) error
 
+	configOptions = append(configOptions, config.WithSharedCredentialsFiles(nil))
+	configOptions = append(configOptions, config.WithSharedConfigFiles(nil))
+	configOptions = append(configOptions, config.WithSharedCredentialsFiles(nil))
+
 	// Set region
 	if conf.AWSRegion != "" {
 		configOptions = append(configOptions, config.WithRegion(conf.AWSRegion))
