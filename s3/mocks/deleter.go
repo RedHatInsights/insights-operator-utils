@@ -18,22 +18,24 @@ package mocks
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/mocks/deleter.html
 
 import (
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"context"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // DeleteObject returns an empty DeleteObjectOutput object. If the mock client Err field is not nil, returns an error.
-func (m *MockS3Client) DeleteObject(input *s3.DeleteObjectInput) (*s3.DeleteObjectOutput, error) {
+func (m *MockS3Client) DeleteObject(ctx context.Context, input *s3.DeleteObjectInput, opts ...func(*s3.Options)) (*s3.DeleteObjectOutput, error) {
 	if m.Err != nil {
 		return nil, m.Err
 	}
 
 	if *input.Key == "" {
-		return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+		return nil, &types.NoSuchKey{}
 	}
 	_, exists := m.Contents[*input.Key]
 	if !exists {
-		return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+		return nil, &types.NoSuchKey{}
 	}
 
 	delete(m.Contents, *input.Key)
@@ -42,18 +44,18 @@ func (m *MockS3Client) DeleteObject(input *s3.DeleteObjectInput) (*s3.DeleteObje
 }
 
 // DeleteObjects returns an empty DeleteObjectOutput object. If the mock client Err field is not nil, returns an error.
-func (m *MockS3Client) DeleteObjects(input *s3.DeleteObjectsInput) (*s3.DeleteObjectsOutput, error) {
+func (m *MockS3Client) DeleteObjects(ctx context.Context, input *s3.DeleteObjectsInput, opts ...func(*s3.Options)) (*s3.DeleteObjectsOutput, error) {
 	if m.Err != nil {
 		return nil, m.Err
 	}
 
 	for _, obj := range input.Delete.Objects {
 		if *obj.Key == "" {
-			return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+			return nil, &types.NoSuchKey{}
 		}
 		_, exists := m.Contents[*obj.Key]
 		if !exists {
-			return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+			return nil, &types.NoSuchKey{}
 		}
 
 		delete(m.Contents, *obj.Key)

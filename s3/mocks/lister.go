@@ -18,12 +18,14 @@ package mocks
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/mocks/lister.html
 
 import (
+	"context"
+
 	collections "github.com/RedHatInsights/insights-operator-utils/collections"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 // ListObjectsV2 return the list of files it has using ListObjectsV2Output type
-func (m *MockS3Client) ListObjectsV2(input *s3.ListObjectsV2Input) (*s3.ListObjectsV2Output, error) {
+func (m *MockS3Client) ListObjectsV2(ctx context.Context, input *s3.ListObjectsV2Input, opts ...func(*s3.Options)) (*s3.ListObjectsV2Output, error) {
 	m.calls++
 	var (
 		output       *s3.ListObjectsV2Output

@@ -19,16 +19,16 @@ package s3util
 
 import (
 	"bytes"
+	"context"
 	"net/http"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 // UploadObject uploads a slice of bytes to a specific path and S3 bucket.
-func UploadObject(client s3iface.S3API, bucket, dst string, src []byte) error {
-	_, err := client.PutObject(&s3.PutObjectInput{
+func UploadObject(ctx context.Context, client PutObjectAPIClient, bucket, dst string, src []byte) error {
+	_, err := client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:        aws.String(bucket),                      // Bucket to be used
 		Key:           aws.String(dst),                         // Name of the file to be saved
 		Body:          bytes.NewReader(src),                    // File content

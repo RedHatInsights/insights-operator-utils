@@ -18,17 +18,18 @@ package mocks
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/mocks/uploader.html
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	s3util "github.com/RedHatInsights/insights-operator-utils/s3"
 )
 
 // PutObject returns an empty PutObjectOutput and the mock client Err field, if not nil.
 // It also updates MockS3Client.Contents with the new input, if no Err is specified.
-func (m *MockS3Client) PutObject(input *s3.PutObjectInput) (*s3.PutObjectOutput, error) {
+func (m *MockS3Client) PutObject(ctx context.Context, input *s3.PutObjectInput, opts ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
 	if m.Err != nil {
 		return &s3.PutObjectOutput{}, m.Err
 	}

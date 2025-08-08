@@ -18,12 +18,12 @@ package s3util
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/downloader.html
 
 import (
+	"context"
 	"fmt"
 	"io"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 // CannotReadError is used in the tests.
@@ -31,8 +31,8 @@ const CannotReadError = "cannot read remote object"
 
 // DownloadObject downloads a file from an S3 bucket given the bucket and key. The
 // response is in slice of byte format.
-func DownloadObject(client s3iface.S3API, bucket, src string) ([]byte, error) {
-	result, err := client.GetObject(&s3.GetObjectInput{
+func DownloadObject(ctx context.Context, client GetObjectAPIClient, bucket, src string) ([]byte, error) {
+	result, err := client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucket), // Bucket to be used
 		Key:    aws.String(src),    // Name of the file to be downloaded
 	})

@@ -19,10 +19,11 @@ package mocks
 
 import (
 	"bytes"
+	"context"
 	"io"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 type mockReadCloser struct {
@@ -48,17 +49,17 @@ func (m mockReadCloser) Close() error {
 
 // GetObject returns a GetObjectOutput object with the value of MockS3Client.Contents corresponding
 // to that key. If the mock client Err field is not nil, returns an error.
-func (m *MockS3Client) GetObject(input *s3.GetObjectInput) (*s3.GetObjectOutput, error) {
+func (m *MockS3Client) GetObject(ctx context.Context, input *s3.GetObjectInput, opts ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
 	if m.Err != nil {
 		return nil, m.Err
 	}
 
 	if *input.Key == "" {
-		return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+		return nil, &types.NoSuchKey{}
 	}
 	fileContent, exists := m.Contents[*input.Key]
 	if !exists {
-		return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+		return nil, &types.NoSuchKey{}
 	}
 
 	b := mockReadCloser{

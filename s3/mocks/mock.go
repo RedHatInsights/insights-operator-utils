@@ -18,10 +18,10 @@ package mocks
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/mocks/mock.html
 
 import (
+	"context"
 	"errors"
 
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 const (
@@ -38,7 +38,6 @@ var (
 
 // MockS3Client can be used in tests to mock an S3 client.
 type MockS3Client struct {
-	s3iface.S3API
 	Err           error
 	Contents      MockContents
 	DownloadError error
@@ -51,6 +50,6 @@ type MockS3Client struct {
 type MockContents map[string][]byte
 
 // HeadObject returns an empty HeadObjectOutput and the mock client Err field.
-func (m *MockS3Client) HeadObject(input *s3.HeadObjectInput) (*s3.HeadObjectOutput, error) {
+func (m *MockS3Client) HeadObject(ctx context.Context, input *s3.HeadObjectInput, opts ...func(*s3.Options)) (*s3.HeadObjectOutput, error) {
 	return &s3.HeadObjectOutput{}, m.Err
 }

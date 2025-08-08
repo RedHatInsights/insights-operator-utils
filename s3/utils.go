@@ -18,48 +18,47 @@ package s3util
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/utils.html
 
 import (
+	"context"
 	"errors"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/rs/zerolog/log"
 )
 
 // ObjectExists returns a boolean of whether the key exists in the bucket.
-func ObjectExists(client s3iface.S3API, bucket, file string) (bool, error) {
+func ObjectExists(ctx context.Context, client HeadObjectAPIClient, bucket, file string) (bool, error) {
 	input := &s3.HeadObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(file),
 	}
 
-	_, err := client.HeadObject(input)
+	_, err := client.HeadObject(ctx, input)
 	return checkAwsErr(err)
 }
 
 func checkAwsErr(err error) (bool, error) {
 	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case s3.ErrCodeNoSuchKey:
-				log.Debug().
-					Err(aerr).
-					Str("awserr", s3.ErrCodeNoSuchKey).
-					Msg("File does not exist")
-				return false, nil
-			case s3.ErrCodeNoSuchBucket:
-				log.Debug().
-					Err(aerr).
-					Str("awserr", s3.ErrCodeNoSuchBucket).
-					Msg("Bucket does not exist")
-				return false, errors.New(s3.ErrCodeNoSuchBucket)
-			default:
-				log.Debug().Err(aerr).Msg("Unknown AWS error")
-				return false, aerr
-			}
+		var noSuchKey *types.NoSuchKey
+		var noSuchBucket *types.NoSuchBucket
+
+		if errors.As(err, &noSuchKey) {
+			log.Debug().
+				Err(err).
+				Str("awserr", "NoSuchKey").
+				Msg("File does not exist")
+			return false, nil
+		} else if errors.As(err, &noSuchBucket) {
+			log.Debug().
+				Err(err).
+				Str("awserr", "NoSuchBucket").
+				Msg("Bucket does not exist")
+			return false, errors.New("NoSuchBucket")
+		} else {
+			log.Debug().Err(err).Msg("Unknown AWS error")
+			return false, err
 		}
-		return false, err
 	}
 	return true, nil
 }

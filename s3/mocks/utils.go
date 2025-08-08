@@ -20,7 +20,8 @@ package mocks
 import (
 	"sort"
 
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 func contentsToSlice(contents MockContents) []string {
@@ -35,16 +36,16 @@ func contentsToSlice(contents MockContents) []string {
 	return keys
 }
 
-func sliceOfStringToS3(files []string) (contents []*s3.Object) {
+func sliceOfStringToS3(files []string) (contents []types.Object) {
 	for i := range files {
-		contents = append(contents, &s3.Object{Key: &files[i]})
+		contents = append(contents, types.Object{Key: aws.String(files[i])})
 	}
 	return contents
 }
 
-func sliceOfStringToS3Folders(folders []string) (contents []*s3.CommonPrefix) {
+func sliceOfStringToS3Folders(folders []string) (contents []types.CommonPrefix) {
 	for i := range folders {
-		contents = append(contents, &s3.CommonPrefix{Prefix: &folders[i]})
+		contents = append(contents, types.CommonPrefix{Prefix: aws.String(folders[i])})
 	}
 	return contents
 }
