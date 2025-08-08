@@ -18,11 +18,11 @@ package s3util_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/downloader_test.html
 
 import (
+	"context"
 	"errors"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -41,15 +41,15 @@ func TestDownloadObject(t *testing.T) {
 		{
 			description:    "bucket doesn't exist",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
+			mockErrorValue: &types.NoSuchBucket{},
+			errorMsg:       "NoSuchBucket",
 			file:           testFile,
 		},
 		{
 			description:    "key doesn't exist",
 			errorExpected:  true,
 			mockErrorValue: nil,
-			errorMsg:       s3.ErrCodeNoSuchKey,
+			errorMsg:       "NoSuchKey",
 			mockContents:   make(s3mocks.MockContents),
 			file:           "doesn't exists",
 		},
@@ -57,15 +57,15 @@ func TestDownloadObject(t *testing.T) {
 			description:    "empty key",
 			errorExpected:  true,
 			mockErrorValue: nil,
-			errorMsg:       s3.ErrCodeNoSuchKey,
+			errorMsg:       "NoSuchKey",
 			mockContents:   make(s3mocks.MockContents),
 			file:           "",
 		},
 		{
 			description:    "unknown aws error",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(randomError, "", nil),
-			errorMsg:       randomError,
+			mockErrorValue: &types.InvalidRequest{},
+			errorMsg:       "InvalidRequest",
 			file:           testFile,
 		},
 		{
@@ -78,8 +78,8 @@ func TestDownloadObject(t *testing.T) {
 		{
 			description:    "bad content",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3util.CannotReadError, "", nil),
-			errorMsg:       s3util.CannotReadError,
+			mockErrorValue: &types.InvalidRequest{},
+			errorMsg:       "InvalidRequest",
 			file:           testFileInvalidContent,
 			mockContents:   mockFiles,
 		},
@@ -100,7 +100,7 @@ func TestDownloadObject(t *testing.T) {
 			mockClient.Err = tc.mockErrorValue
 			mockClient.Contents = tc.mockContents
 			mockClient.DownloadError = tc.downloadError
-			b, err := s3util.DownloadObject(mockClient, testBucket, tc.file)
+			b, err := s3util.DownloadObject(context.Background(), mockClient, testBucket, tc.file)
 			if tc.errorExpected {
 				require.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)

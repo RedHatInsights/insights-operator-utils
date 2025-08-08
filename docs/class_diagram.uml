@@ -88,15 +88,7 @@ namespace logger {
         + AWSRegion string
         + LogGroup string
         + StreamName string
-        + CreateStreamIfNotExists bool
         + Debug bool
-
-    }
-    class KafkaZerologConfiguration << (S,Aquamarine) >> {
-        + Broker string
-        + Topic string
-        + CertPath string
-        + Level string
 
     }
     class LoggingConfiguration << (S,Aquamarine) >> {
@@ -105,7 +97,6 @@ namespace logger {
         + LogLevel string
         + LoggingToCloudWatchEnabled bool
         + LoggingToSentryEnabled bool
-        + LoggingToKafkaEnabled bool
 
     }
     class SaramaZerologger << (S,Aquamarine) >> {

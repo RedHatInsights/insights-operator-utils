@@ -42,21 +42,16 @@ type LoggingConfiguration struct {
 	// LoggingToSentryEnabled enables logging to Sentry
 	// (configuration for Sentry is in SentryLoggingConfiguration)
 	LoggingToSentryEnabled bool `mapstructure:"logging_to_sentry_enabled" toml:"logging_to_sentry_enabled"`
-
-	// LoggingToKafkaEnabled enables logging to Kafka
-	// (configuration for Kafka logging is in KafkaZerologConfiguration)
-	LoggingToKafkaEnabled bool `mapstructure:"logging_to_kafka_enabled" toml:"logging_to_kafka_enabled"`
 }
 
 // CloudWatchConfiguration represents configuration of CloudWatch logger
 type CloudWatchConfiguration struct {
-	AWSAccessID             string `mapstructure:"aws_access_id" toml:"aws_access_id"`
-	AWSSecretKey            string `mapstructure:"aws_secret_key" toml:"aws_secret_key"`
-	AWSSessionToken         string `mapstructure:"aws_session_token" toml:"aws_session_token"`
-	AWSRegion               string `mapstructure:"aws_region" toml:"aws_region"`
-	LogGroup                string `mapstructure:"log_group" toml:"log_group"`
-	StreamName              string `mapstructure:"stream_name" toml:"stream_name"`
-	CreateStreamIfNotExists bool   `mapstructure:"create_stream_if_not_exists" toml:"create_stream_if_not_exists"`
+	AWSAccessID     string `mapstructure:"aws_access_id" toml:"aws_access_id"`
+	AWSSecretKey    string `mapstructure:"aws_secret_key" toml:"aws_secret_key"`
+	AWSSessionToken string `mapstructure:"aws_session_token" toml:"aws_session_token"`
+	AWSRegion       string `mapstructure:"aws_region" toml:"aws_region"`
+	LogGroup        string `mapstructure:"log_group" toml:"log_group"`
+	StreamName      string `mapstructure:"stream_name" toml:"stream_name"`
 
 	// enable debug logs for debugging aws client itself
 	Debug bool `mapstructure:"debug" toml:"debug"`
@@ -66,12 +61,4 @@ type CloudWatchConfiguration struct {
 type SentryLoggingConfiguration struct {
 	SentryDSN         string `mapstructure:"dsn" toml:"dsn"`
 	SentryEnvironment string `mapstructure:"environment" toml:"environment"`
-}
-
-// KafkaZerologConfiguration represetns the configuration for sending log messages to a Kafka topic
-type KafkaZerologConfiguration struct {
-	Broker   string `mapstructure:"broker" toml:"broker"`
-	Topic    string `mapstructure:"topic" toml:"topic"`
-	CertPath string `mapstructure:"cert_path" toml:"cert_path"`
-	Level    string `mapstructure:"level" toml:"level"`
 }

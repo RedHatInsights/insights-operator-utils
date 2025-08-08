@@ -18,15 +18,16 @@ package mocks
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/mocks/copier.html
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // CopyObject returns an empty CopyObjectOutput object. If the mock client Err field is not nil, returns an error.
-func (m *MockS3Client) CopyObject(input *s3.CopyObjectInput) (*s3.CopyObjectOutput, error) {
+func (m *MockS3Client) CopyObject(ctx context.Context, input *s3.CopyObjectInput, opts ...func(*s3.Options)) (*s3.CopyObjectOutput, error) {
 	if m.Err != nil {
 		return nil, m.Err
 	}
@@ -35,7 +36,7 @@ func (m *MockS3Client) CopyObject(input *s3.CopyObjectInput) (*s3.CopyObjectOutp
 
 	_, exists := m.Contents[inputKey]
 	if !exists {
-		return nil, awserr.New(s3.ErrCodeNoSuchKey, "", nil)
+		return nil, &types.NoSuchKey{}
 	}
 
 	m.Contents[*input.Key] = m.Contents[inputKey]

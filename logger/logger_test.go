@@ -39,14 +39,13 @@ const (
 
 var (
 	cloudWatchConf = logger.CloudWatchConfiguration{
-		AWSAccessID:             "access ID",
-		AWSSecretKey:            "secret",
-		AWSSessionToken:         "sess token",
-		AWSRegion:               "aws region",
-		LogGroup:                "log group",
-		StreamName:              "stream name",
-		CreateStreamIfNotExists: true,
-		Debug:                   false,
+		AWSAccessID:     "access ID",
+		AWSSecretKey:    "secret",
+		AWSSessionToken: "sess token",
+		AWSRegion:       "aws region",
+		LogGroup:        "log group",
+		StreamName:      "stream name",
+		Debug:           false,
 	}
 )
 
@@ -58,15 +57,15 @@ type RemoteLoggingExpect struct {
 	ResultBody       string
 }
 
+// getDescribeLogStreamsEvent returns a mock for the cloudwatchwriter2 library's DescribeLogStreams call
+// which doesn't include descending and orderBy parameters
 func getDescribeLogStreamsEvent(logStreamName string) RemoteLoggingExpect {
 	return RemoteLoggingExpect{
 		http.MethodPost,
 		"Logs_20140328.DescribeLogStreams",
 		`{
-			"descending": true,
 			"logGroupName": "` + cloudWatchConf.LogGroup + `",
-			"logStreamNamePrefix": "` + logStreamName + `",
-			"orderBy": "LogStreamName"
+			"logStreamNamePrefix": "` + logStreamName + `"
 		}`,
 		http.StatusOK,
 		`{
@@ -101,11 +100,9 @@ func TestSaramaZerologger(t *testing.T) {
 			LogLevel:                   "debug",
 			LoggingToCloudWatchEnabled: false,
 			LoggingToSentryEnabled:     false,
-			LoggingToKafkaEnabled:      false,
 		},
 		logger.CloudWatchConfiguration{},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 		zerolog.New(buf),
 	)
 	helpers.FailOnError(t, err)
@@ -161,7 +158,6 @@ func TestLoggerSetLogLevel(t *testing.T) {
 				},
 				logger.CloudWatchConfiguration{},
 				logger.SentryLoggingConfiguration{},
-				logger.KafkaZerologConfiguration{},
 				zerolog.New(buf),
 			)
 			helpers.FailOnError(t, err)
@@ -214,18 +210,83 @@ func TestWorkaroundForRHIOPS729_Write(t *testing.T) {
 	}
 }
 
+func gockExpectLogStreamCreation(t testing.TB, baseURL string) {
+	logger.AWSCloudWatchEndpoint = baseURL
+
+	// Mock the CreateLogGroup call that cloudwatchwriter2 makes first
+	helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
+		Method:   http.MethodPost,
+		Body:     `{"logGroupName":"test-group"}`,
+		Endpoint: "",
+		ExtraHeaders: http.Header{
+			"X-Amz-Target": []string{"Logs_20140328.CreateLogGroup"},
+		},
+	}, &helpers.APIResponse{
+		StatusCode: http.StatusBadRequest,
+		Body:       `{"__type": "ResourceAlreadyExistsException", "message": "The specified log group already exists"}`,
+		Headers: map[string]string{
+			"Content-Type": "application/x-amz-json-1.1",
+		},
+	})
+
+	// Mock the CreateLogStream call that cloudwatchwriter2 makes
+	helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
+		Method:   http.MethodPost,
+		Body:     `{"logGroupName":"test-group","logStreamName":"test-stream"}`,
+		Endpoint: "",
+		ExtraHeaders: http.Header{
+			"X-Amz-Target": []string{"Logs_20140328.CreateLogStream"},
+		},
+	}, &helpers.APIResponse{
+		StatusCode: http.StatusBadRequest,
+		Body:       `{"__type": "ResourceAlreadyExistsException", "message": "The specified log stream already exists"}`,
+		Headers: map[string]string{
+			"Content-Type": "application/x-amz-json-1.1",
+		},
+	})
+
+	// Mock DescribeLogStreams call that cloudwatchwriter2 makes
+	helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
+		Method:   http.MethodPost,
+		Body:     `{"logGroupName":"test-group","logStreamNamePrefix":"test-stream"}`,
+		Endpoint: "",
+		ExtraHeaders: http.Header{
+			"X-Amz-Target": []string{"Logs_20140328.DescribeLogStreams"},
+		},
+	}, &helpers.APIResponse{
+		StatusCode: http.StatusOK,
+		Body:       `{"logStreams":[{"logStreamName":"test-stream","uploadSequenceToken":"1"}]}`,
+		Headers: map[string]string{
+			"Content-Type": "application/x-amz-json-1.1",
+		},
+	})
+}
+
 // TestInitZerolog_DebugEnabled check if/how instance of zerolog is constructed
 // when debug output is enabled.
 func TestInitZerolog_DebugEnabled(t *testing.T) {
+	defer helpers.CleanAfterGock(t)
+
+	const baseURL = "http://localhost:9999/"
+	logger.AWSCloudWatchEndpoint = baseURL
+
+	gockExpectLogStreamCreation(t, baseURL)
+
 	err := logger.InitZerolog(
 		logger.LoggingConfiguration{
 			Debug:                      true,
 			LogLevel:                   "debug",
 			LoggingToCloudWatchEnabled: true,
 		},
-		logger.CloudWatchConfiguration{},
+		logger.CloudWatchConfiguration{
+			AWSAccessID:     cloudWatchConf.AWSAccessID,
+			AWSSecretKey:    cloudWatchConf.AWSSecretKey,
+			AWSSessionToken: cloudWatchConf.AWSSessionToken,
+			AWSRegion:       cloudWatchConf.AWSRegion,
+			LogGroup:        "test-group",
+			StreamName:      "test-stream",
+		},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -233,15 +294,28 @@ func TestInitZerolog_DebugEnabled(t *testing.T) {
 // TestInitZerolog_LogToCloudWatch check if/how instance of zerolog is
 // constructed when logging to CloudWatch is enabled.
 func TestInitZerolog_LogToCloudWatch(t *testing.T) {
+	defer helpers.CleanAfterGock(t)
+
+	const baseURL = "http://localhost:9999/"
+	logger.AWSCloudWatchEndpoint = baseURL
+
+	gockExpectLogStreamCreation(t, baseURL)
+
 	err := logger.InitZerolog(
 		logger.LoggingConfiguration{
 			Debug:                      false,
 			LogLevel:                   "debug",
 			LoggingToCloudWatchEnabled: true,
 		},
-		logger.CloudWatchConfiguration{},
+		logger.CloudWatchConfiguration{
+			AWSAccessID:     cloudWatchConf.AWSAccessID,
+			AWSSecretKey:    cloudWatchConf.AWSSecretKey,
+			AWSSessionToken: cloudWatchConf.AWSSessionToken,
+			AWSRegion:       cloudWatchConf.AWSRegion,
+			LogGroup:        "test-group",
+			StreamName:      "test-stream",
+		},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -250,6 +324,13 @@ func TestInitZerolog_LogToCloudWatch(t *testing.T) {
 // constructed when logging to CloudWatch is enabled, including debug output
 // for CloudWatch.
 func TestInitZerolog_LogToCloudWatchWithDebug(t *testing.T) {
+	defer helpers.CleanAfterGock(t)
+
+	const baseURL = "http://localhost:9999/"
+	logger.AWSCloudWatchEndpoint = baseURL
+
+	gockExpectLogStreamCreation(t, baseURL)
+
 	err := logger.InitZerolog(
 		logger.LoggingConfiguration{
 			Debug:                      false,
@@ -257,10 +338,15 @@ func TestInitZerolog_LogToCloudWatchWithDebug(t *testing.T) {
 			LoggingToCloudWatchEnabled: true,
 		},
 		logger.CloudWatchConfiguration{
-			Debug: true,
+			AWSAccessID:     cloudWatchConf.AWSAccessID,
+			AWSSecretKey:    cloudWatchConf.AWSSecretKey,
+			AWSSessionToken: cloudWatchConf.AWSSessionToken,
+			AWSRegion:       cloudWatchConf.AWSRegion,
+			LogGroup:        "test-group",
+			StreamName:      "test-stream",
+			Debug:           true,
 		},
 		logger.SentryLoggingConfiguration{},
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -269,10 +355,11 @@ func TestLoggingToCloudwatch(t *testing.T) {
 	helpers.RunTestWithTimeout(t, func(t testing.TB) {
 		defer helpers.CleanAfterGock(t)
 
-		const baseURL = "http://localhost:9999"
-		logger.AWSCloudWatchEndpoint = baseURL + "/cloudwatch"
+		const baseURL = "http://localhost:9999/"
+		logger.AWSCloudWatchEndpoint = baseURL
 
 		expects := []RemoteLoggingExpect{
+			// cloudwatchwriter2 will try to create the log stream first
 			{
 				http.MethodPost,
 				"Logs_20140328.CreateLogStream",
@@ -286,7 +373,9 @@ func TestLoggingToCloudwatch(t *testing.T) {
 					"message": "The specified log stream already exists"
 				}`,
 			},
+			// Then it will describe the log stream to get the sequence token
 			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
+			// Then it will put log events
 			{
 				http.MethodPost,
 				"Logs_20140328.PutLogEvents",
@@ -321,6 +410,7 @@ func TestLoggingToCloudwatch(t *testing.T) {
 				http.StatusOK,
 				`{"nextSequenceToken":"3"}`,
 			},
+			// Additional DescribeLogStreams calls that cloudwatchwriter2 might make
 			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
 			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
 			getDescribeLogStreamsEvent(cloudWatchConf.StreamName),
@@ -330,7 +420,7 @@ func TestLoggingToCloudwatch(t *testing.T) {
 			helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
 				Method:   expect.ExpectedMethod,
 				Body:     expect.ExpectedBody,
-				Endpoint: "cloudwatch/",
+				Endpoint: "",
 				ExtraHeaders: http.Header{
 					"X-Amz-Target": []string{expect.ExpectedTarget},
 				},
@@ -350,7 +440,6 @@ func TestLoggingToCloudwatch(t *testing.T) {
 		},
 			cloudWatchConf,
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 		helpers.FailOnError(t, err)
 
@@ -364,8 +453,8 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 	helpers.RunTestWithTimeout(t, func(t testing.TB) {
 		defer helpers.CleanAfterGock(t)
 
-		const baseURL = "http://localhost:9999"
-		logger.AWSCloudWatchEndpoint = baseURL + "/cloudwatch"
+		const baseURL = "http://localhost:9999/"
+		logger.AWSCloudWatchEndpoint = baseURL
 
 		hostname, err := os.Hostname()
 		helpers.FailOnError(t, err)
@@ -391,7 +480,7 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 			helpers.GockExpectAPIRequest(t, baseURL, &helpers.APIRequest{
 				Method:   expect.ExpectedMethod,
 				Body:     expect.ExpectedBody,
-				Endpoint: "cloudwatch/",
+				Endpoint: "",
 				ExtraHeaders: http.Header{
 					"X-Amz-Target": []string{expect.ExpectedTarget},
 				},
@@ -414,7 +503,6 @@ func TestLoggingToCloudwatch_LogStreamMissing(t *testing.T) {
 		},
 			*cloudWatchConfCopy,
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 		helpers.FailOnError(t, err)
 	}, testTimeout)
@@ -434,7 +522,6 @@ func TestInitZerolog_LogToSentry(t *testing.T) {
 	},
 		logger.CloudWatchConfiguration{},
 		sentryConf,
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 }
@@ -450,11 +537,9 @@ func TestCloseZerolog(t *testing.T) {
 		LogLevel:                   "debug",
 		LoggingToCloudWatchEnabled: false,
 		LoggingToSentryEnabled:     true,
-		LoggingToKafkaEnabled:      false,
 	},
 		logger.CloudWatchConfiguration{},
 		sentryConf,
-		logger.KafkaZerologConfiguration{},
 	)
 	helpers.FailOnError(t, err)
 	logger.CloseZerolog()
@@ -471,7 +556,6 @@ func TestStdoutLog(t *testing.T) {
 		},
 			logger.CloudWatchConfiguration{},
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 
 		log.Info().Msg("Hello world")
@@ -492,7 +576,6 @@ func TestStderrLog(t *testing.T) {
 		},
 			logger.CloudWatchConfiguration{},
 			logger.SentryLoggingConfiguration{},
-			logger.KafkaZerologConfiguration{},
 		)
 
 		log.Info().Msg("Hello world")
@@ -503,21 +586,14 @@ func TestStderrLog(t *testing.T) {
 }
 
 func TestKafkaLogging(t *testing.T) {
-	kafkaLoggingConf := logger.KafkaZerologConfiguration{
-		Broker: "kafka:9092",
-		Topic:  "log_topic",
-	}
-
 	err := logger.InitZerolog(logger.LoggingConfiguration{
 		Debug:                      false,
 		LogLevel:                   "debug",
 		LoggingToCloudWatchEnabled: false,
 		LoggingToSentryEnabled:     false,
-		LoggingToKafkaEnabled:      true,
 	},
 		logger.CloudWatchConfiguration{},
 		logger.SentryLoggingConfiguration{},
-		kafkaLoggingConf,
 	)
 	helpers.FailOnError(t, err)
 }

@@ -18,13 +18,13 @@ package s3util_test
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/copier_test.html
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	s3util "github.com/RedHatInsights/insights-operator-utils/s3"
 	s3mocks "github.com/RedHatInsights/insights-operator-utils/s3/mocks"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,21 +48,21 @@ func getTestCases() []testCase {
 		{
 			description:    "bucket doesn't exist",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(s3.ErrCodeNoSuchBucket, "", nil),
-			errorMsg:       s3.ErrCodeNoSuchBucket,
+			mockErrorValue: &types.NoSuchBucket{},
+			errorMsg:       "NoSuchBucket",
 			file:           testFile,
 		},
 		{
 			description:   "empty key input",
 			errorExpected: true,
-			errorMsg:      s3.ErrCodeNoSuchKey,
+			errorMsg:      "NoSuchKey",
 			file:          "",
 		},
 		{
 			description:    "unknown aws error",
 			errorExpected:  true,
-			mockErrorValue: awserr.New(randomError, "", nil),
-			errorMsg:       randomError,
+			mockErrorValue: &types.InvalidRequest{},
+			errorMsg:       "InvalidRequest",
 		},
 		{
 			description:    "unknown error",
@@ -88,7 +88,7 @@ func TestCopyObject(t *testing.T) {
 		t.Run(tc.description, func(t *testing.T) {
 			mockClient.Err = tc.mockErrorValue
 			mockClient.Contents = tc.mockContents
-			err := s3util.CopyObject(mockClient, testBucket, tc.file, testBucket, newFile)
+			err := s3util.CopyObject(context.Background(), mockClient, testBucket, tc.file, testBucket, newFile)
 			if tc.errorExpected {
 				assert.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)
@@ -114,7 +114,7 @@ func TestRenameObject(t *testing.T) {
 		t.Run(tc.description, func(t *testing.T) {
 			mockClient.Err = tc.mockErrorValue
 			mockClient.Contents = tc.mockContents
-			err := s3util.RenameObject(mockClient, testBucket, tc.file, newFile)
+			err := s3util.RenameObject(context.Background(), mockClient, mockClient, testBucket, tc.file, newFile)
 			if tc.errorExpected {
 				assert.Error(t, err)
 				assert.Contains(t, err.Error(), tc.errorMsg)

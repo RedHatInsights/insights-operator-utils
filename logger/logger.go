@@ -22,26 +22,33 @@ package logger
 // https://redhatinsights.github.io/insights-operator-utils/packages/logger/logger.html
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/IBM/sarama"
-	"github.com/RedHatInsights/cloudwatch"
-	"github.com/RedHatInsights/kafka-zerolog/kafkazerolog"
 	zlogsentry "github.com/archdx/zerolog-sentry"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	sentry "github.com/getsentry/sentry-go"
+	cww "github.com/lzap/cloudwatchwriter2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 var needClose []io.Closer = []io.Closer{}
+
+// AWSCloudWatchEndpoint allows you to mock cloudwatch client by redirecting requests to a local proxy
+var AWSCloudWatchEndpoint string
+
+const cloudwatchBatchInterval = 500 * time.Millisecond
 
 // WorkaroundForRHIOPS729 keeps only those fields that are currently getting their way to Kibana
 // TODO: delete when RHIOPS-729 is fixed
@@ -82,13 +89,10 @@ func (writer WorkaroundForRHIOPS729) Write(bytes []byte) (int, error) {
 	return len(bytes), nil
 }
 
-// AWSCloudWatchEndpoint allows you to mock cloudwatch client by redirecting requests to a local proxy
-var AWSCloudWatchEndpoint string
-
 // InitZerolog initializes zerolog with provided configs to use proper stdout and/or CloudWatch logging
 func InitZerolog(
 	loggingConf LoggingConfiguration, cloudWatchConf CloudWatchConfiguration, sentryConf SentryLoggingConfiguration,
-	kafkazerologConf KafkaZerologConfiguration, additionalWriters ...io.Writer,
+	additionalWriters ...io.Writer,
 ) error {
 	setGlobalLogLevel(loggingConf)
 
@@ -131,16 +135,6 @@ func InitZerolog(
 		needClose = append(needClose, sentryWriter)
 	}
 
-	if loggingConf.LoggingToKafkaEnabled {
-		kafkaWriter, err := setupKafkaZerolog(kafkazerologConf)
-		if err != nil {
-			err = fmt.Errorf("Error initializing Kafka logging: %s", err.Error())
-			return err
-		}
-		writers = append(writers, kafkaWriter)
-		needClose = append(needClose, kafkaWriter)
-	}
-
 	logsWriter := zerolog.MultiLevelWriter(writers...)
 	log.Logger = zerolog.New(logsWriter).With().Timestamp().Logger()
 
@@ -181,12 +175,12 @@ func convertLogLevel(level string) zerolog.Level {
 	return zerolog.DebugLevel
 }
 
-func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
+func fillInMissingConfiguration(conf *CloudWatchConfiguration) error {
 	// os.Hostname is preferred to os.Getenv("HOSTNAME") because the env var might
 	// not be populated yet (e.g. GitHub runners)
 	hostname, err := os.Hostname()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// if no log stream name is explicitly provided, HOSTNAME is used
@@ -196,43 +190,53 @@ func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
 		// take provided log stream name and replace any $HOSTNAME placeholders with real hostname
 		conf.StreamName = strings.ReplaceAll(conf.StreamName, "$HOSTNAME", hostname)
 	}
-	awsLogLevel := aws.LogOff
-	if conf.Debug {
-		awsLogLevel = aws.LogDebugWithSigning |
-			aws.LogDebugWithHTTPBody |
-			aws.LogDebugWithEventStreamBody
+	return nil
+}
+
+func setupCloudwatchLogging(conf *CloudWatchConfiguration) (io.Writer, error) {
+	if err := fillInMissingConfiguration(conf); err != nil {
+		return nil, err
 	}
 
-	awsConf := aws.NewConfig().
-		WithCredentials(credentials.NewStaticCredentials(
-			conf.AWSAccessID, conf.AWSSecretKey, conf.AWSSessionToken,
-		)).
-		WithRegion(conf.AWSRegion).
-		WithLogLevel(awsLogLevel)
+	if conf.LogGroup == "" {
+		return nil, fmt.Errorf("log group name cannot be empty")
+	}
 
+	// Build configuration options for AWS SDK v2
+	var configOptions []func(*config.LoadOptions) error
+
+	// Set region
+	if conf.AWSRegion != "" {
+		configOptions = append(configOptions, config.WithRegion(conf.AWSRegion))
+	}
+
+	// Set credentials if provided
+	if conf.AWSAccessID != "" && conf.AWSSecretKey != "" {
+		configOptions = append(configOptions, config.WithCredentialsProvider(
+			credentials.NewStaticCredentialsProvider(conf.AWSAccessID, conf.AWSSecretKey, conf.AWSSessionToken),
+		))
+	}
+
+	// Load the configuration
+	cfg, err := config.LoadDefaultConfig(context.TODO(), configOptions...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load AWS config: %w", err)
+	}
+
+	// Create CloudWatch Logs client with service-specific endpoint if provided
+	var cloudWatchClient *cloudwatchlogs.Client
 	if len(AWSCloudWatchEndpoint) > 0 {
-		awsConf = awsConf.WithEndpoint(AWSCloudWatchEndpoint)
-	}
-
-	cloudWatchSession := session.Must(session.NewSession(awsConf))
-	CloudWatchClient := cloudwatchlogs.New(cloudWatchSession)
-
-	var cloudWatchWriter io.Writer
-	if conf.CreateStreamIfNotExists {
-		group := cloudwatch.NewGroup(conf.LogGroup, CloudWatchClient)
-
-		var err error
-		cloudWatchWriter, err = group.Create(conf.StreamName)
-		if err != nil {
-			return nil, err
-		}
+		cloudWatchClient = cloudwatchlogs.NewFromConfig(cfg, func(o *cloudwatchlogs.Options) {
+			o.BaseEndpoint = aws.String(AWSCloudWatchEndpoint)
+			// Use the default HTTP client to ensure gock can intercept requests
+			o.HTTPClient = http.DefaultClient
+		})
 	} else {
-		cloudWatchWriter = cloudwatch.NewWriter(
-			conf.LogGroup, conf.StreamName, CloudWatchClient,
-		)
+		cloudWatchClient = cloudwatchlogs.NewFromConfig(cfg)
 	}
 
-	return cloudWatchWriter, nil
+	return cww.NewWithClient(
+		cloudWatchClient, cloudwatchBatchInterval, conf.LogGroup, conf.StreamName)
 }
 
 func sentryBeforeSend(event *sentry.Event, _ *sentry.EventHint) *sentry.Event {
@@ -251,15 +255,6 @@ func setupSentryLogging(conf SentryLoggingConfiguration) (io.WriteCloser, error)
 	}
 
 	return sentryWriter, nil
-}
-
-func setupKafkaZerolog(conf KafkaZerologConfiguration) (io.WriteCloser, error) {
-	return kafkazerolog.NewKafkaLogger(kafkazerolog.KafkaLoggerConf{
-		Broker: conf.Broker,
-		Topic:  conf.Topic,
-		Cert:   conf.CertPath,
-		Level:  convertLogLevel(conf.Level),
-	})
 }
 
 const kafkaErrorPrefix = "kafka: error"

@@ -18,29 +18,29 @@ package s3util
 // https://redhatinsights.github.io/insights-operator-utils/packages/s3/copier.html
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 // CopyObject copies the `inputKey` in the inputBucket to `outputKey` in the outputBucket.
-func CopyObject(client s3iface.S3API, inputBucket, inputKey, outputBucket, outputKey string) error {
+func CopyObject(ctx context.Context, client CopyObjectAPIClient, inputBucket, inputKey, outputBucket, outputKey string) error {
 	input := &s3.CopyObjectInput{
 		Bucket:     aws.String(outputBucket),
 		Key:        aws.String(outputKey),
 		CopySource: aws.String(fmt.Sprintf("/%s/%s", inputBucket, inputKey)),
 	}
-	_, err := client.CopyObject(input)
+	_, err := client.CopyObject(ctx, input)
 	return err
 }
 
 // RenameObject renames the `inputKey` in the bucket to `outputKey`.
-func RenameObject(client s3iface.S3API, bucket, inputKey, outputKey string) error {
-	if err := CopyObject(client, bucket, inputKey, bucket, outputKey); err != nil {
+func RenameObject(ctx context.Context, client CopyObjectAPIClient, deleteClient DeleteObjectsAPIClient, bucket, inputKey, outputKey string) error {
+	if err := CopyObject(ctx, client, bucket, inputKey, bucket, outputKey); err != nil {
 		return err
 	}
 
-	return DeleteObject(client, bucket, inputKey)
+	return DeleteObject(ctx, deleteClient, bucket, inputKey)
 }
