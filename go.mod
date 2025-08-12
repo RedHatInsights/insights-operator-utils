@@ -9,7 +9,7 @@ require (
 	github.com/RedHatInsights/insights-results-aggregator-data v1.3.9
 	github.com/RedHatInsights/insights-results-types v1.23.5
 	github.com/archdx/zerolog-sentry v1.8.5
-	github.com/aws/aws-sdk-go-v2 v1.37.2
+	github.com/aws/aws-sdk-go-v2 v1.38.0
 	github.com/aws/aws-sdk-go-v2/config v1.30.3
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.3
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.55.0
