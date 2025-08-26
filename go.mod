@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.38.1
 	github.com/aws/aws-sdk-go-v2/config v1.31.2
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.6
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.56.2
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.57.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.87.1
 	github.com/getkin/kin-openapi v0.132.0
 	github.com/getsentry/sentry-go v0.35.1
