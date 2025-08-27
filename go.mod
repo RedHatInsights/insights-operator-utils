@@ -14,7 +14,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.7
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.57.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.87.1
-	github.com/getkin/kin-openapi v0.132.0
+	github.com/getkin/kin-openapi v0.133.0
 	github.com/getsentry/sentry-go v0.35.1
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/golang/mock v1.6.0
@@ -90,6 +90,7 @@ require (
 	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
+	github.com/woodsbury/decimal128 v1.3.0 // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
 	golang.org/x/crypto v0.38.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
