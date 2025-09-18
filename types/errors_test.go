@@ -149,12 +149,27 @@ func TestItemNotFoundError(t *testing.T) {
 	assert.Equal(t, err.Error(), expected)
 }
 
+// TestItemTypeNotFoundError checks the method Error() for data structure
+// ItemTypeNotFoundError.
+func TestItemTypeNotFoundError(t *testing.T) {
+	// expected error value
+	const expected = "Item with type ITEM_TYPE was not found in the storage"
+
+	// construct an instance of error interface
+	err := types.ItemTypeNotFoundError{
+		ItemType: "ITEM_TYPE"}
+
+	// check if error value is correct
+	assert.Equal(t, err.Error(), expected)
+}
+
 // TestHandleServer error check the function HandleServerError defined in errors.go
 func TestHandleServerError(t *testing.T) {
 	// check the behaviour with all error types defined in this package
 	testResponse(t, &types.RouterMissingParamError{}, http.StatusBadRequest)
 	testResponse(t, &types.RouterParsingError{}, http.StatusBadRequest)
 	testResponse(t, &types.ItemNotFoundError{}, http.StatusNotFound)
+	testResponse(t, &types.ItemTypeNotFoundError{}, http.StatusNotFound)
 	testResponse(t, &types.UnauthorizedError{}, http.StatusUnauthorized)
 	testResponse(t, &types.ForbiddenError{}, http.StatusForbidden)
 	testResponse(t, &types.ForbiddenError{}, http.StatusForbidden)

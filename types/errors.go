@@ -128,7 +128,7 @@ func HandleServerError(writer http.ResponseWriter, err error) {
 		respErr = responses.SendBadRequest(writer, err.Error())
 	case *json.UnmarshalTypeError:
 		respErr = responses.SendBadRequest(writer, "bad type in json data")
-	case *ItemNotFoundError:
+	case *ItemNotFoundError, *ItemTypeNotFoundError:
 		respErr = responses.SendNotFound(writer, err.Error())
 	case *UnauthorizedError:
 		respErr = responses.SendUnauthorized(writer, err.Error())
@@ -155,7 +155,17 @@ type ItemNotFoundError struct {
 	ItemID interface{}
 }
 
+// ItemTypeNotFoundError shows that specific type of item wasn't found in storage
+type ItemTypeNotFoundError struct {
+	ItemType interface{}
+}
+
 // Error returns error string
 func (e *ItemNotFoundError) Error() string {
 	return fmt.Sprintf("Item with ID %+v was not found in the storage", e.ItemID)
+}
+
+// Error returns error string
+func (e *ItemTypeNotFoundError) Error() string {
+	return fmt.Sprintf("Item with type %+v was not found in the storage", e.ItemType)
 }
