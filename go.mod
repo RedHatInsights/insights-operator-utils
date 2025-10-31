@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.31.16
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.20
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.58.5
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.89.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.89.1
 	github.com/getkin/kin-openapi v0.133.0
 	github.com/getsentry/sentry-go v0.36.2
 	github.com/go-redis/redismock/v9 v9.2.0
@@ -40,11 +40,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.12 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.12 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.4 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.11 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.11 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.30.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.39.0 // indirect
