@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.32.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.58.7
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.91.1
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.92.0
 	github.com/getkin/kin-openapi v0.133.0
 	github.com/getsentry/sentry-go v0.38.0
 	github.com/go-redis/redismock/v9 v9.2.0
