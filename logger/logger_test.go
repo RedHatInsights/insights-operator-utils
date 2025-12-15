@@ -42,7 +42,7 @@ var (
 		AWSAccessID:     "access ID",
 		AWSSecretKey:    "secret",
 		AWSSessionToken: "sess token",
-		AWSRegion:       "aws region",
+		AWSRegion:       "us-east-1",
 		LogGroup:        "log group",
 		StreamName:      "stream name",
 		Debug:           false,
