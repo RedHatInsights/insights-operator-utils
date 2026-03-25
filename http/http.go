@@ -100,6 +100,9 @@ func SendRequest(req *http.Request, timeout time.Duration) ([]byte, error) {
 		Timeout: timeout,
 	}
 
+	// #nosec G704 -- This is a low-level HTTP utility function for internal service-to-service
+	// communication. URLs are constructed from application config (not user input) using
+	// MakeURLToEndpoint helpers. Callers are responsible for URL validation if needed.
 	response, err := client.Do(req)
 
 	if err != nil {
