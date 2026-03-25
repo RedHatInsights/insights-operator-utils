@@ -44,6 +44,7 @@ func (pgc *GatewayClient) Do(request *http.Request) (*http.Response, error) {
 		Str("request", request.URL.String()).
 		Str("method", request.Method).
 		Msg("Pushing metrics to Prometheus push gateway")
+	// #nosec G704 -- URL is controlled by application config (Prometheus push gateway endpoint), not user input
 	resp, err := pgc.HTTPClient.Do(request)
 	if resp != nil {
 		log.Debug().Int("code", resp.StatusCode).Msg("Returned status code")
