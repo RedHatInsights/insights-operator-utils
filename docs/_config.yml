@@ -1,5 +1,5 @@
 title: Insights Operator Utils
-description: Utility functions that are shared for insights-operator-* repositories 
+description: Utility functions that are shared for insights-operator-* repositories
 baseurl: /insights-operator-utils
 url: "https://redhatinsights.github.io"
 repository: "RedHatInsights/insights-operator-utils"

@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright 2020 Red Hat, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,4 +31,4 @@ mv class_diagram_.svg class_diagram.svg
 mv class_diagram.uml docs/
 mv class_diagram.svg docs/
 mv class_diagram.png docs/
-popd
+popd || exit

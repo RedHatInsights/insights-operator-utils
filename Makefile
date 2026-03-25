@@ -1,30 +1,17 @@
 SHELL := /bin/bash
 
-.PHONY: help clean build fmt lint run test style license godoc install_docgo install_addlicense before_commit install_golangci-lint
+.PHONY: help clean build lint run test style license godoc install_docgo install_addlicense before_commit pre-commit
 
 SOURCES:=$(shell find . -name '*.go')
 DOCFILES:=$(addprefix docs/packages/, $(addsuffix .html, $(basename ${SOURCES})))
 
 
-install_golangci-lint:
-	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+pre-commit: ## Run pre-commit hooks on all files
+	pre-commit run --all-files
 
-fmt: install_golangci-lint ## Run go formatting
-	@echo "Running go formatting"
-	golangci-lint fmt
+lint: pre-commit ## Run linting via pre-commit hooks
 
-lint: install_golangci-lint ## Run go liting
-	@echo "Running go linting"
-	golangci-lint run --fix
-
-shellcheck: ## Run shellcheck
-	./shellcheck.sh
-
-abcgo: ## Run ABC metrics checker
-	@echo "Run ABC metrics checker"
-	./abcgo.sh
-
-style: fmt lint shellcheck abcgo ## Run all the formatting related commands (fmt, lint, abcgo) + check shell scripts
+style: pre-commit ## Run all formatting and linting via pre-commit hooks
 
 test: clean build ## Run the unit tests
 	@go test -coverprofile coverage.out $(shell go list ./...)
@@ -39,7 +26,7 @@ cover: test ## Display test coverage on generated HTML pages
 coverage: ## Display test coverage onto terminal
 	@go tool cover -func=coverage.out
 
-before_commit: style test license ## Checks done before commit
+before_commit: pre-commit test license ## Checks done before commit
 	./check_coverage.sh
 
 license: install_addlicense  ## Add license in every file in repository
