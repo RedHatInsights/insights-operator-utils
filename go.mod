@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.64.2
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.97.2
 	github.com/getkin/kin-openapi v0.134.0
-	github.com/getsentry/sentry-go v0.42.0
+	github.com/getsentry/sentry-go v0.44.1
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
