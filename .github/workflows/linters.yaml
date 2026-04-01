@@ -1,20 +1,10 @@
-name: Go linters
+name: Linters
 
 on:
-  - push
-  - pull_request
+  push:
+    branches: [main, master]
+  pull_request:
 
 jobs:
-  golint:
-    runs-on: ubuntu-latest
-    name: Linters
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.25"
-      - name: Build project
-        run: go build
-      - name: ABC metrics checker
-        run: make abcgo
+  lint:
+    uses: RedHatInsights/processing-tools/.github/workflows/linters.yaml@v0.1.0

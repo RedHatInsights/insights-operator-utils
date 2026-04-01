@@ -25,7 +25,7 @@ namespace helpers {
         + APIPrefix string
 
         + Initialize() http.Handler
-        + AddEndpoint(endpoint string, f <font color=blue>func</font>(http.ResponseWriter, *http.Request) ) 
+        + AddEndpoint(endpoint string, f <font color=blue>func</font>(http.ResponseWriter, *http.Request) )
 
     }
     class MockT << (S,Aquamarine) >> {
@@ -33,22 +33,22 @@ namespace helpers {
 
         + Expects *mock_testing.MockTB
 
-        + Finish() 
-        + ExpectFailOnError(err error) 
-        + ExpectFailOnErrorAnyArgument() 
-        + Cleanup(f <font color=blue>func</font>() ) 
-        + Error(args ...<font color=blue>interface</font>{}) 
-        + Errorf(format string, args ...<font color=blue>interface</font>{}) 
-        + Fail() 
-        + FailNow() 
+        + Finish()
+        + ExpectFailOnError(err error)
+        + ExpectFailOnErrorAnyArgument()
+        + Cleanup(f <font color=blue>func</font>() )
+        + Error(args ...<font color=blue>interface</font>{})
+        + Errorf(format string, args ...<font color=blue>interface</font>{})
+        + Fail()
+        + FailNow()
         + Failed() bool
-        + Fatal(args ...<font color=blue>interface</font>{}) 
-        + Fatalf(format string, args ...<font color=blue>interface</font>{}) 
-        + Log(args ...<font color=blue>interface</font>{}) 
-        + Logf(format string, args ...<font color=blue>interface</font>{}) 
-        + Skip(args ...<font color=blue>interface</font>{}) 
-        + SkipNow() 
-        + Skipf(format string, args ...<font color=blue>interface</font>{}) 
+        + Fatal(args ...<font color=blue>interface</font>{})
+        + Fatalf(format string, args ...<font color=blue>interface</font>{})
+        + Log(args ...<font color=blue>interface</font>{})
+        + Logf(format string, args ...<font color=blue>interface</font>{})
+        + Skip(args ...<font color=blue>interface</font>{})
+        + SkipNow()
+        + Skipf(format string, args ...<font color=blue>interface</font>{})
         + Skipped() bool
 
     }
@@ -73,7 +73,7 @@ namespace helpers {
 
 namespace httputils {
     class loggingResponseWriter << (S,Aquamarine) >> {
-        + WriteHeader(statusCode int) 
+        + WriteHeader(statusCode int)
 
     }
 }
@@ -102,11 +102,11 @@ namespace logger {
     class SaramaZerologger << (S,Aquamarine) >> {
         - zerologger zerolog.Logger
 
-        - logMessage(format string, params ...<font color=blue>interface</font>{}) 
+        - logMessage(format string, params ...<font color=blue>interface</font>{})
 
-        + Print(params ...<font color=blue>interface</font>{}) 
-        + Printf(format string, params ...<font color=blue>interface</font>{}) 
-        + Println(v ...<font color=blue>interface</font>{}) 
+        + Print(params ...<font color=blue>interface</font>{})
+        + Printf(format string, params ...<font color=blue>interface</font>{})
+        + Println(v ...<font color=blue>interface</font>{})
 
     }
     class SentryLoggingConfiguration << (S,Aquamarine) >> {
@@ -146,24 +146,24 @@ namespace mock_testing {
         - ctrl *gomock.Controller
         - recorder *MockTBMockRecorder
 
-        - private() 
+        - private()
 
         + EXPECT() *MockTBMockRecorder
-        + Cleanup(arg0 <font color=blue>func</font>() ) 
-        + Error(arg0 ...<font color=blue>interface</font>{}) 
-        + Errorf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
-        + Fail() 
-        + FailNow() 
+        + Cleanup(arg0 <font color=blue>func</font>() )
+        + Error(arg0 ...<font color=blue>interface</font>{})
+        + Errorf(arg0 string, arg1 ...<font color=blue>interface</font>{})
+        + Fail()
+        + FailNow()
         + Failed() bool
-        + Fatal(arg0 ...<font color=blue>interface</font>{}) 
-        + Fatalf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
-        + Helper() 
-        + Log(arg0 ...<font color=blue>interface</font>{}) 
-        + Logf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Fatal(arg0 ...<font color=blue>interface</font>{})
+        + Fatalf(arg0 string, arg1 ...<font color=blue>interface</font>{})
+        + Helper()
+        + Log(arg0 ...<font color=blue>interface</font>{})
+        + Logf(arg0 string, arg1 ...<font color=blue>interface</font>{})
         + Name() string
-        + Skip(arg0 ...<font color=blue>interface</font>{}) 
-        + SkipNow() 
-        + Skipf(arg0 string, arg1 ...<font color=blue>interface</font>{}) 
+        + Skip(arg0 ...<font color=blue>interface</font>{})
+        + SkipNow()
+        + Skipf(arg0 string, arg1 ...<font color=blue>interface</font>{})
         + Skipped() bool
 
     }
@@ -208,11 +208,11 @@ namespace saramahelpers {
         + Claims() <font color=blue>map</font>[string][]int32
         + MemberID() string
         + GenerationID() int32
-        + MarkOffset(topic string, partition int32, offset int64, metadata string) 
-        + ResetOffset(topic string, partition int32, offset int64, metadata string) 
-        + MarkMessage(msg *sarama.ConsumerMessage, metadata string) 
+        + MarkOffset(topic string, partition int32, offset int64, metadata string)
+        + ResetOffset(topic string, partition int32, offset int64, metadata string)
+        + MarkMessage(msg *sarama.ConsumerMessage, metadata string)
         + Context() context.Context
-        + Commit() 
+        + Commit()
 
     }
 }

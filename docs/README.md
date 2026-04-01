@@ -1,2 +1,1 @@
 # Content of `docs` subdirectory
-
