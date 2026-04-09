@@ -36,8 +36,10 @@ repos:
       - id: abcgo
         args: ['--threshold=40']
 
+      # - id: go-version-consistency
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.7
+    rev: v0.15.9
     hooks:
       # Adding a set of rules to ruff check to match pyupgrade rules
       - id: ruff-check
@@ -46,3 +48,13 @@ repos:
           - '--line-length=100'
           - '--select=UP,F632,E,W,F,I,N,B,C4,SIM'
       - id: ruff-format
+
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v2.14.0
+    hooks:
+      - id: hadolint
+
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 43.109.5
+    hooks:
+      - id: renovate-config-validator
