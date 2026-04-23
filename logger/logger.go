@@ -32,12 +32,12 @@ import (
 	"time"
 
 	"github.com/IBM/sarama"
-	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	sentry "github.com/getsentry/sentry-go"
+	sentryzerolog "github.com/getsentry/sentry-go/zerolog"
 	cww "github.com/lzap/cloudwatchwriter2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -245,11 +245,13 @@ func sentryBeforeSend(event *sentry.Event, _ *sentry.EventHint) *sentry.Event {
 }
 
 func setupSentryLogging(conf SentryLoggingConfiguration) (io.WriteCloser, error) {
-	sentryWriter, err := zlogsentry.New(
-		conf.SentryDSN,
-		zlogsentry.WithEnvironment(conf.SentryEnvironment),
-		zlogsentry.WithBeforeSend(sentryBeforeSend),
-	)
+	sentryWriter, err := sentryzerolog.New(sentryzerolog.Config{
+		ClientOptions: sentry.ClientOptions{
+			Dsn:         conf.SentryDSN,
+			Environment: conf.SentryEnvironment,
+			BeforeSend:  sentryBeforeSend,
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
