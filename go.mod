@@ -1,6 +1,6 @@
 module github.com/RedHatInsights/insights-operator-utils
 
-go 1.25.0
+go 1.26
 
 require (
 	github.com/IBM/sarama v1.48.0
@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.15
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.71.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.100.0
-	github.com/getkin/kin-openapi v0.135.0
+	github.com/getkin/kin-openapi v0.136.0
 	github.com/getsentry/sentry-go v0.46.0
 	github.com/getsentry/sentry-go/zerolog v0.46.0
 	github.com/go-redis/redismock/v9 v9.2.0
@@ -84,6 +84,7 @@ require (
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
 	github.com/woodsbury/decimal128 v1.4.0 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
