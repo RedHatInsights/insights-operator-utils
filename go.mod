@@ -7,7 +7,7 @@ require (
 	github.com/RedHatInsights/insights-results-aggregator-data v1.3.9
 	github.com/RedHatInsights/insights-results-types v1.23.5
 	github.com/aws/aws-sdk-go-v2 v1.41.7
-	github.com/aws/aws-sdk-go-v2/config v1.32.16
+	github.com/aws/aws-sdk-go-v2/config v1.32.17
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.16
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.71.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.100.1
