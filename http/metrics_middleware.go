@@ -41,7 +41,7 @@ func (writer loggingResponseWriter) WriteHeader(statusCode int) {
 	metrics.APIResponseStatusCodes.With(
 		prometheus.Labels{
 			"status_code": fmt.Sprint(statusCode),
-			endpointLabel:    writer.endpoint},
+			endpointLabel: writer.endpoint},
 	).Inc()
 }
 
