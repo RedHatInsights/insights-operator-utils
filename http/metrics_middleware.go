@@ -29,6 +29,8 @@ import (
 	"github.com/RedHatInsights/insights-operator-utils/metrics"
 )
 
+const endpointLabel = "endpoint"
+
 type loggingResponseWriter struct {
 	http.ResponseWriter
 	endpoint string
@@ -39,7 +41,7 @@ func (writer loggingResponseWriter) WriteHeader(statusCode int) {
 	metrics.APIResponseStatusCodes.With(
 		prometheus.Labels{
 			"status_code": fmt.Sprint(statusCode),
-			"endpoint":    writer.endpoint},
+			endpointLabel:    writer.endpoint},
 	).Inc()
 }
 
@@ -53,7 +55,7 @@ func logRequestHandler(writer http.ResponseWriter, request *http.Request, nextHa
 		endpoint = ""
 	}
 
-	metrics.APIRequests.With(prometheus.Labels{"endpoint": endpoint}).Inc()
+	metrics.APIRequests.With(prometheus.Labels{endpointLabel: endpoint}).Inc()
 
 	startTime := time.Now()
 	nextHandler.ServeHTTP(&loggingResponseWriter{
@@ -63,7 +65,7 @@ func logRequestHandler(writer http.ResponseWriter, request *http.Request, nextHa
 	duration := time.Since(startTime)
 
 	metrics.APIResponsesTime.With(
-		prometheus.Labels{"endpoint": endpoint},
+		prometheus.Labels{endpointLabel: endpoint},
 	).Observe(duration.Seconds())
 }
 

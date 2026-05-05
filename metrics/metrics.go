@@ -32,25 +32,27 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
+const endpointLabel = "endpoint"
+
 var (
 	// APIRequests is a counter vector for requests to endpoints
 	APIRequests *prometheus.CounterVec = promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_endpoints_requests",
 		Help: "The total number of requests per endpoint",
-	}, []string{"endpoint"})
+	}, []string{endpointLabel})
 
 	// APIResponsesTime collects the information about api response time per endpoint
 	APIResponsesTime *prometheus.HistogramVec = promauto.NewHistogramVec(prometheus.HistogramOpts{
 		Name:    "api_endpoints_response_time",
 		Help:    "API endpoints response time",
 		Buckets: prometheus.LinearBuckets(0, 20, 20),
-	}, []string{"endpoint"})
+	}, []string{endpointLabel})
 
 	// APIResponseStatusCodes collects the information about api response status codes
 	APIResponseStatusCodes *prometheus.CounterVec = promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "api_endpoints_status_codes",
 		Help: "API endpoints status codes",
-	}, []string{"status_code", "endpoint"})
+	}, []string{"status_code", endpointLabel})
 )
 
 // AddAPIMetricsWithNamespace overwrite the defined metrics with namespaced version of them
@@ -63,18 +65,18 @@ func AddAPIMetricsWithNamespace(namespace string) {
 		Namespace: namespace,
 		Name:      "api_endpoints_requests",
 		Help:      "The total number of requests per endpoint",
-	}, []string{"endpoint"})
+	}, []string{endpointLabel})
 
 	APIResponsesTime = promauto.NewHistogramVec(prometheus.HistogramOpts{
 		Namespace: namespace,
 		Name:      "api_endpoints_response_time",
 		Help:      "API endpoints response time",
 		Buckets:   prometheus.LinearBuckets(0, 20, 20),
-	}, []string{"endpoint"})
+	}, []string{endpointLabel})
 
 	APIResponseStatusCodes = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: namespace,
 		Name:      "api_endpoints_status_codes",
 		Help:      "API endpoints status codes",
-	}, []string{"status_code", "endpoint"})
+	}, []string{"status_code", endpointLabel})
 }

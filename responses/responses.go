@@ -28,6 +28,7 @@ import (
 const (
 	contentType = "Content-Type"
 	appJSON     = "application/json; charset=utf-8"
+	statusKey   = "status"
 )
 
 // setDefaultContentType is a helper function to set the Content-Type header
@@ -37,17 +38,17 @@ func setDefaultContentType(w http.ResponseWriter) {
 
 // BuildResponse builds response for RestAPI request
 func BuildResponse(status string) map[string]interface{} {
-	return map[string]interface{}{"status": status}
+	return map[string]interface{}{statusKey: status}
 }
 
 // BuildOkResponse builds simple "ok" response
 func BuildOkResponse() map[string]interface{} {
-	return map[string]interface{}{"status": "ok"}
+	return map[string]interface{}{statusKey: "ok"}
 }
 
 // BuildOkResponseWithData builds response with status "ok" and data
 func BuildOkResponseWithData(dataName string, data interface{}) map[string]interface{} {
-	resp := map[string]interface{}{"status": "ok"}
+	resp := map[string]interface{}{statusKey: "ok"}
 	resp[dataName] = data
 	return resp
 }
@@ -55,7 +56,7 @@ func BuildOkResponseWithData(dataName string, data interface{}) map[string]inter
 // Send sends HTTP response with a provided statusCode
 // data can be either string or map[string]interface{}
 // if data is string it will send response like this:
-// {"status": data} which is helpful for explaining error to the client
+// {statusKey: data} which is helpful for explaining error to the client
 //
 // Returned error value is based on error returned from json.Encoder
 func Send(statusCode int, w http.ResponseWriter, data interface{}) error {
