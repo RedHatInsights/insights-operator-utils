@@ -1,35 +1,10 @@
 name: Go tests
 
 on:
-  push:
-    branches: [master, main]
   pull_request:
 
 jobs:
   gotests:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version:
-          - "1.25"
-          - "1.26"
-    name: Tests for Go ${{ matrix.go-version}}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ matrix.go-version }}
-      - name: Unit tests
-        run: env
-      - name: Retrieve code coverage
-        run: go test -coverprofile coverage.out $(go list ./... | grep -v tests)
-      - name: Display code coverage
-        run: go tool cover -func=coverage.out
-      - name: Upload coverage to Codecov
-        if: matrix.go-version == '1.25'
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: unit-tests
-          fail_ci_if_error: false
+    uses: RedHatInsights/processing-tools/.github/workflows/gotests.yaml@v0.4.2
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
