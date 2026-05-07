@@ -7,6 +7,6 @@ on:
 
 jobs:
   gotests:
-    uses: RedHatInsights/processing-tools/.github/workflows/gotests.yaml@v0.4.2
+    uses: RedHatInsights/processing-tools/.github/workflows/gotests.yaml@v0.4.3
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
