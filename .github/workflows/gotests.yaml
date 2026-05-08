@@ -8,5 +8,7 @@ on:
 jobs:
   gotests:
     uses: RedHatInsights/processing-tools/.github/workflows/gotests.yaml@v0.4.3
+    with:
+      coverage_threshold: 69
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
