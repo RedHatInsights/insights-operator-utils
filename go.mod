@@ -3,7 +3,7 @@ module github.com/RedHatInsights/insights-operator-utils
 go 1.25.0
 
 require (
-	github.com/IBM/sarama v1.50.2
+	github.com/IBM/sarama v1.50.3
 	github.com/RedHatInsights/insights-results-aggregator-data v1.3.9
 	github.com/RedHatInsights/insights-results-types v1.23.5
 	github.com/aws/aws-sdk-go-v2 v1.42.0
