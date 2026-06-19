@@ -12,8 +12,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.76.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.103.3
 	github.com/getkin/kin-openapi v0.140.0
-	github.com/getsentry/sentry-go v0.46.2
-	github.com/getsentry/sentry-go/zerolog v0.46.2
+	github.com/getsentry/sentry-go v0.47.0
+	github.com/getsentry/sentry-go/zerolog v0.47.0
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
@@ -53,7 +53,7 @@ require (
 	github.com/bitly/go-simplejson v0.5.1 // indirect
 	github.com/buger/jsonparser v1.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-openapi/jsonpointer v0.23.1 // indirect
@@ -73,7 +73,7 @@ require (
 	github.com/oasdiff/yaml v0.1.0 // indirect
 	github.com/oasdiff/yaml3 v0.0.13 // indirect
 	github.com/pierrec/lz4/v4 v4.1.27 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/common v0.68.1 // indirect
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
