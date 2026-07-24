@@ -218,8 +218,8 @@ github.com/gavv/httpexpect v2.0.0+incompatible/go.mod h1:x+9tiU1YnrOvnB725RkpoLv
 github.com/gchaincl/sqlhooks v1.3.0/go.mod h1:9BypXnereMT0+Ys8WGWHqzgkkOfHIhyeUCqXC24ra34=
 github.com/getkin/kin-openapi v0.20.0/go.mod h1:WGRs2ZMM1Q8LR1QBEwUxC6RJEfaBcD0s+pcEVXFuAjw=
 github.com/getkin/kin-openapi v0.22.1/go.mod h1:WGRs2ZMM1Q8LR1QBEwUxC6RJEfaBcD0s+pcEVXFuAjw=
-github.com/getkin/kin-openapi v0.142.0 h1:izj0vBdFprMhitfzaX8sTqztsEQyvwhssBoB6n8NO7w=
-github.com/getkin/kin-openapi v0.142.0/go.mod h1:3BH9M9XDe/y9M5DSvEocVYAYq1w0qrhJHjC/vZi0AaY=
+github.com/getkin/kin-openapi v0.144.0 h1:hIRcTH+KjLfkLpYU6bSSfdFpi0fZi1fp+hSPi4aQu9Y=
+github.com/getkin/kin-openapi v0.144.0/go.mod h1:3BH9M9XDe/y9M5DSvEocVYAYq1w0qrhJHjC/vZi0AaY=
 github.com/getsentry/sentry-go v0.6.1/go.mod h1:0yZBuzSvbZwBnvaF9VwZIMen3kXscY8/uasKtAX1qG8=
 github.com/getsentry/sentry-go v0.48.0 h1:FRZNr7Uk1C86ev1bSJmYlUkL9oyivQA6YOcdYfaaMmY=
 github.com/getsentry/sentry-go v0.48.0/go.mod h1:E5UkA5wp1qR2+MDydNYlVeUiNN2xEdjYMidkgf0Qoss=
