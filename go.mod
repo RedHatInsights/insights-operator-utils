@@ -7,10 +7,10 @@ require (
 	github.com/RedHatInsights/insights-results-aggregator-data v1.3.9
 	github.com/RedHatInsights/insights-results-types v1.23.5
 	github.com/aws/aws-sdk-go-v2 v1.45.1
-	github.com/aws/aws-sdk-go-v2/config v1.33.1
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.1
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.84.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.109.1
+	github.com/aws/aws-sdk-go-v2/config v1.33.2
+	github.com/aws/aws-sdk-go-v2/credentials v1.20.2
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.85.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.110.0
 	github.com/getkin/kin-openapi v0.149.0
 	github.com/getsentry/sentry-go v0.49.0
 	github.com/getsentry/sentry-go/zerolog v0.49.0
@@ -23,7 +23,7 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/mozillazg/request v0.8.0
 	github.com/prometheus/client_golang v1.24.1
-	github.com/prometheus/client_model v0.6.2
+	github.com/prometheus/client_model v0.6.3
 	github.com/redhatinsights/app-common-go v1.6.9
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/rs/zerolog v1.35.1
@@ -44,10 +44,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.7.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.35.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.40.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.47.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.8.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.36.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.41.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.48.0 // indirect
 	github.com/aws/smithy-go v1.28.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bitly/go-simplejson v0.5.1 // indirect
@@ -72,7 +72,7 @@ require (
 	github.com/oasdiff/yaml v0.1.1 // indirect
 	github.com/oasdiff/yaml3 v0.0.14 // indirect
 	github.com/pierrec/lz4/v4 v4.1.29 // indirect
-	github.com/prometheus/common v0.70.1 // indirect
+	github.com/prometheus/common v0.71.0 // indirect
 	github.com/prometheus/procfs v0.22.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/rogpeppe/go-internal v1.16.0 // indirect
