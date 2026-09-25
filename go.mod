@@ -24,7 +24,7 @@ require (
 	github.com/mozillazg/request v0.8.0
 	github.com/prometheus/client_golang v1.24.1
 	github.com/prometheus/client_model v0.6.3
-	github.com/redhatinsights/app-common-go v1.6.9
+	github.com/redhatinsights/app-common-go v1.7.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/rs/zerolog v1.35.1
 	github.com/stretchr/testify v1.12.1
