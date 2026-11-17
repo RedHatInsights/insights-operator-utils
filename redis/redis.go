@@ -17,6 +17,7 @@ package redis
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"time"
 
@@ -35,13 +36,17 @@ type Client struct {
 
 // CreateRedisClient creates a Redis V9 client, it has explicit checks for config params
 // because the go-redis package lets us create a client with incorrect params
-// so errors are only found during subsequent command executions
+// so errors are only found during subsequent command executions.
+// When useTLS is true, the client negotiates TLS (required for ElastiCache AUTH /
+// transit encryption). System CAs are used; no custom CA path is required for
+// standard AWS ElastiCache endpoints.
 func CreateRedisClient(
 	address string,
 	databaseIndex int,
 	username string,
 	password string,
 	timeoutSeconds int,
+	useTLS bool,
 ) (*redisV9.Client, error) {
 	if address == "" {
 		err := errors.New("Redis server address must not be empty")
@@ -55,20 +60,29 @@ func CreateRedisClient(
 		return nil, err
 	}
 
-	log.Info().Msgf("creating redis client. endpoint %v, selected DB %d, timeout seconds %d",
-		address, databaseIndex, timeoutSeconds,
-	)
+	log.Info().
+		Str("endpoint", address).
+		Int("database", databaseIndex).
+		Int("timeout_seconds", timeoutSeconds).
+		Bool("tls", useTLS).
+		Bool("password_set", password != "").
+		Bool("username_set", username != "").
+		Msg("creating redis client")
 
-	// DB is configurable in case we want to change data structure
-	c := redisV9.NewClient(&redisV9.Options{
+	opts := &redisV9.Options{
 		Addr:        address,
 		DB:          databaseIndex,
 		Username:    username,
 		Password:    password,
 		ReadTimeout: time.Duration(timeoutSeconds) * time.Second,
-	})
+	}
+	if useTLS {
+		opts.TLSConfig = &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		}
+	}
 
-	return c, nil
+	return redisV9.NewClient(opts), nil
 }
 
 // HealthCheck executes PING command to check for liveness status of Redis server
