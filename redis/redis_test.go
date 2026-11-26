@@ -59,7 +59,7 @@ func redisExpectationsMet(t *testing.T, mock redismock.ClientMock) {
 
 func TestCreateRedisClientOK(t *testing.T) {
 	client, err := redis.CreateRedisClient(
-		defaultRedisAddress, defaultRedisDatabase, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds,
+		defaultRedisAddress, defaultRedisDatabase, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds, false,
 	)
 	assert.NoError(t, err)
 
@@ -69,12 +69,23 @@ func TestCreateRedisClientOK(t *testing.T) {
 	assert.Equal(t, options.DB, defaultRedisDatabase)
 	assert.Equal(t, options.Password, defaultRedisPassword)
 	assert.Equal(t, options.ReadTimeout, time.Duration(defaultRedisTimeoutSeconds)*time.Second)
+	assert.Nil(t, options.TLSConfig)
+}
+
+func TestCreateRedisClientWithTLS(t *testing.T) {
+	client, err := redis.CreateRedisClient(
+		defaultRedisAddress, defaultRedisDatabase, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds, true,
+	)
+	assert.NoError(t, err)
+
+	options := client.Options()
+	assert.NotNil(t, options.TLSConfig)
 }
 
 func TestCreateRedisClientBadAddress(t *testing.T) {
 	// empty address
 	client, err := redis.CreateRedisClient(
-		"", defaultRedisDatabase, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds,
+		"", defaultRedisDatabase, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds, false,
 	)
 	assert.Nil(t, client)
 	assert.Error(t, err)
@@ -83,7 +94,7 @@ func TestCreateRedisClientBadAddress(t *testing.T) {
 func TestCreateRedisClientDBIndexOutOfRange(t *testing.T) {
 	// Redis supports "only" 16 different databases with indices 0-15
 	client, err := redis.CreateRedisClient(
-		defaultRedisAddress, 16, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds,
+		defaultRedisAddress, 16, defaultRedisUsername, defaultRedisPassword, defaultRedisTimeoutSeconds, false,
 	)
 	assert.Nil(t, client)
 	assert.Error(t, err)
